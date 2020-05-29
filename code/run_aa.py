@@ -14,7 +14,7 @@ parser.add_argument('proposed_residue', type=str, help='three letter uppercase s
 args = parser.parse_args()
 
 # Create hybrid topology factory
-apm_delivery = PointMutationExecutor(f"../input/{args.WT_residue.lower()}_solvent.pdb", 
+apm_delivery = PointMutationExecutor(f"../input/{args.WT_residue.lower()}_vacuum.pdb", 
                          '1', 
                          '2', 
                          args.proposed_residue,
