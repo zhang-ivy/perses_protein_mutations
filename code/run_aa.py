@@ -1,4 +1,5 @@
 import argparse
+import pickle
 from perses.app.relative_point_mutation_setup import PointMutationExecutor
 from perses.annihilation.lambda_protocol import LambdaProtocol
 from openmmtools.multistate import MultiStateReporter
@@ -18,12 +19,12 @@ apm_delivery = PointMutationExecutor(f"{args.WT_residue.lower()}_solvent.pdb",
                          args.proposed_residue,
                         )
 apo_htf = apm_delivery.get_apo_htf()
-pickle.dump(apo_htf, open( input + ".pickle", "wb" ) )
+pickle.dump(apo_htf, open(f"{args.WT_residue}_{args.proposed_residue}_solvent.pickle", "wb" ) )
 
 # Build the hybrid repex samplers
 suffix = 'run'; selection = 'not water'; checkpoint_interval = 10; n_states = 11; n_cycles = 5000
 lambda_protocol = LambdaProtocol(functions='default')
-reporter_file = input + '.nc'
+reporter_file = f"{args.WT_residue}_{args.proposed_residue}_solvent.nc"
 reporter = MultiStateReporter(reporter_file, analysis_particle_indices = apo_htf.hybrid_topology.select(selection), checkpoint_interval = checkpoint_interval)
 hss = HybridRepexSampler(mcmc_moves=mcmc.LangevinSplittingDynamicsMove(timestep= 4.0 * unit.femtoseconds,
                                                                       collision_rate=5.0 / unit.picosecond,
