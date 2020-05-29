@@ -2,6 +2,7 @@ import argparse
 import pickle
 from perses.app.relative_point_mutation_setup import PointMutationExecutor
 from perses.annihilation.lambda_protocol import LambdaProtocol
+import simtk.unit as unit
 from openmmtools.multistate import MultiStateReporter
 from perses.samplers.multistate import HybridRepexSampler
 from openmmtools import mcmc
