@@ -14,18 +14,18 @@ parser.add_argument('proposed_residue', type=str, help='three letter uppercase s
 args = parser.parse_args()
 
 # Create hybrid topology factory
-apm_delivery = PointMutationExecutor(f"{args.WT_residue.lower()}_solvent.pdb", 
+apm_delivery = PointMutationExecutor(f"../input/{args.WT_residue.lower()}_solvent.pdb", 
                          '1', 
                          '2', 
                          args.proposed_residue,
                         )
 apo_htf = apm_delivery.get_apo_htf()
-pickle.dump(apo_htf, open(f"{args.WT_residue}_{args.proposed_residue}_solvent.pickle", "wb" ) )
+pickle.dump(apo_htf, open(f"../data/{args.WT_residue}_{args.proposed_residue}_solvent.pickle", "wb" ) )
 
 # Build the hybrid repex samplers
 suffix = 'run'; selection = 'not water'; checkpoint_interval = 10; n_states = 11; n_cycles = 5000
 lambda_protocol = LambdaProtocol(functions='default')
-reporter_file = f"{args.WT_residue}_{args.proposed_residue}_solvent.nc"
+reporter_file = f"../data/{args.WT_residue}_{args.proposed_residue}_solvent.nc"
 reporter = MultiStateReporter(reporter_file, analysis_particle_indices = apo_htf.hybrid_topology.select(selection), checkpoint_interval = checkpoint_interval)
 hss = HybridRepexSampler(mcmc_moves=mcmc.LangevinSplittingDynamicsMove(timestep= 4.0 * unit.femtoseconds,
                                                                       collision_rate=5.0 / unit.picosecond,
