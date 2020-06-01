@@ -6,6 +6,29 @@ import simtk.unit as unit
 from openmmtools.multistate import MultiStateReporter
 from perses.samplers.multistate import HybridRepexSampler
 from openmmtools import mcmc
+import logging
+import datetime
+
+# Set up logger
+class TimeFilter(logging.Filter):
+    def filter(self, record):
+        try:
+            last = self.last
+        except AttributeError:
+            last = record.relativeCreated
+        delta = datetime.datetime.fromtimestamp(record.relativeCreated/1000.0) - datetime.datetime.fromtimestamp(last/1000.0)
+        record.relative = '{0:.2f}'.format(delta.seconds + delta.microseconds/1000000.0)
+        self.last = record.relativeCreated
+        return True
+fmt = logging.Formatter(fmt="%(asctime)s:(%(relative)ss):%(name)s:%(message)s")
+logging.basicConfig(
+    format='%(asctime)s %(levelname)-8s %(message)s',
+    level=logging.DEBUG,
+    datefmt='%Y-%m-%d %H:%M:%S')
+_logger = logging.getLogger()
+_logger.setLevel(logging.DEBUG)
+[hndl.addFilter(TimeFilter()) for hndl in _logger.handlers]
+[hndl.setFormatter(fmt) for hndl in _logger.handlers]
 
 # Read WT and proposed residue abbreviations
 parser = argparse.ArgumentParser(description='run perses protein mutation on capped amino acid')
