@@ -1,6 +1,7 @@
 import itertools
 import pickle
 from perses.app.relative_point_mutation_setup import PointMutationExecutor
+import simtk.openmm.app as app
 
 amino_acids = ['ALA', 'CYS', 'SER', 'THR']
 # # Solvent
@@ -12,7 +13,7 @@ amino_acids = ['ALA', 'CYS', 'SER', 'THR']
 #                               proposed,
 #                              )
 #      apo_htf = apm_delivery.get_apo_htf()
-#      pickle.dump(apo_htf, open(f"../data/{wt}_{proposed}_solvent.pickle", "wb" ))
+#      pickle.dump(apo_htf, open(f"../data/solvent/{wt}_{proposed}_solvent.pickle", "wb" ))
 
 # Vacuum
 for wt, proposed in itertools.permutations(amino_acids,r=2):
@@ -27,4 +28,4 @@ for wt, proposed in itertools.permutations(amino_acids,r=2):
 	                          nonperiodic_forcefield_kwargs={'nonbondedMethod': app.NoCutoff}
                              )
      apo_htf = apm_delivery.get_apo_htf()
-     pickle.dump(apo_htf, open(f"../data/{wt}_{proposed}_vacuum.pickle", "wb" ))
+     pickle.dump(apo_htf, open(f"../data/vacuum/{wt}_{proposed}_vacuum.pickle", "wb" ))
