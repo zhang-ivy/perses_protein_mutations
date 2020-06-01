@@ -21,7 +21,10 @@ for wt, proposed in itertools.permutations(amino_acids,r=2):
                               '1', 
                               '2', 
                               proposed,
-                              phase='vacuum'
+                              phase='vacuum',
+	                          barostat=None,
+	                          periodic_forcefield_kwargs=None, 
+	                          nonperiodic_forcefield_kwargs={'nonbondedMethod': app.NoCutoff}
                              )
      apo_htf = apm_delivery.get_apo_htf()
      pickle.dump(apo_htf, open(f"../data/{wt}_{proposed}_vacuum.pickle", "wb" ))
