@@ -33,6 +33,7 @@ _logger.setLevel(logging.DEBUG)
 # Read WT and proposed residue abbreviations
 parser = argparse.ArgumentParser(description='run perses protein mutation on capped amino acid')
 parser.add_argument('input_file', type=str, help='path to hybrid topology factory')
+parser.add_argument('output_dir', type=str, help='path to output dir')
 args = parser.parse_args()
 
 apo_htf = pickle.load(open(args.input_file, "rb" ))
@@ -40,7 +41,7 @@ apo_htf = pickle.load(open(args.input_file, "rb" ))
 # Build the hybrid repex samplers
 suffix = 'run'; selection = 'not water'; checkpoint_interval = 10; n_states = 11; n_cycles = 5000
 lambda_protocol = LambdaProtocol(functions='default')
-reporter_file = f"../data/{os.path.basename(args.input_file)[:-3]}.nc"
+reporter_file = os.path.join(args.output_dir, f"{os.path.basename(args.input_file)[:-3]}.nc")
 reporter = MultiStateReporter(reporter_file, analysis_particle_indices = apo_htf.hybrid_topology.select(selection), checkpoint_interval = checkpoint_interval)
 hss = HybridRepexSampler(mcmc_moves=mcmc.LangevinSplittingDynamicsMove(timestep= 4.0 * unit.femtoseconds,
                                                                       collision_rate=5.0 / unit.picosecond,
