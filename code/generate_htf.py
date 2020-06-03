@@ -3,6 +3,7 @@ import itertools
 import pickle
 from perses.app.relative_point_mutation_setup import PointMutationExecutor
 import simtk.openmm.app as app
+import os
 
 # Read WT and proposed residue abbreviations
 parser = argparse.ArgumentParser(description='generate htfs')
