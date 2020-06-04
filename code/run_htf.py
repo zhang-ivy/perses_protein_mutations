@@ -30,7 +30,7 @@ _logger.setLevel(logging.DEBUG)
 [hndl.addFilter(TimeFilter()) for hndl in _logger.handlers]
 [hndl.setFormatter(fmt) for hndl in _logger.handlers]
 
-# Read WT and proposed residue abbreviations
+# Read args
 parser = argparse.ArgumentParser(description='run perses protein mutation on capped amino acid')
 parser.add_argument('input_file', type=str, help='path to hybrid topology factory')
 parser.add_argument('output_dir', type=str, help='path to output dir')
