@@ -38,8 +38,6 @@ timestep=4.0 * unit.femtosecond
 temperature = 300*unit.kelvin
 collision_rate = 90/unit.picosecond
 platform_name = 'CUDA'
-system = htf.hybrid_system
-positions = htf.hybrid_positions
 
 # Read in htf
 with open(args.input_file, 'rb') as f:
