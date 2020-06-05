@@ -4,10 +4,18 @@ import numpy as np
 from openmmtools.integrators import PeriodicNonequilibriumIntegrator
 from simtk import unit
 from simtk import openmm
+import argparse
+import os
 
 # Set up logger
 _logger = logging.getLogger()
 _logger.setLevel(logging.DEBUG)
+
+# Read args
+parser = argparse.ArgumentParser(description='run perses protein mutation on capped amino acid')
+parser.add_argument('input_file', type=str, help='path to hybrid topology factory')
+parser.add_argument('output_dir', type=str, help='path to output dir')
+args = parser.parse_args()
 
 # Define lambda functions
 x = 'lambda'
@@ -34,7 +42,7 @@ system = htf.hybrid_system
 positions = htf.hybrid_positions
 
 # Read in htf
-with open("/data/chodera/zhangi/perses_benchmark/repex/0/solvent/ALA_CYS_solvent.pickle", 'rb') as f:
+with open(args.input_file, 'rb') as f:
     htf = pickle.load(f)
 system = htf.hybrid_system
 positions = htf.hybrid_positions
@@ -49,6 +57,7 @@ if platform_name in ['CUDA', 'OpenCL']:
 if platform_name in ['CUDA']:
     platform.setPropertyDefaultValue('DeterministicForces', 'true')
 context = openmm.Context(system, integrator, platform)
+context.setPeriodicBoxVectors(*system.getDefaultPeriodicBoxVectors())
 context.setPositions(positions)
 
 # Minimize
@@ -56,26 +65,36 @@ openmm.LocalEnergyMinimizer.minimize(context)
 
 # Run neq
 ncycles = 100
-forward_works, reverse_works = list(), list()
+forward_works_master, reverse_works_master = list(), list()
 for _ in range(ncycles):
     # Equilibrium (lambda = 0)
+    _logger.info(f'Starting to equilibrate at lambda = 0')
     integrator.step(nsteps_eq)
-    
+    _logger.info(f'Done equilibrating at lambda = 0')
+
     # Forward (0 -> 1)
-    forward_works.append(integrator.get_protocol_work(dimensionless=True))
+    forward_works = [integrator.get_protocol_work(dimensionless=True)]
     for fwd_step in range(nsteps_neq):
+        _logger.info(f'NEQ step: {step}')
         integrator.step(fwd_step)
         forward_works.append(integrator.get_protocol_work(dimensionless=True))
-        
+    forward_works_master.append(forward_works)
+
     # Equilibrium (lambda = 1)
+    _logger.info(f'Starting to equilibrate at lambda = 1')
     integrator.step(nsteps_eq)
-    
+    _logger.info(f'Done equilibrating at lambda = 1')
+
     # Reverse work (1 -> 0)
-    reverse_works.append(integrator.get_protocol_work(dimensionless=True))
+    reverse_works = [integrator.get_protocol_work(dimensionless=True)]
     for rev_step in range(nsteps_neq):
+        _logger.info(f'NEQ step: {step}')
         integrator.step(rev_step)
         reverse_works.append(integrator.get_protocol_work(dimensionless=True))
+    reverse_works_master.append(reverse_works)
         
 # Save works
-np.save("ALA_CYS_solvent_forward.npy", forward_works)
-np.save("ALA_CYS_solvent_reverse.npy", reverse_works)
+with open(os.path.join(args.output_dir, f"{os.path.basename(args.input_file)[:-3]}_forward.npy")) as f: # change filenames when distributing jobs
+    np.save(f, forward_works_master)
+with open(os.path.join(args.output_dir, f"{os.path.basename(args.input_file)[:-3]}_reverse.npy")) as f:
+    np.save(f, reverse_works_master)
