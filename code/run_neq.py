@@ -73,7 +73,7 @@ for _ in range(ncycles):
     # Forward (0 -> 1)
     forward_works = [integrator.get_protocol_work(dimensionless=True)]
     for fwd_step in range(nsteps_neq):
-        _logger.info(f'NEQ step: {step}')
+        _logger.info(f'NEQ step: {fwd_step}')
         integrator.step(fwd_step)
         forward_works.append(integrator.get_protocol_work(dimensionless=True))
     forward_works_master.append(forward_works)
@@ -86,7 +86,7 @@ for _ in range(ncycles):
     # Reverse work (1 -> 0)
     reverse_works = [integrator.get_protocol_work(dimensionless=True)]
     for rev_step in range(nsteps_neq):
-        _logger.info(f'NEQ step: {step}')
+        _logger.info(f'NEQ step: {rev_step}')
         integrator.step(rev_step)
         reverse_works.append(integrator.get_protocol_work(dimensionless=True))
     reverse_works_master.append(reverse_works)
