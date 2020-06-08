@@ -6,6 +6,7 @@ from simtk import unit
 from simtk import openmm
 import argparse
 import os
+import time
 
 # Set up logger
 _logger = logging.getLogger()
@@ -35,8 +36,6 @@ nsteps_eq = 62500 # 0.25 ns
 nsteps_neq= 20000 # 80 ps
 neq_splitting='V R H O R V'
 timestep=4.0 * unit.femtosecond
-temperature = 300*unit.kelvin
-collision_rate = 90/unit.picosecond
 platform_name = 'CUDA'
 
 # Read in htf
@@ -67,27 +66,35 @@ forward_works_master, reverse_works_master = list(), list()
 for _ in range(ncycles):
     # Equilibrium (lambda = 0)
     _logger.info(f'Starting to equilibrate at lambda = 0')
+    initial_time = time.time()
     integrator.step(nsteps_eq)
-    _logger.info(f'Done equilibrating at lambda = 0')
+    elapsed_time = (time.time() - initial_time) * unit.seconds
+    _logger.info(f'Done equilibrating at lambda = 0, took: {elapsed_time / unit.seconds} seconds')
 
     # Forward (0 -> 1)
     forward_works = [integrator.get_protocol_work(dimensionless=True)]
     for fwd_step in range(nsteps_neq):
-        _logger.info(f'NEQ step: {fwd_step}')
-        integrator.step(fwd_step)
+        initial_time = time.time()
+        integrator.step(1)
+        elapsed_time = (time.time() - initial_time) * unit.seconds
+        _logger.info(f'forward NEQ step: {fwd_step}, took: {elapsed_time / unit.seconds} seconds')
         forward_works.append(integrator.get_protocol_work(dimensionless=True))
     forward_works_master.append(forward_works)
 
     # Equilibrium (lambda = 1)
     _logger.info(f'Starting to equilibrate at lambda = 1')
+    initial_time = time.time()
     integrator.step(nsteps_eq)
-    _logger.info(f'Done equilibrating at lambda = 1')
+    elapsed_time = (time.time() - initial_time) * unit.seconds
+    _logger.info(f'Done equilibrating at lambda = 1, took: {elapsed_time / unit.seconds} seconds')
 
     # Reverse work (1 -> 0)
     reverse_works = [integrator.get_protocol_work(dimensionless=True)]
     for rev_step in range(nsteps_neq):
-        _logger.info(f'NEQ step: {rev_step}')
-        integrator.step(rev_step)
+        initial_time = time.time()
+        integrator.step(1)
+        elapsed_time = (time.time() - initial_time) * unit.seconds
+        _logger.info(f'reverse NEQ step: {rev_step}, took: {elapsed_time / unit.seconds} seconds')
         reverse_works.append(integrator.get_protocol_work(dimensionless=True))
     reverse_works_master.append(reverse_works)
         
