@@ -36,13 +36,13 @@ parser.add_argument('dir', type=str, help='path to input/output dir')
 parser.add_argument('phase', type=str, help='solvent or vacuum')
 args = parser.parse_args()
 
-simulation_number = os.path.basename(os.path.dirname(args.dir))
-apo_htf = pickle.load(open(os.path.join(args.dir, f"{simulation_number}_{args.phase}.pickle"), "rb" ))
+i = os.path.basename(os.path.dirname(args.dir))
+apo_htf = pickle.load(open(os.path.join(args.dir, f"{i}_{args.phase}.pickle"), "rb" ))
 
 # Build the hybrid repex samplers
 suffix = 'run'; selection = 'not water'; checkpoint_interval = 10; n_states = 11; n_cycles = 5000
 lambda_protocol = LambdaProtocol(functions='default')
-reporter_file = os.path.join(args.dir, f"{simulation_number}_{args.phase}.nc")
+reporter_file = os.path.join(args.dir, f"{i}_{args.phase}.nc")
 reporter = MultiStateReporter(reporter_file, analysis_particle_indices = apo_htf.hybrid_topology.select(selection), checkpoint_interval = checkpoint_interval)
 hss = HybridRepexSampler(mcmc_moves=mcmc.LangevinSplittingDynamicsMove(timestep= 4.0 * unit.femtoseconds,
                                                                       collision_rate=5.0 / unit.picosecond,
