@@ -14,8 +14,8 @@ _logger.setLevel(logging.DEBUG)
 
 # Read args
 parser = argparse.ArgumentParser(description='run perses protein mutation on capped amino acid')
-parser.add_argument('input_file', type=str, help='path to hybrid topology factory')
-parser.add_argument('output_dir', type=str, help='path to output dir')
+parser.add_argument('dir', type=str, help='path to input/output dir')
+parser.add_argument('phase', type=str, help='solvent or vacuum')
 args = parser.parse_args()
 
 # Define lambda functions
@@ -39,7 +39,8 @@ timestep=4.0 * unit.femtosecond
 platform_name = 'CUDA'
 
 # Read in htf
-with open(args.input_file, 'rb') as f:
+i = os.path.basename(os.path.dirname(args.dir))
+with open(os.path.join(args.dir, f"{i}_{args.phase}.pickle"), 'rb') as f:
     htf = pickle.load(f)
 system = htf.hybrid_system
 positions = htf.hybrid_positions
@@ -99,7 +100,7 @@ for cycle in range(ncycles):
     reverse_works_master.append(reverse_works)
         
 # Save works
-with open(os.path.join(args.output_dir, f"{os.path.basename(args.input_file)[:-3]}_forward.npy"), 'wb') as f: # change filenames when distributing jobs
+with open(os.path.join(args.dir, f"{i}_{args.phase}_forward.npy"), 'wb') as f: # change filenames when distributing jobs
     np.save(f, forward_works_master)
-with open(os.path.join(args.output_dir, f"{os.path.basename(args.input_file)[:-3]}_reverse.npy"), 'wb') as f:
+with open(os.path.join(args.dir, f"{i}_{args.phase}_reverse.npy"), 'wb') as f:
     np.save(f, reverse_works_master)
