@@ -63,13 +63,13 @@ openmm.LocalEnergyMinimizer.minimize(context)
 # Run neq
 ncycles = 100
 forward_works_master, reverse_works_master = list(), list()
-for _ in range(ncycles):
+for cycle in range(ncycles):
     # Equilibrium (lambda = 0)
-    _logger.info(f'Starting to equilibrate at lambda = 0')
+    _logger.info(f'Cycle: {cycle}, Starting to equilibrate at lambda = 0')
     initial_time = time.time()
     integrator.step(nsteps_eq)
     elapsed_time = (time.time() - initial_time) * unit.seconds
-    _logger.info(f'Done equilibrating at lambda = 0, took: {elapsed_time / unit.seconds} seconds')
+    _logger.info(f'Cycle: {cycle}, Done equilibrating at lambda = 0, took: {elapsed_time / unit.seconds} seconds')
 
     # Forward (0 -> 1)
     forward_works = [integrator.get_protocol_work(dimensionless=True)]
@@ -77,16 +77,16 @@ for _ in range(ncycles):
         initial_time = time.time()
         integrator.step(1)
         elapsed_time = (time.time() - initial_time) * unit.seconds
-        _logger.info(f'forward NEQ step: {fwd_step}, took: {elapsed_time / unit.seconds} seconds')
+        _logger.info(f'Cycle: {cycle}, forward NEQ step: {fwd_step}, took: {elapsed_time / unit.seconds} seconds')
         forward_works.append(integrator.get_protocol_work(dimensionless=True))
     forward_works_master.append(forward_works)
 
     # Equilibrium (lambda = 1)
-    _logger.info(f'Starting to equilibrate at lambda = 1')
+    _logger.info(f'Cycle: {cycle}, Starting to equilibrate at lambda = 1')
     initial_time = time.time()
     integrator.step(nsteps_eq)
     elapsed_time = (time.time() - initial_time) * unit.seconds
-    _logger.info(f'Done equilibrating at lambda = 1, took: {elapsed_time / unit.seconds} seconds')
+    _logger.info(f'Cycle: {cycle}, Done equilibrating at lambda = 1, took: {elapsed_time / unit.seconds} seconds')
 
     # Reverse work (1 -> 0)
     reverse_works = [integrator.get_protocol_work(dimensionless=True)]
@@ -94,7 +94,7 @@ for _ in range(ncycles):
         initial_time = time.time()
         integrator.step(1)
         elapsed_time = (time.time() - initial_time) * unit.seconds
-        _logger.info(f'reverse NEQ step: {rev_step}, took: {elapsed_time / unit.seconds} seconds')
+        _logger.info(f'Cycle: {cycle}, reverse NEQ step: {rev_step}, took: {elapsed_time / unit.seconds} seconds')
         reverse_works.append(integrator.get_protocol_work(dimensionless=True))
     reverse_works_master.append(reverse_works)
         
