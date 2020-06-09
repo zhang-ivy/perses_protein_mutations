@@ -99,7 +99,7 @@ for _ in range(ncycles):
     reverse_works_master.append(reverse_works)
         
 # Save works
-with open(os.path.join(args.output_dir, f"{os.path.basename(args.input_file)[:-3]}_forward.npy"), 'w') as f: # change filenames when distributing jobs
+with open(os.path.join(args.output_dir, f"{os.path.basename(args.input_file)[:-3]}_forward.npy"), 'wb') as f: # change filenames when distributing jobs
     np.save(f, forward_works_master)
-with open(os.path.join(args.output_dir, f"{os.path.basename(args.input_file)[:-3]}_reverse.npy"), 'w') as f:
+with open(os.path.join(args.output_dir, f"{os.path.basename(args.input_file)[:-3]}_reverse.npy"), 'wb') as f:
     np.save(f, reverse_works_master)

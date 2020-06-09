@@ -99,7 +99,7 @@ for _ in range(ncycles):
     reverse_works_master.append(reverse_works)
         
 # Save works
-with open(f"{args.output}_forward.npy", 'w') as f:
+with open(f"{args.output}_forward.npy", 'wb') as f:
     np.save(f, forward_works_master)
-with open(f"{args.output}_reverse.npy", 'w') as f:
+with open(f"{args.output}_reverse.npy", 'wb') as f:
     np.save(f, reverse_works_master)
