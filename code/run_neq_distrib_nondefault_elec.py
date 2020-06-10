@@ -2,6 +2,7 @@ import logging
 import pickle
 import numpy as np
 from openmmtools.integrators import PeriodicNonequilibriumIntegrator
+from perses.annihilation.lambda_protocol import LambdaProtocol
 from simtk import unit
 from simtk import openmm
 import argparse
