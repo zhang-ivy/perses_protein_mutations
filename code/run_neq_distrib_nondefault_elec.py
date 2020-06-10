@@ -20,25 +20,17 @@ parser.add_argument('sim_number', type=str, help='number in job name - 1')
 args = parser.parse_args()
 
 # Define lambda protocol
-custom_functions = {'lambda_sterics_core':
-                         lambda x: x,
-                         'lambda_electrostatics_core':
-                         lambda x: x,
-                         'lambda_sterics_insert':
-                         lambda x: 2.0 * x if x < 0.5 else 1.0,
-                         'lambda_sterics_delete':
-                         lambda x: 0.0 if x < 0.5 else 2.0 * (x - 0.5),
-                         'lambda_electrostatics_insert':
-                         lambda x: 0.0 if x < 0.5 else np.sqrt(2.0 * (x - 0.5)),
-                         'lambda_electrostatics_delete':
-                         lambda x: 2.0 * x if x < 0.5 else 1.0,
-                         'lambda_bonds':
-                         lambda x: x,
-                         'lambda_angles':
-                         lambda x: x,
-                         'lambda_torsions':
-                         lambda x: x
-                         }
+x = 'lambda'
+custom_functions = {
+                     'lambda_sterics_core': x,
+                     'lambda_electrostatics_core': x,
+                     'lambda_sterics_insert': f"select(step({x} - 0.5), 1.0, 2.0 * {x})",
+                     'lambda_sterics_delete': f"select(step({x} - 0.5), 2.0 * ({x} - 0.5), 0.0)",
+                     'lambda_electrostatics_insert': f"select(step({x} - 0.5), sqrt(2.0 * ({x} - 0.5)), 0.0)",
+                     'lambda_electrostatics_delete': f"select(step({x} - 0.5), 1.0, 2.0 * {x})",
+                     'lambda_bonds': x,
+                     'lambda_angles': x,
+                     'lambda_torsions': x}
 
 # Define simulation parameters
 nsteps_eq = 62500 # 0.25 ns
