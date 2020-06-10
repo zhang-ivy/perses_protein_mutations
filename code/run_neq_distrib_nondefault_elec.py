@@ -2,7 +2,6 @@ import logging
 import pickle
 import numpy as np
 from openmmtools.integrators import PeriodicNonequilibriumIntegrator
-from perses.annihilation.lambda_protocol import LambdaProtocol
 from simtk import unit
 from simtk import openmm
 import argparse
@@ -40,7 +39,6 @@ custom_functions = {'lambda_sterics_core':
                          'lambda_torsions':
                          lambda x: x
                          }
-lambda_protocol = LambdaProtocol(functions=custom_functions)
 
 # Define simulation parameters
 nsteps_eq = 62500 # 0.25 ns
@@ -57,7 +55,7 @@ system = htf.hybrid_system
 positions = htf.hybrid_positions
 
 # Set up integrator
-integrator = PeriodicNonequilibriumIntegrator(lambda_protocol, nsteps_eq, nsteps_neq, neq_splitting, timestep=timestep)
+integrator = PeriodicNonequilibriumIntegrator(custom_functions, nsteps_eq, nsteps_neq, neq_splitting, timestep=timestep)
 
 # Set up context
 platform = openmm.Platform.getPlatformByName(platform_name)
