@@ -52,7 +52,7 @@ custom_functions = {'lambda_sterics_core':
                          'lambda_electrostatics_insert':
                          lambda x: 0.0 if x < 0.5 else np.sqrt(2.0 * (x - 0.5)),
                          'lambda_electrostatics_delete':
-                         lambda x: 2.0 * x if x < 0.5 else 1.0,
+                         lambda x: np.sqrt(2.0 * x) if x < 0.5 else 1.0,
                          'lambda_bonds':
                          lambda x: x,
                          'lambda_angles':
