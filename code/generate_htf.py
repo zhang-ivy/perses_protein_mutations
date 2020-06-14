@@ -19,14 +19,12 @@ for i, (wt, proposed) in enumerate(itertools.permutations(amino_acids,r=2)):
         os.makedirs(os.path.join(args.output_dir, f"{i}/"))
 
     # Create hybrid topology factory
-    apm_delivery = PointMutationExecutor(f"../input/{wt.lower()}_vacuum.pdb", 
+    apo_delivery = PointMutationExecutor(f"../input/{wt.lower()}_vacuum.pdb", 
                             '1', 
                             '2', 
                             proposed,
                            )
-    apo_htf = apm_delivery.get_apo_htf()
-    pickle.dump(apo_htf, open(os.path.join(args.output_dir, f"{i}/{i}_solvent.pickle"), "wb" ))
-
+    pickle.dump(apo_delivery.get_apo_htf(), open(os.path.join(args.output_dir, f"{i}/{i}_solvent.pickle"), "wb" ))
 
 # Vacuum
 for i, (wt, proposed) in enumerate(itertools.permutations(amino_acids,r=2)):
@@ -35,7 +33,7 @@ for i, (wt, proposed) in enumerate(itertools.permutations(amino_acids,r=2)):
         os.makedirs(os.path.join(args.output_dir, f"{i}/"))
 
     # Create hybrid topology factory
-    apm_delivery = PointMutationExecutor(f"../input/{wt.lower()}_vacuum.pdb", 
+    apo_delivery = PointMutationExecutor(f"../input/{wt.lower()}_vacuum.pdb", 
                               '1', 
                               '2', 
                               proposed,
@@ -44,7 +42,6 @@ for i, (wt, proposed) in enumerate(itertools.permutations(amino_acids,r=2)):
 	                          periodic_forcefield_kwargs=None, 
 	                          nonperiodic_forcefield_kwargs={'nonbondedMethod': app.NoCutoff}
                              )
-    apo_htf = apm_delivery.get_apo_htf()
-    pickle.dump(apo_htf, open(os.path.join(args.output_dir, f"{i}/{i}_vacuum.pickle"), "wb" ))
+    pickle.dump(apo_delivery.get_apo_htf(), open(os.path.join(args.output_dir, f"{i}/{i}_vacuum.pickle"), "wb" ))
 
 
