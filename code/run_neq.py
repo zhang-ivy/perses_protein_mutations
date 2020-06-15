@@ -7,6 +7,8 @@ from simtk import openmm
 import argparse
 import os
 import time
+from simtk.openmm.app import PDBFile
+import mdtraj as md
 
 # Set up logger
 _logger = logging.getLogger()
@@ -58,12 +60,16 @@ context = openmm.Context(system, integrator, platform)
 context.setPeriodicBoxVectors(*system.getDefaultPeriodicBoxVectors())
 context.setPositions(positions)
 
+simulation.reporters.append(DCDReporter(output_prefix +  '.restarted.dcd', 12500, enforcePeriodicBox=False))
+
+
 # Minimize
 openmm.LocalEnergyMinimizer.minimize(context)
 
 # Run neq
 ncycles = 100
 forward_works_master, reverse_works_master = list(), list()
+forward_traj_old, forward_traj_new, reverse_traj_old, reverse_traj_new = list(), list(), list(), list()
 for cycle in range(ncycles):
     # Equilibrium (lambda = 0)
     _logger.info(f'Cycle: {cycle}, Starting to equilibrate at lambda = 0')
@@ -73,6 +79,11 @@ for cycle in range(ncycles):
     _logger.info(f'Cycle: {cycle}, Done equilibrating at lambda = 0, took: {elapsed_time / unit.seconds} seconds')
 
     # Forward (0 -> 1)
+    pos = context.getState(getPositions=True, enforcePeriodicBox=False).getPositions(asNumpy=True)
+    old_pos = np.asarray(htf.old_positions(pos))
+    new_pos = np.asarray(htf.new_positions(pos))
+    forward_traj_old.append(old_pos)
+    forward_traj_new.append(new_pos)
     forward_works = [integrator.get_protocol_work(dimensionless=True)]
     for fwd_step in range(nsteps_neq):
         initial_time = time.time()
@@ -81,6 +92,11 @@ for cycle in range(ncycles):
         _logger.info(f'Cycle: {cycle}, forward NEQ step: {fwd_step}, took: {elapsed_time / unit.seconds} seconds')
         forward_works.append(integrator.get_protocol_work(dimensionless=True))
     forward_works_master.append(forward_works)
+    pos = context.getState(getPositions=True, enforcePeriodicBox=False).getPositions(asNumpy=True)
+    old_pos = np.asarray(htf.old_positions(pos))
+    new_pos = np.asarray(htf.new_positions(pos))
+    forward_traj_old.append(old_pos)
+    forward_traj_new.append(new_pos)
 
     # Equilibrium (lambda = 1)
     _logger.info(f'Cycle: {cycle}, Starting to equilibrate at lambda = 1')
@@ -90,6 +106,11 @@ for cycle in range(ncycles):
     _logger.info(f'Cycle: {cycle}, Done equilibrating at lambda = 1, took: {elapsed_time / unit.seconds} seconds')
 
     # Reverse work (1 -> 0)
+    pos = context.getState(getPositions=True, enforcePeriodicBox=False).getPositions(asNumpy=True)
+    old_pos = np.asarray(htf.old_positions(pos))
+    new_pos = np.asarray(htf.new_positions(pos))
+    reverse_traj_old.append(old_pos)
+    reverse_traj_new.append(new_pos)
     reverse_works = [integrator.get_protocol_work(dimensionless=True)]
     for rev_step in range(nsteps_neq):
         initial_time = time.time()
@@ -98,9 +119,26 @@ for cycle in range(ncycles):
         _logger.info(f'Cycle: {cycle}, reverse NEQ step: {rev_step}, took: {elapsed_time / unit.seconds} seconds')
         reverse_works.append(integrator.get_protocol_work(dimensionless=True))
     reverse_works_master.append(reverse_works)
-        
-# Save works
+    pos = context.getState(getPositions=True, enforcePeriodicBox=False).getPositions(asNumpy=True)
+    old_pos = np.asarray(htf.old_positions(pos))
+    new_pos = np.asarray(htf.new_positions(pos))
+    reverse_traj_old.append(old_pos)
+    reverse_traj_new.append(new_pos)
+
+# Save works and traj
 with open(os.path.join(args.dir, f"{i}_{args.phase}_forward.npy"), 'wb') as f: # change filenames when distributing jobs
     np.save(f, forward_works_master)
 with open(os.path.join(args.dir, f"{i}_{args.phase}_reverse.npy"), 'wb') as f:
     np.save(f, reverse_works_master)
+
+top_old = md.Topology.from_openmm(htf._topology_proposal.old_topology)
+top_new = md.Topology.from_openmm(htf._topology_proposal.new_topology)
+traj = md.Trajectory(np.array(forward_traj_old), top_old)
+traj.save(os.path.join(args.dir, f"{i}_{args.phase}_forward_old.pdb"))
+traj = md.Trajectory(np.array(forward_traj_new), top_new)
+traj.save(os.path.join(args.dir, f"{i}_{args.phase}_forward_new.pdb"))
+traj = md.Trajectory(np.array(reverse_traj_old), top_old)
+traj.save(os.path.join(args.dir, f"{i}_{args.phase}_reverse_old.pdb"))
+traj = md.Trajectory(np.array(reverse_traj_new), top_new)
+traj.save(os.path.join(args.dir, f"{i}_{args.phase}_reverse_new.pdb"))
+
