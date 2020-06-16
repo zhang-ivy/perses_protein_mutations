@@ -73,6 +73,7 @@ pos = context.getState(getPositions=True, enforcePeriodicBox=False).getPositions
 old_pos = np.asarray(htf.old_positions(pos))
 traj_old.append(old_pos)
 for step in range(nsteps_eq):
+    _logger.info(f'Step: {step}')
     if step % 3 == 0:
         pos = context.getState(getPositions=True, enforcePeriodicBox=False).getPositions(asNumpy=True)
         old_pos = np.asarray(htf.old_positions(pos))
