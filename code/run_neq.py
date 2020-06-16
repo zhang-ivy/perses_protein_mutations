@@ -60,9 +60,6 @@ context = openmm.Context(system, integrator, platform)
 context.setPeriodicBoxVectors(*system.getDefaultPeriodicBoxVectors())
 context.setPositions(positions)
 
-simulation.reporters.append(DCDReporter(output_prefix +  '.restarted.dcd', 12500, enforcePeriodicBox=False))
-
-
 # Minimize
 openmm.LocalEnergyMinimizer.minimize(context)
 
