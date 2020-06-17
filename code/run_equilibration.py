@@ -35,9 +35,9 @@ DEFAULT_ALCHEMICAL_FUNCTIONS = {
 
 # Define simulation parameters
 nsteps_eq = 625000 # 2.5 ns
-nsteps_neq= 20000 # 80 ps
-neq_splitting='V R H O R V'
-timestep=4.0 * unit.femtosecond
+nsteps_neq = 20000 # 80 ps
+neq_splitting ='V R H O R V'
+timestep = 4.0 * unit.femtosecond
 platform_name = 'CUDA'
 
 # Read in htf
@@ -76,7 +76,7 @@ for step in range(nsteps_eq):
         pos = context.getState(getPositions=True, enforcePeriodicBox=False).getPositions(asNumpy=True)
         old_pos = np.asarray(htf.old_positions(pos))
         traj_old.append(old_pos)
-    integrator.step(step)
+    integrator.step(1)
 elapsed_time = (time.time() - initial_time) * unit.seconds
 _logger.info(f'Done equilibrating, took: {elapsed_time / unit.seconds} seconds')
 
