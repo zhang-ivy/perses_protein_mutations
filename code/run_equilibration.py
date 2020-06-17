@@ -85,4 +85,4 @@ _logger.info(f'Done equilibrating, took: {elapsed_time / unit.seconds} seconds')
 # Save traj
 top_old = md.Topology.from_openmm(htf._topology_proposal.old_topology)
 traj = md.Trajectory(np.array(traj_old), top_old)
-traj.save(os.path.join(args.dir, f"{i}_{args.phase}_old.pdb"))
+traj.save(os.path.join(args.dir, f"{i}_{args.phase}_equil_old.pdb"))
