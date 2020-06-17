@@ -18,7 +18,6 @@ _logger.setLevel(logging.DEBUG)
 parser = argparse.ArgumentParser(description='run perses protein mutation on capped amino acid')
 parser.add_argument('dir', type=str, help='path to input/output dir')
 parser.add_argument('phase', type=str, help='solvent or vacuum')
-parser.add_argument('sim_number', type=str, help='number in job name - 1')
 args = parser.parse_args()
 
 # Define lambda functions
@@ -37,7 +36,7 @@ DEFAULT_ALCHEMICAL_FUNCTIONS = {
 # Define simulation parameters
 nsteps_eq = 62500 # 0.25 ns
 nsteps_neq = 20000 # 80 ps
-neq_splitting='V R H O R V'
+neq_splitting = 'V R H O R V'
 timestep = 4.0 * unit.femtosecond
 platform_name = 'CUDA'
 
@@ -46,6 +45,7 @@ i = os.path.basename(os.path.dirname(args.dir))
 with open(os.path.join(args.dir, f"{i}_{args.phase}.pickle"), 'rb') as f:
     htf = pickle.load(f)
 system = htf.hybrid_system
+system.removeForce(7)
 positions = htf.hybrid_positions
 
 # Set up integrator
@@ -65,7 +65,7 @@ context.setPositions(positions)
 openmm.LocalEnergyMinimizer.minimize(context)
 
 # Run neq
-ncycles = 10
+ncycles = 100
 forward_works_master, reverse_works_master = list(), list()
 forward_traj_old, forward_traj_new, reverse_traj_old, reverse_traj_new = list(), list(), list(), list()
 for cycle in range(ncycles):
@@ -122,21 +122,21 @@ for cycle in range(ncycles):
     new_pos = np.asarray(htf.new_positions(pos))
     reverse_traj_old.append(old_pos)
     reverse_traj_new.append(new_pos)
-        
-# Save works
-with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_forward.npy"), 'wb') as f:
+
+# Save works and traj
+with open(os.path.join(args.dir, f"{i}_{args.phase}_forward.npy"), 'wb') as f: # change filenames when distributing jobs
     np.save(f, forward_works_master)
-with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_reverse.npy"), 'wb') as f:
+with open(os.path.join(args.dir, f"{i}_{args.phase}_reverse.npy"), 'wb') as f:
     np.save(f, reverse_works_master)
 
 top_old = md.Topology.from_openmm(htf._topology_proposal.old_topology)
 top_new = md.Topology.from_openmm(htf._topology_proposal.new_topology)
 traj = md.Trajectory(np.array(forward_traj_old), top_old)
-traj.save(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_forward_old.pdb"))
+traj.save(os.path.join(args.dir, f"{i}_{args.phase}_forward_old.pdb"))
 traj = md.Trajectory(np.array(forward_traj_new), top_new)
-traj.save(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_forward_new.pdb"))
+traj.save(os.path.join(args.dir, f"{i}_{args.phase}_forward_new.pdb"))
 traj = md.Trajectory(np.array(reverse_traj_old), top_old)
-traj.save(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_reverse_old.pdb"))
+traj.save(os.path.join(args.dir, f"{i}_{args.phase}_reverse_old.pdb"))
 traj = md.Trajectory(np.array(reverse_traj_new), top_new)
-traj.save(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_reverse_new.pdb"))
+traj.save(os.path.join(args.dir, f"{i}_{args.phase}_reverse_new.pdb"))
 
