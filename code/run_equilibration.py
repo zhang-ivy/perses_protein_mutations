@@ -64,9 +64,7 @@ context.setPositions(positions)
 openmm.LocalEnergyMinimizer.minimize(context)
 
 # Run equilibration
-forward_works_master, reverse_works_master = list(), list()
-forward_traj_old, forward_traj_new, reverse_traj_old, reverse_traj_new = list(), list(), list(), list()
-
+traj_old = list()
 _logger.info(f'Starting to equilibrate first end state')
 initial_time = time.time()
 pos = context.getState(getPositions=True, enforcePeriodicBox=False).getPositions(asNumpy=True)
@@ -83,6 +81,8 @@ elapsed_time = (time.time() - initial_time) * unit.seconds
 _logger.info(f'Done equilibrating, took: {elapsed_time / unit.seconds} seconds')
 
 # Save traj
-top_old = md.Topology.from_openmm(htf._topology_proposal.old_topology)
-traj = md.Trajectory(np.array(traj_old), top_old)
-traj.save(os.path.join(args.dir, f"{i}_{args.phase}_equil_old.pdb"))
+with open(os.path.join(args.dir, f"{i}_{args.phase}_equil_old.npy"), 'wb') as f:
+    np.save(f, traj_old)
+# top_old = md.Topology.from_openmm(htf._topology_proposal.old_topology)
+# traj = md.Trajectory(np.array(traj_old), top_old)
+# traj.save(os.path.join(args.dir, f"{i}_{args.phase}_equil_old.pdb"))
