@@ -65,20 +65,18 @@ openmm.LocalEnergyMinimizer.minimize(context)
 
 # Run equilibration
 traj_old = list()
-_logger.info(f'Starting to equilibrate first end state')
-initial_time = time.time()
 pos = context.getState(getPositions=True, enforcePeriodicBox=False).getPositions(asNumpy=True)
 old_pos = np.asarray(htf.old_positions(pos))
 traj_old.append(old_pos)
 for step in range(nsteps_eq):
-    _logger.info(f'Step: {step}')
     if step % 3 == 0:
         pos = context.getState(getPositions=True, enforcePeriodicBox=False).getPositions(asNumpy=True)
         old_pos = np.asarray(htf.old_positions(pos))
         traj_old.append(old_pos)
+    initial_time = time.time()
     integrator.step(1)
-elapsed_time = (time.time() - initial_time) * unit.seconds
-_logger.info(f'Done equilibrating, took: {elapsed_time / unit.seconds} seconds')
+    elapsed_time = (time.time() - initial_time) * unit.seconds
+    _logger.info(f'Step: {step} took {elapsed_time} seconds')
 
 # Save traj
 with open(os.path.join(args.dir, f"{i}_{args.phase}_equil_old.npy"), 'wb') as f:
