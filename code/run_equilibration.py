@@ -27,8 +27,8 @@ DEFAULT_ALCHEMICAL_FUNCTIONS = {
                              'lambda_electrostatics_core': x,
                              'lambda_sterics_insert': f"select(step({x} - 0.5), 1.0, 2.0 * {x})",
                              'lambda_sterics_delete': f"select(step({x} - 0.5), 2.0 * ({x} - 0.5), 0.0)",
-                             'lambda_electrostatics_insert': f"select(step({x} - 0.5), 2.0 * ({x} - 0.5), 0.0)",
-                             'lambda_electrostatics_delete': f"select(step({x} - 0.5), 1.0, 2.0 * {x})",
+                             'lambda_electrostatics_insert': "0",
+                             'lambda_electrostatics_delete': "1",
                              'lambda_bonds': x,
                              'lambda_angles': x,
                              'lambda_torsions': x}
@@ -79,7 +79,7 @@ for step in range(nsteps_eq):
     _logger.info(f'Step: {step} took {elapsed_time} seconds')
 
 # Save traj
-with open(os.path.join(args.dir, f"{i}_{args.phase}_equil_old.npy"), 'wb') as f:
+with open(os.path.join(args.dir, f"{i}_{args.phase}_equil_old_no_alc_elec.npy"), 'wb') as f:
     np.save(f, traj_old)
 # top_old = md.Topology.from_openmm(htf._topology_proposal.old_topology)
 # traj = md.Trajectory(np.array(traj_old), top_old)
