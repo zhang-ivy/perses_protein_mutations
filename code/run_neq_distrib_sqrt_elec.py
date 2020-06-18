@@ -78,9 +78,7 @@ for cycle in range(ncycles):
     # Forward (0 -> 1)
     pos = context.getState(getPositions=True, enforcePeriodicBox=False).getPositions(asNumpy=True)
     old_pos = np.asarray(htf.old_positions(pos))
-    new_pos = np.asarray(htf.new_positions(pos))
     forward_traj_old.append(old_pos)
-    forward_traj_new.append(new_pos)
     forward_works = [integrator.get_protocol_work(dimensionless=True)]
     for fwd_step in range(nsteps_neq):
         initial_time = time.time()
@@ -90,9 +88,7 @@ for cycle in range(ncycles):
         forward_works.append(integrator.get_protocol_work(dimensionless=True))
     forward_works_master.append(forward_works)
     pos = context.getState(getPositions=True, enforcePeriodicBox=False).getPositions(asNumpy=True)
-    old_pos = np.asarray(htf.old_positions(pos))
     new_pos = np.asarray(htf.new_positions(pos))
-    forward_traj_old.append(old_pos)
     forward_traj_new.append(new_pos)
 
     # Equilibrium (lambda = 1)
@@ -104,9 +100,7 @@ for cycle in range(ncycles):
 
     # Reverse work (1 -> 0)
     pos = context.getState(getPositions=True, enforcePeriodicBox=False).getPositions(asNumpy=True)
-    old_pos = np.asarray(htf.old_positions(pos))
     new_pos = np.asarray(htf.new_positions(pos))
-    reverse_traj_old.append(old_pos)
     reverse_traj_new.append(new_pos)
     reverse_works = [integrator.get_protocol_work(dimensionless=True)]
     for rev_step in range(nsteps_neq):
@@ -118,9 +112,7 @@ for cycle in range(ncycles):
     reverse_works_master.append(reverse_works)
     pos = context.getState(getPositions=True, enforcePeriodicBox=False).getPositions(asNumpy=True)
     old_pos = np.asarray(htf.old_positions(pos))
-    new_pos = np.asarray(htf.new_positions(pos))
     reverse_traj_old.append(old_pos)
-    reverse_traj_new.append(new_pos)
         
         
 # Save works
