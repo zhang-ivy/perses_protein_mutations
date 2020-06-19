@@ -65,7 +65,6 @@ openmm.LocalEnergyMinimizer.minimize(context)
 
 # Run neq
 ncycles = 100
-equil_
 forward_works_master, reverse_works_master = list(), list()
 forward_equil, forward_neq_old, forward_neq_new, reverse_equil, reverse_neq_old, reverse_neq_new = list(), list(), list(), list(), list(), list()
 for cycle in range(ncycles):
