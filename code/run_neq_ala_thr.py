@@ -90,7 +90,7 @@ for cycle in range(ncycles):
     forward_works = [integrator.get_protocol_work(dimensionless=True)]
     for fwd_step in range(nsteps_neq):
         initial_time = time.time()
-        if step % 750 == 0:
+        if fwd_step % 750 == 0:
             forward_neq_old = forward_neq_old[-10:]
             forward_neq_new = forward_neq_new[-10:]
         try:
@@ -134,7 +134,7 @@ for cycle in range(ncycles):
     reverse_works = [integrator.get_protocol_work(dimensionless=True)]
     for rev_step in range(nsteps_neq):
         initial_time = time.time()
-        if step % 750 == 0:
+        if rev_step % 750 == 0:
             reverse_neq_old = reverse_neq_old[-10:]
             reverse_neq_new = reverse_neq_new[-10:]
         try:
