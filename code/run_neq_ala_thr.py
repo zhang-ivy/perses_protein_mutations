@@ -65,7 +65,7 @@ context.setPositions(positions)
 openmm.LocalEnergyMinimizer.minimize(context)
 
 # Run neq
-ncycles = 100
+ncycles = 10
 forward_works_master, reverse_works_master = list(), list()
 forward_equil, forward_neq_old, forward_neq_new, reverse_equil, reverse_neq_old, reverse_neq_new = list(), list(), list(), list(), list(), list()
 for cycle in range(ncycles):
@@ -166,7 +166,7 @@ with open(os.path.join(args.dir, f"{i}_{args.phase}_forward.npy"), 'wb') as f: #
 with open(os.path.join(args.dir, f"{i}_{args.phase}_reverse.npy"), 'wb') as f:
     np.save(f, reverse_works_master)
 
-    # Save works and traj
+# Save works and traj
 with open(os.path.join(args.dir, f"{i}_{args.phase}_forward_equil_pos.npy"), 'wb') as f: # change filenames when distributing jobs
     np.save(f, forward_equil)
 with open(os.path.join(args.dir, f"{i}_{args.phase}_reverse_equil_pos.npy"), 'wb') as f:
