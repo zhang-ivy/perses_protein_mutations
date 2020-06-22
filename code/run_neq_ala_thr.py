@@ -9,6 +9,7 @@ import os
 import time
 from simtk.openmm.app import PDBFile
 import mdtraj as md
+import sys
 
 # Set up logger
 _logger = logging.getLogger()
@@ -77,9 +78,10 @@ for cycle in range(ncycles):
         try:
             integrator.step(1)
         except:
-            print("exception!")
+            _logger.info("exception!")
             with open(os.path.join(args.dir, f"{i}_{args.phase}_forward_equil_pos.npy"), 'wb') as f: # change filenames when distributing jobs
                  np.save(f, forward_equil)
+            sys.exit()
         elapsed_time = (time.time() - initial_time) * unit.seconds
         pos = context.getState(getPositions=True, enforcePeriodicBox=False).getPositions(asNumpy=True)
         old_pos = np.asarray(htf.old_positions(pos))
@@ -96,11 +98,12 @@ for cycle in range(ncycles):
         try:
             integrator.step(1)
         except:
-            print("exception!")
+            _logger.info("exception!")
             with open(os.path.join(args.dir, f"{i}_{args.phase}_forward_neq_old_pos.npy"), 'wb') as f: # change filenames when distributing jobs
                 np.save(f, forward_neq_old)
             with open(os.path.join(args.dir, f"{i}_{args.phase}_forward_neq_new_pos.npy"), 'wb') as f: # change filenames when distributing jobs
                 np.save(f, forward_neq_new)
+            sys.exit()
         elapsed_time = (time.time() - initial_time) * unit.seconds
         _logger.info(f'Cycle: {cycle}, forward NEQ step: {fwd_step}, took: {elapsed_time / unit.seconds} seconds')
         pos = context.getState(getPositions=True, enforcePeriodicBox=False).getPositions(asNumpy=True)
@@ -121,9 +124,10 @@ for cycle in range(ncycles):
         try:
             integrator.step(1)
         except:
-            print("exception!")
+            _logger.info("exception!")
             with open(os.path.join(args.dir, f"{i}_{args.phase}_reverse_equil_pos.npy"), 'wb') as f: # change filenames when distributing jobs
                  np.save(f, reverse_equil)
+            sys.exit()
         elapsed_time = (time.time() - initial_time) * unit.seconds
         pos = context.getState(getPositions=True, enforcePeriodicBox=False).getPositions(asNumpy=True)
         new_pos = np.asarray(htf.new_positions(pos))
@@ -140,11 +144,12 @@ for cycle in range(ncycles):
         try:
             integrator.step(1)
         except:
-            print("exception!")
+            _logger.info("exception!")
             with open(os.path.join(args.dir, f"{i}_{args.phase}_reverse_neq_old_pos.npy"), 'wb') as f: # change filenames when distributing jobs
                 np.save(f, reverse_neq_old)
             with open(os.path.join(args.dir, f"{i}_{args.phase}_reverse_neq_new_pos.npy"), 'wb') as f: # change filenames when distributing jobs
                 np.save(f, reverse_neq_new)
+            sys.exit()
         elapsed_time = (time.time() - initial_time) * unit.seconds
         _logger.info(f'Cycle: {cycle}, forward NEQ step: {rev_step}, took: {elapsed_time / unit.seconds} seconds')
         pos = context.getState(getPositions=True, enforcePeriodicBox=False).getPositions(asNumpy=True)
