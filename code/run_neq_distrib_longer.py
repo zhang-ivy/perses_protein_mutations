@@ -65,7 +65,7 @@ context.setPositions(positions)
 openmm.LocalEnergyMinimizer.minimize(context)
 
 # Run neq
-ncycles = 1
+ncycles = 10
 forward_works_master, reverse_works_master = list(), list()
 forward_traj_old, forward_traj_new, reverse_traj_old, reverse_traj_new = list(), list(), list(), list()
 for cycle in range(ncycles):
