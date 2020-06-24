@@ -18,14 +18,12 @@ _logger.setLevel(logging.DEBUG)
 parser = argparse.ArgumentParser(description='run perses protein mutation on capped amino acid')
 parser.add_argument('dir', type=str, help='path to input/output dir')
 parser.add_argument('phase', type=str, help='solvent or vacuum')
-parser.add_argument('inflection', type=float, help='for lambda protocol')
 parser.add_argument('sim_number', type=str, help='number in job name - 1')
 args = parser.parse_args()
 
 # Define lambda functions
 x = 'lambda'
-inflection = args.inflection
-custom_functions = {
+DEFAULT_ALCHEMICAL_FUNCTIONS = {
                              'lambda_sterics_core': x,
                              'lambda_electrostatics_core': x,
                              'lambda_sterics_insert': f"select(step({x} - 0.5), 1.0, 2.0 * {x})",
@@ -51,7 +49,7 @@ system = htf.hybrid_system
 positions = htf.hybrid_positions
 
 # Set up integrator
-integrator = PeriodicNonequilibriumIntegrator(custom_functions, nsteps_eq, nsteps_neq, neq_splitting, timestep=timestep)
+integrator = PeriodicNonequilibriumIntegrator(DEFAULT_ALCHEMICAL_FUNCTIONS, nsteps_eq, nsteps_neq, neq_splitting, timestep=timestep)
 
 # Set up context
 platform = openmm.Platform.getPlatformByName(platform_name)
