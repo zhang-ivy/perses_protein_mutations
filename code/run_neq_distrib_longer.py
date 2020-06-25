@@ -125,9 +125,9 @@ for cycle in range(ncycles):
     reverse_works_master.append(reverse_works)
         
     # Save works
-    with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_{cycle}_forward.npy"), 'wb') as f:
+    with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_forward.npy"), 'wb') as f:
         np.save(f, forward_works_master)
-    with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_{cycle}_reverse.npy"), 'wb') as f:
+    with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_reverse.npy"), 'wb') as f:
         np.save(f, reverse_works_master)
 
     # Save trajs
@@ -135,22 +135,22 @@ for cycle in range(ncycles):
     top_new = md.Topology.from_openmm(htf._topology_proposal.new_topology)
     traj = md.Trajectory(np.array(forward_eq_old), top_old)
     traj.remove_solvent(inplace=True)
-    traj.save(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_{cycle}_forward_eq_old.pdb"))
+    traj.save(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_forward_eq_old.pdb"))
     traj = md.Trajectory(np.array(reverse_eq_new), top_new)
     traj.remove_solvent(inplace=True)
-    traj.save(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_{cycle}_reverse_eq_new.pdb"))
+    traj.save(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_reverse_eq_new.pdb"))
 
     traj = md.Trajectory(np.array(forward_neq_old), top_old)
     traj.remove_solvent(inplace=True)
-    traj.save(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_{cycle}_forward_neq_old.pdb"))
+    traj.save(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_forward_neq_old.pdb"))
     traj = md.Trajectory(np.array(forward_neq_new), top_new)
     traj.remove_solvent(inplace=True)
-    traj.save(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_{cycle}_forward_neq_new.pdb"))
+    traj.save(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_forward_neq_new.pdb"))
 
     traj = md.Trajectory(np.array(reverse_neq_old), top_old)
     traj.remove_solvent(inplace=True)
-    traj.save(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_{cycle}_reverse_neq_old.pdb"))
+    traj.save(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_reverse_neq_old.pdb"))
     traj = md.Trajectory(np.array(reverse_neq_new), top_new)
     traj.remove_solvent(inplace=True)
-    traj.save(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_{cycle}_reverse_neq_new.pdb"))
+    traj.save(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_reverse_neq_new.pdb"))
 
