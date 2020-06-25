@@ -35,8 +35,8 @@ DEFAULT_ALCHEMICAL_FUNCTIONS = {
                              'lambda_torsions': x}
 
 # Define simulation parameters
-nsteps_eq = 375000 # 1.5 ns
-nsteps_neq = 375000 # 1.5 ns
+nsteps_eq = 625000 # 2.5 ns
+nsteps_neq = 625000 # 2.5 ns
 neq_splitting='V R H O R V'
 timestep = 4.0 * unit.femtosecond
 platform_name = 'CUDA'
@@ -75,7 +75,7 @@ for cycle in range(ncycles):
         initial_time = time.time()
         integrator.step(1)
         elapsed_time = (time.time() - initial_time) * unit.seconds
-        if step % 750 == 0:
+        if step % 5000 == 0:
             _logger.info(f'Cycle: {cycle}, Step: {step}, equilibrating at lambda = 0, took: {elapsed_time / unit.seconds} seconds')
             pos = context.getState(getPositions=True, enforcePeriodicBox=False).getPositions(asNumpy=True)
             old_pos = np.asarray(htf.old_positions(pos))
@@ -87,14 +87,14 @@ for cycle in range(ncycles):
         initial_time = time.time()
         integrator.step(1)
         elapsed_time = (time.time() - initial_time) * unit.seconds
-        forward_works.append(integrator.get_protocol_work(dimensionless=True))
-        if fwd_step % 750 == 0:
+        if fwd_step % 5000 == 0:
             _logger.info(f'Cycle: {cycle}, forward NEQ step: {fwd_step}, took: {elapsed_time / unit.seconds} seconds')
             pos = context.getState(getPositions=True, enforcePeriodicBox=False).getPositions(asNumpy=True)
             old_pos = np.asarray(htf.old_positions(pos))
             new_pos = np.asarray(htf.new_positions(pos))
             forward_neq_old.append(old_pos)
             forward_neq_new.append(new_pos)
+            forward_works.append(integrator.get_protocol_work(dimensionless=True))
     forward_works_master.append(forward_works)
     
     # Equilibrium (lambda = 1)
@@ -102,7 +102,7 @@ for cycle in range(ncycles):
         initial_time = time.time()
         integrator.step(1)
         elapsed_time = (time.time() - initial_time) * unit.seconds
-        if step % 750 == 0:
+        if step % 5000 == 0:
             _logger.info(f'Cycle: {cycle}, Step: {step}, equilibrating at lambda = 1, took: {elapsed_time / unit.seconds} seconds')
             pos = context.getState(getPositions=True, enforcePeriodicBox=False).getPositions(asNumpy=True)
             new_pos = np.asarray(htf.new_positions(pos))
@@ -114,14 +114,14 @@ for cycle in range(ncycles):
         initial_time = time.time()
         integrator.step(1)
         elapsed_time = (time.time() - initial_time) * unit.seconds
-        reverse_works.append(integrator.get_protocol_work(dimensionless=True))
-        if rev_step % 750 == 0:
+        if rev_step % 5000 == 0:
             _logger.info(f'Cycle: {cycle}, reverse NEQ step: {rev_step}, took: {elapsed_time / unit.seconds} seconds')
             pos = context.getState(getPositions=True, enforcePeriodicBox=False).getPositions(asNumpy=True)
             old_pos = np.asarray(htf.old_positions(pos))
             new_pos = np.asarray(htf.new_positions(pos))
             reverse_neq_old.append(old_pos)
             reverse_neq_new.append(new_pos)
+            reverse_works.append(integrator.get_protocol_work(dimensionless=True))
     reverse_works_master.append(reverse_works)
         
     # Save works
