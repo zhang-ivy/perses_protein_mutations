@@ -91,7 +91,7 @@ for rev_step in range(nsteps_neq):
     elapsed_time = (time.time() - initial_time) * unit.seconds
     reverse_works.append(integrator.get_protocol_work(dimensionless=True))
     if rev_step % 750 == 0:
-        _logger.info(f'Cycle: {cycle}, reverse NEQ step: {rev_step}, took: {elapsed_time / unit.seconds} seconds')
+        _logger.info(f'reverse NEQ step: {rev_step}, took: {elapsed_time / unit.seconds} seconds')
         pos = context.getState(getPositions=True, enforcePeriodicBox=False).getPositions(asNumpy=True)
         old_pos = np.asarray(htf.old_positions(pos))
         new_pos = np.asarray(htf.new_positions(pos))

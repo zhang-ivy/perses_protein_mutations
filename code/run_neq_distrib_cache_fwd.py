@@ -92,7 +92,7 @@ for fwd_step in range(nsteps_neq):
     elapsed_time = (time.time() - initial_time) * unit.seconds
     forward_works.append(integrator.get_protocol_work(dimensionless=True))
     if fwd_step % 750 == 0:
-        _logger.info(f'Cycle: {cycle}, forward NEQ step: {fwd_step}, took: {elapsed_time / unit.seconds} seconds')
+        _logger.info(f'forward NEQ step: {fwd_step}, took: {elapsed_time / unit.seconds} seconds')
         pos = context.getState(getPositions=True, enforcePeriodicBox=False).getPositions(asNumpy=True)
         old_pos = np.asarray(htf.old_positions(pos))
         new_pos = np.asarray(htf.new_positions(pos))
