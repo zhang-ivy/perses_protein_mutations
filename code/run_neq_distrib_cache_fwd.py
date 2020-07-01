@@ -61,7 +61,7 @@ with open(os.path.join(args.dir, f"ala_indices.npy"), 'rb') as f:
     ala_indices = np.load(f)
 
 # Get equilbrium snapshot
-positions = ala_pos_hybrid[ala_indices[args.sim_number]]
+positions = ala_pos_hybrid[ala_indices[int(args.sim_number)]]
 
 # Set up integrator
 integrator = AlchemicalNonequilibriumLangevinIntegrator(alchemical_functions=DEFAULT_ALCHEMICAL_FUNCTIONS, nsteps_neq=nsteps_neq, splitting=neq_splitting, timestep=timestep)
