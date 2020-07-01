@@ -13,7 +13,7 @@ import sys
 
 # Set up logger
 _logger = logging.getLogger()
-_logger.setLevel(logging.DEBUG)
+_logger.setLevel(logging.INFO)
 
 # Read args
 parser = argparse.ArgumentParser(description='run perses protein mutation on capped amino acid')
