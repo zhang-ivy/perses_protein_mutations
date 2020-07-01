@@ -19,6 +19,7 @@ _logger.setLevel(logging.DEBUG)
 parser = argparse.ArgumentParser(description='run perses protein mutation on capped amino acid')
 parser.add_argument('dir', type=str, help='path to input/output dir')
 parser.add_argument('phase', type=str, help='solvent or vacuum')
+parser.add_argument('sim_number', type=str, help='number in job name - 1')
 args = parser.parse_args()
 
 # Define lambda functions
@@ -161,22 +162,22 @@ for cycle in range(ncycles):
     reverse_works_master.append(reverse_works)
 
 # Save works and traj
-with open(os.path.join(args.dir, f"{i}_{args.phase}_forward.npy"), 'wb') as f: # change filenames when distributing jobs
+with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_forward.npy"), 'wb') as f: # change filenames when distributing jobs
     np.save(f, forward_works_master)
-with open(os.path.join(args.dir, f"{i}_{args.phase}_reverse.npy"), 'wb') as f:
+with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_reverse.npy"), 'wb') as f:
     np.save(f, reverse_works_master)
 
 # Save works and traj
-with open(os.path.join(args.dir, f"{i}_{args.phase}_forward_equil_pos.npy"), 'wb') as f: # change filenames when distributing jobs
+with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_forward_equil_pos.npy"), 'wb') as f: # change filenames when distributing jobs
     np.save(f, forward_equil)
-with open(os.path.join(args.dir, f"{i}_{args.phase}_reverse_equil_pos.npy"), 'wb') as f:
+with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_reverse_equil_pos.npy"), 'wb') as f:
     np.save(f, reverse_equil)
-with open(os.path.join(args.dir, f"{i}_{args.phase}_forward_neq_old_pos.npy"), 'wb') as f: # change filenames when distributing jobs
+with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_forward_neq_old_pos.npy"), 'wb') as f: # change filenames when distributing jobs
                 np.save(f, forward_neq_old)
-with open(os.path.join(args.dir, f"{i}_{args.phase}_forward_neq_new_pos.npy"), 'wb') as f: # change filenames when distributing jobs
+with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_forward_neq_new_pos.npy"), 'wb') as f: # change filenames when distributing jobs
     np.save(f, forward_neq_new)
-with open(os.path.join(args.dir, f"{i}_{args.phase}_reverse_neq_old_pos.npy"), 'wb') as f: # change filenames when distributing jobs
+with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_reverse_neq_old_pos.npy"), 'wb') as f: # change filenames when distributing jobs
                 np.save(f, reverse_neq_old)
-with open(os.path.join(args.dir, f"{i}_{args.phase}_reverse_neq_new_pos.npy"), 'wb') as f: # change filenames when distributing jobs
+with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_reverse_neq_new_pos.npy"), 'wb') as f: # change filenames when distributing jobs
     np.save(f, reverse_neq_new)
 
