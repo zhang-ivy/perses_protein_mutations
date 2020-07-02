@@ -36,10 +36,10 @@ DEFAULT_ALCHEMICAL_FUNCTIONS = {
                              'lambda_torsions': x}
 
 # Define simulation parameters
-nsteps_eq = 62500 # 0.25 ns
-nsteps_neq = 20000 # 80 ps
+nsteps_eq = 125000 # 0.25 ns
+nsteps_neq = 40000 # 80 ps
 neq_splitting ='V R H O R V'
-timestep = 4.0 * unit.femtosecond
+timestep = 2.0 * unit.femtosecond
 platform_name = 'CUDA'
 
 # Read in htf
@@ -173,7 +173,7 @@ with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_forward_eq
 with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_reverse_equil_pos.npy"), 'wb') as f:
     np.save(f, reverse_equil)
 with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_forward_neq_old_pos.npy"), 'wb') as f: # change filenames when distributing jobs
-                np.save(f, forward_neq_old)
+    np.save(f, forward_neq_old)
 with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_forward_neq_new_pos.npy"), 'wb') as f: # change filenames when distributing jobs
     np.save(f, forward_neq_new)
 with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_reverse_neq_old_pos.npy"), 'wb') as f: # change filenames when distributing jobs
