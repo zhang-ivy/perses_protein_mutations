@@ -45,7 +45,6 @@ i = os.path.basename(os.path.dirname(args.dir))
 with open(os.path.join(args.dir, f"{i}_{args.phase}.pickle"), 'rb') as f:
     htf = pickle.load(f)
 system = htf.hybrid_system
-positions = htf.hybrid_positions
 
 # Read in ala cache
 with open(os.path.join(args.dir, f"ala_pos_hybrid.npy"), 'rb') as f:
@@ -74,7 +73,7 @@ context.setPositions(positions)
 # Minimize
 openmm.LocalEnergyMinimizer.minimize(context)
 
-# Run eq forwrad (0 -> 1)
+# Run eq forward (0 -> 1)
 initial_time = time.time()
 integrator.step(nsteps_eq)
 elapsed_time = (time.time() - initial_time) * unit.seconds
