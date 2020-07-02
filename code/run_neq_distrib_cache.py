@@ -77,7 +77,7 @@ openmm.LocalEnergyMinimizer.minimize(context)
 initial_time = time.time()
 integrator.step(nsteps_eq)
 elapsed_time = (time.time() - initial_time) * unit.seconds
-_logger.info(f'Step: {step}, equilibrating at lambda = 0, took: {elapsed_time / unit.seconds} seconds')
+_logger.info(f'Equilibrating at lambda = 0, took: {elapsed_time / unit.seconds} seconds')
 
 # Run neq forward (0 -> 1)
 forward_works_master = list()
@@ -113,7 +113,7 @@ context.setPositions(positions)
 initial_time = time.time()
 integrator.step(nsteps_eq)
 elapsed_time = (time.time() - initial_time) * unit.seconds
-_logger.info(f'Step: {step}, equilibrating at lambda = 1, took: {elapsed_time / unit.seconds} seconds')
+_logger.info(f'Equilibrating at lambda = 1, took: {elapsed_time / unit.seconds} seconds')
 
 # Run neq reverse (1 -> 0)
 reverse_works_master = list()
