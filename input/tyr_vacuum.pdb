@@ -32,4 +32,37 @@ ATOM     30  H   NME     3       5.356   0.990   0.531  1.00  0.00           H
 ATOM     31 1HH3 NME     3       6.325   3.435   1.247  1.00  0.00           H  
 ATOM     32 2HH3 NME     3       5.106   3.168   2.486  1.00  0.00           H  
 ATOM     33 3HH3 NME     3       6.458   2.055   2.327  1.00  0.00           H  
+CONECT    1    2    3    7
+CONECT    2    1
+CONECT    3    1    4    5    6
+CONECT    4    3
+CONECT    5    3
+CONECT    6    3
+CONECT    7    1    8   19
+CONECT    8    7    9   11   20
+CONECT    9    8   10   28
+CONECT   10    9
+CONECT   11    8   12   21   22
+CONECT   12   11   13   14
+CONECT   13   12   15   23
+CONECT   14   12   16   24
+CONECT   15   13   17   25
+CONECT   16   14   17   26
+CONECT   17   15   16   18
+CONECT   18   17   27
+CONECT   19    7
+CONECT   20    8
+CONECT   21   11
+CONECT   22   11
+CONECT   23   13
+CONECT   24   14
+CONECT   25   15
+CONECT   26   16
+CONECT   27   18
+CONECT   28    9   29   30
+CONECT   29   28   31   32   33
+CONECT   30   28
+CONECT   31   29
+CONECT   32   29
+CONECT   33   29
 END
