@@ -74,7 +74,7 @@ for cycle in range(ncycles):
         initial_time = time.time()
         integrator.step(1)
         elapsed_time = (time.time() - initial_time) * unit.seconds
-        if step % 750 == 0:
+        if step % 1250 == 0:
             _logger.info(f'Cycle: {cycle}, Step: {step}, equilibrating at lambda = 0, took: {elapsed_time / unit.seconds} seconds')
             pos = context.getState(getPositions=True, enforcePeriodicBox=False).getPositions(asNumpy=True)
             old_pos = np.asarray(htf.old_positions(pos))
@@ -87,7 +87,7 @@ for cycle in range(ncycles):
         integrator.step(1)
         elapsed_time = (time.time() - initial_time) * unit.seconds
         forward_works.append(integrator.get_protocol_work(dimensionless=True))
-        if fwd_step % 750 == 0:
+        if fwd_step % 1250 == 0:
             _logger.info(f'Cycle: {cycle}, forward NEQ step: {fwd_step}, took: {elapsed_time / unit.seconds} seconds')
             pos = context.getState(getPositions=True, enforcePeriodicBox=False).getPositions(asNumpy=True)
             old_pos = np.asarray(htf.old_positions(pos))
@@ -101,7 +101,7 @@ for cycle in range(ncycles):
         initial_time = time.time()
         integrator.step(1)
         elapsed_time = (time.time() - initial_time) * unit.seconds
-        if step % 750 == 0:
+        if step % 1250 == 0:
             _logger.info(f'Cycle: {cycle}, Step: {step}, equilibrating at lambda = 1, took: {elapsed_time / unit.seconds} seconds')
             pos = context.getState(getPositions=True, enforcePeriodicBox=False).getPositions(asNumpy=True)
             new_pos = np.asarray(htf.new_positions(pos))
@@ -114,7 +114,7 @@ for cycle in range(ncycles):
         integrator.step(1)
         elapsed_time = (time.time() - initial_time) * unit.seconds
         reverse_works.append(integrator.get_protocol_work(dimensionless=True))
-        if rev_step % 750 == 0:
+        if rev_step % 1250 == 0:
             _logger.info(f'Cycle: {cycle}, reverse NEQ step: {rev_step}, took: {elapsed_time / unit.seconds} seconds')
             pos = context.getState(getPositions=True, enforcePeriodicBox=False).getPositions(asNumpy=True)
             old_pos = np.asarray(htf.old_positions(pos))
