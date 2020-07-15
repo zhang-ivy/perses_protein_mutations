@@ -7,12 +7,11 @@ from simtk import openmm
 import argparse
 import os
 import time
-from simtk.openmm.app import PDBFile
 import mdtraj as md
 
 # Set up logger
 _logger = logging.getLogger()
-_logger.setLevel(logging.DEBUG)
+_logger.setLevel(logging.INFO)
 
 # Read args
 parser = argparse.ArgumentParser(description='run perses protein mutation on capped amino acid')
@@ -35,8 +34,8 @@ DEFAULT_ALCHEMICAL_FUNCTIONS = {
                              'lambda_torsions': x}
 
 # Define simulation parameters
-nsteps_eq = 375000 # 1.5 ns
-nsteps_neq = 375000 # 1.5 ns
+nsteps_eq = 500000 # 2.5 ns
+nsteps_neq = 500000 # 2.5 ns
 neq_splitting='V R H O R V'
 timestep = 4.0 * unit.femtosecond
 platform_name = 'CUDA'
@@ -131,26 +130,16 @@ for cycle in range(ncycles):
         np.save(f, reverse_works_master)
 
     # Save trajs
-    top_old = md.Topology.from_openmm(htf._topology_proposal.old_topology)
-    top_new = md.Topology.from_openmm(htf._topology_proposal.new_topology)
-    traj = md.Trajectory(np.array(forward_eq_old), top_old)
-    traj.remove_solvent(inplace=True)
-    traj.save(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_forward_eq_old.pdb"))
-    traj = md.Trajectory(np.array(reverse_eq_new), top_new)
-    traj.remove_solvent(inplace=True)
-    traj.save(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_reverse_eq_new.pdb"))
-
-    traj = md.Trajectory(np.array(forward_neq_old), top_old)
-    traj.remove_solvent(inplace=True)
-    traj.save(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_forward_neq_old.pdb"))
-    traj = md.Trajectory(np.array(forward_neq_new), top_new)
-    traj.remove_solvent(inplace=True)
-    traj.save(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_forward_neq_new.pdb"))
-
-    traj = md.Trajectory(np.array(reverse_neq_old), top_old)
-    traj.remove_solvent(inplace=True)
-    traj.save(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_reverse_neq_old.pdb"))
-    traj = md.Trajectory(np.array(reverse_neq_new), top_new)
-    traj.remove_solvent(inplace=True)
-    traj.save(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_reverse_neq_new.pdb"))
+    with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_forward_eq_old.npy"), 'wb') as f:
+        np.save(f, forward_eq_old)
+    with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_reverse_eq_new.npy"), 'wb') as f:
+        np.save(f, reverse_eq_new)
+    with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_forward_neq_old.npy"), 'wb') as f:
+        np.save(f, forward_neq_old)
+    with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_forward_neq_new.npy"), 'wb') as f:
+        np.save(f, forward_neq_new)
+    with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_reverse_neq_old.npy"), 'wb') as f:
+        np.save(f, reverse_neq_old)
+    with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_reverse_neq_new.npy"), 'wb') as f:
+        np.save(f, reverse_neq_new)
 
