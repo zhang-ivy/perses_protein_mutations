@@ -9,6 +9,8 @@ import os
 import time
 import mdtraj as md
 import bz2
+from simtk.openmm import XmlSerializer
+
 
 # Set up logger
 _logger = logging.getLogger()
