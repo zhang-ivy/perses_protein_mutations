@@ -42,10 +42,16 @@ platform_name = 'CUDA'
 
 # Read in htf
 i = os.path.basename(os.path.dirname(args.dir))
-with open(os.path.join(args.dir, f"{i}_{args.sim_number}_{args.phase}.pickle"), 'rb') as f:
+with open(os.path.join(args.dir, f"{i}_{args.phase}.pickle"), 'rb') as f:
     htf = pickle.load(f)
-system = htf.hybrid_system
+
+with open(os.path.join(args.dir, f"{i}_{args.sim_number}_{args.phase}.npy"), 'rb') as f:
+    positions = np.load(f, allow_pickle=True) * unit.nanometer
+
+htf._new_positions = positions
+htf._compute_hybrid_positions()
 positions = htf.hybrid_positions
+system = htf.hybrid_system
 
 # Set up integrator
 integrator = PeriodicNonequilibriumIntegrator(DEFAULT_ALCHEMICAL_FUNCTIONS, nsteps_eq, nsteps_neq, neq_splitting, timestep=timestep)
