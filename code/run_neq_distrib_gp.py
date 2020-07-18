@@ -49,7 +49,7 @@ with open(os.path.join(args.dir, f"{i}_{args.phase}.pickle"), 'rb') as f:
 with open(os.path.join(args.dir, f"mmc2_barstar_T42_positions.npy"), 'rb') as f:
     positions = np.load(f, allow_pickle=True) 
 
-htf._old_positions = positions[args.sim_number] * unit.nanometer
+htf._old_positions = positions[int(args.sim_number)] * unit.nanometer
 htf._compute_hybrid_positions()
 positions = htf.hybrid_positions
 system = htf.hybrid_system
