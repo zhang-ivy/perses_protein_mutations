@@ -114,28 +114,6 @@ class HybridRepexSamplerWindows(HybridCompatibilityMixinWindows, replicaexchange
         self._factory = hybrid_factory
 
 
-# Define lambda protocol
-custom_functions = {'lambda_sterics_core':
-                         lambda x: x,
-                         'lambda_electrostatics_core':
-                         lambda x: x,
-                         'lambda_sterics_insert':
-                         lambda x: 2.0 * x if x < 0.5 else 1.0,
-                         'lambda_sterics_delete':
-                         lambda x: 0.0 if x < 0.5 else 2.0 * (x - 0.5),
-                         'lambda_electrostatics_insert':
-                         lambda x: x,
-                         'lambda_electrostatics_delete':
-                         lambda x: x,
-                         'lambda_bonds':
-                         lambda x: x,
-                         'lambda_angles':
-                         lambda x: x,
-                         'lambda_torsions':
-                         lambda x: x
-                         }
-
-
 # Read args
 parser = argparse.ArgumentParser(description='run perses protein mutation on capped amino acid')
 parser.add_argument('dir', type=str, help='path to input/output dir')
@@ -150,7 +128,7 @@ with open(os.path.join(outdir, f"mmc2_barstar_T42_positions_complex.npy"), 'rb')
 
 # Build the hybrid repex samplers
 suffix = 'run'; selection = 'not water'; checkpoint_interval = 10; n_states = 11; n_cycles = 5000
-lambda_protocol = LambdaProtocol(functions=custom_functions)
+lambda_protocol = LambdaProtocol(functions='default')
 reporter_file = os.path.join(args.dir, f"{i}_{args.phase}.nc")
 reporter = MultiStateReporter(reporter_file, analysis_particle_indices = apo_htf.hybrid_topology.select(selection), checkpoint_interval = checkpoint_interval)
 hss = HybridRepexSamplerWindows(mcmc_moves=mcmc.LangevinSplittingDynamicsMove(timestep= 4.0 * unit.femtoseconds,
