@@ -67,9 +67,9 @@ suffix = 'run'; selection = 'not water'; checkpoint_interval = 10; n_states = 11
 lambda_protocol = LambdaProtocol(functions=custom_functions)
 reporter_file = os.path.join(args.dir, f"{i}_{args.phase}.nc")
 reporter = MultiStateReporter(reporter_file, analysis_particle_indices = apo_htf.hybrid_topology.select(selection), checkpoint_interval = checkpoint_interval)
-hss = HybridRepexSampler(mcmc_moves=mcmc.LangevinSplittingDynamicsMove(timestep= 4.0 * unit.femtoseconds,
+hss = HybridRepexSampler(mcmc_moves=mcmc.LangevinSplittingDynamicsMove(timestep= 2.0 * unit.femtoseconds,
                                                                       collision_rate=5.0 / unit.picosecond,
-                                                                      n_steps=250,
+                                                                      n_steps=500,
                                                                       reassign_velocities=False,
                                                                       n_restart_attempts=20,
                                                                       splitting="V R R R O R R R V",
