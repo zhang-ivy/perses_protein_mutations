@@ -40,11 +40,10 @@ neq_splitting='V R H O R V'
 timestep = 4.0 * unit.femtosecond
 platform_name = 'CUDA'
 
-# Read in htf
-htf = np.load(os.path.join(args.dir, f"{i}_{phase}.npz"), allow_pickle=True)
-htf = htf.get('arr_0')
-htf = htf.flatten()[0]
-
+# Read in htf and positions
+i = os.path.basename(os.path.dirname(args.dir))
+with open(os.path.join(args.dir, f"{i}_{args.phase}.pickle"), 'rb') as f:
+    htf = pickle.load(f)
 with open(os.path.join(args.dir, f"mmc2_barstar_T42_positions.npy"), 'rb') as f:
     positions = np.load(f, allow_pickle=True) 
 
