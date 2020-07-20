@@ -17,6 +17,7 @@ from openmmtools import cache
 cache.global_context_cache.platform = configure_platform(utils.get_fastest_platform().getName())
 from openmmtools.states import *
 from perses.dispersed.utils import create_endstates
+from openmmtools.integrators import LangevinIntegrator
 
 import numpy as np
 import copy
@@ -79,9 +80,21 @@ class HybridCompatibilityMixinWindows(object):
             compound_thermodynamic_state.set_alchemical_parameters(lambda_val,lambda_protocol)
             thermodynamic_state_list.append(compound_thermodynamic_state)
 
-             # now generating a sampler_state for each thermodyanmic state, with relaxed positions
-            context, context_integrator = context_cache.get_context(compound_thermodynamic_state)
+            # now generating a sampler_state for each thermodyanmic state, with relaxed positions
+            integrator = LangevinIntegrator(temperature=temperature)
+            context, context_integrator = context_cache.get_context(compound_thermodynamic_state, integrator)
+            context.setPositions(positions)
+            context.setPeriodicBoxVectors(*compound_thermodynamic_state.system.getDefaultPeriodicBoxVectors())
             feptasks.minimize(compound_thermodynamic_state, sampler_state)
+
+            for i in range(5):
+                try: 
+                    context_integrator.step(100)
+                    break
+                except Exception as e:
+                    print(e)
+                    pass
+            
             sampler_state_list.append(sampler_state)
 
         reporter = storage_file
