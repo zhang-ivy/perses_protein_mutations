@@ -20,6 +20,7 @@ from perses.dispersed.utils import create_endstates
 
 import numpy as np
 import copy
+import logging
 
 class HybridCompatibilityMixinWindows(object):
     """
@@ -135,6 +136,10 @@ custom_functions = {'lambda_sterics_core':
                          lambda x: x
                          }
 
+
+# Set up logger
+_logger = logging.getLogger()
+_logger.setLevel(logging.DEBUG)
 
 # Read args
 parser = argparse.ArgumentParser(description='run perses protein mutation on capped amino acid')

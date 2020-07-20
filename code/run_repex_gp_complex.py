@@ -20,6 +20,7 @@ from perses.dispersed.utils import create_endstates
 
 import numpy as np
 import copy
+import logging
 
 class HybridCompatibilityMixinWindows(object):
     """
@@ -113,6 +114,9 @@ class HybridRepexSamplerWindows(HybridCompatibilityMixinWindows, replicaexchange
         super(HybridRepexSamplerWindows, self).__init__(*args, hybrid_factory=hybrid_factory, **kwargs)
         self._factory = hybrid_factory
 
+# Set up logger
+_logger = logging.getLogger()
+_logger.setLevel(logging.DEBUG)
 
 # Read args
 parser = argparse.ArgumentParser(description='run perses protein mutation on capped amino acid')
