@@ -150,7 +150,7 @@ args = parser.parse_args()
 i = os.path.basename(os.path.dirname(args.dir))
 apo_htf = pickle.load(open(os.path.join(args.dir, f"{i}_{args.phase}.pickle"), "rb" ))
 
-with open(os.path.join(args.dir, f"mmc2_barstar_T42_positions_complex.npy"), 'rb') as f:
+with open(os.path.join(args.dir, f"positions.npy"), 'rb') as f:
     all_pos = np.load(f, allow_pickle=True)
 
 # Build the hybrid repex samplers
