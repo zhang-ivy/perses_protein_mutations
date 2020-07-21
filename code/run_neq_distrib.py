@@ -7,12 +7,11 @@ from simtk import openmm
 import argparse
 import os
 import time
-from simtk.openmm.app import PDBFile
 import mdtraj as md
 
 # Set up logger
 _logger = logging.getLogger()
-_logger.setLevel(logging.DEBUG)
+_logger.setLevel(logging.INFO)
 
 # Read args
 parser = argparse.ArgumentParser(description='run perses protein mutation on capped amino acid')
@@ -35,10 +34,10 @@ DEFAULT_ALCHEMICAL_FUNCTIONS = {
                              'lambda_torsions': x}
 
 # Define simulation parameters
-nsteps_eq = 62500 # 0.25 ns
-nsteps_neq = 20000 # 80 ps
+nsteps_eq = 750000 # 1.5 ns
+nsteps_neq = 750000 # 1.5 ps
 neq_splitting='V R H O R V'
-timestep = 4.0 * unit.femtosecond
+timestep = 2.0 * unit.femtosecond
 platform_name = 'CUDA'
 
 # Read in htf
@@ -65,7 +64,7 @@ context.setPositions(positions)
 openmm.LocalEnergyMinimizer.minimize(context)
 
 # Run neq
-ncycles = 10
+ncycles = 1
 forward_works_master, reverse_works_master = list(), list()
 forward_traj_old, forward_traj_new, reverse_traj_old, reverse_traj_new = list(), list(), list(), list()
 for cycle in range(ncycles):
@@ -121,14 +120,12 @@ with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_forward.np
 with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_reverse.npy"), 'wb') as f:
     np.save(f, reverse_works_master)
 
-top_old = md.Topology.from_openmm(htf._topology_proposal.old_topology)
-top_new = md.Topology.from_openmm(htf._topology_proposal.new_topology)
-traj = md.Trajectory(np.array(forward_traj_old), top_old)
-traj.save(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_forward_old.pdb"))
-traj = md.Trajectory(np.array(forward_traj_new), top_new)
-traj.save(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_forward_new.pdb"))
-traj = md.Trajectory(np.array(reverse_traj_old), top_old)
-traj.save(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_reverse_old.pdb"))
-traj = md.Trajectory(np.array(reverse_traj_new), top_new)
-traj.save(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_reverse_new.pdb"))
-
+# Save positions
+with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_forward_old.npy"), 'wb') as f:
+    np.save(f, forward_traj_old)
+with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_forward_new.npy"), 'wb') as f:
+    np.save(f, forward_traj_new)
+with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_reverse_old.npy"), 'wb') as f:
+    np.save(f, reverse_traj_old)
+with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_reverse_new.npy"), 'wb') as f:
+    np.save(f, reverse_traj_new)
