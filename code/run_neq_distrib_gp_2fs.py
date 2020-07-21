@@ -36,8 +36,10 @@ DEFAULT_ALCHEMICAL_FUNCTIONS = {
 # Define simulation parameters
 # nsteps_eq = 62500 # 0.25 ns
 # nsteps_neq = 20000 # 80 ps
-nsteps_eq = 125000 # 0.25 ns
-nsteps_neq = 40000 # 80 ps
+# nsteps_eq = 125000 # 0.25 ns
+# nsteps_neq = 40000 # 80 ps
+nsteps_eq = 750000 # 1.5 ns
+nsteps_neq = 750000 # 1.5 ns
 neq_splitting='V R H O R V'
 timestep = 2.0 * unit.femtosecond
 platform_name = 'CUDA'
@@ -46,7 +48,7 @@ platform_name = 'CUDA'
 i = os.path.basename(os.path.dirname(args.dir))
 with open(os.path.join(args.dir, f"{i}_{args.phase}.pickle"), 'rb') as f:
     htf = pickle.load(f)
-with open(os.path.join(args.dir, f"positions.npy"), 'rb') as f:
+with open(os.path.join(args.dir, f"mmc2_barstar_T42_positions_complex.npy"), 'rb') as f:
     positions = np.load(f, allow_pickle=True) 
 
 htf._new_positions = positions[int(args.sim_number)] * unit.nanometer
