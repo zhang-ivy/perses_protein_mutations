@@ -44,7 +44,7 @@ platform_name = 'CUDA'
 i = os.path.basename(os.path.dirname(args.dir))
 with open(os.path.join(args.dir, f"{i}_{args.phase}.pickle"), 'rb') as f:
     htf = pickle.load(f)
-with open(os.path.join(args.dir, f"mmc2_barstar_T42_positions.npy"), 'rb') as f:
+with open(os.path.join(args.dir, f"mmc2_barstar_T42_positions_complex.npy"), 'rb') as f:
     positions = np.load(f, allow_pickle=True) 
 
 htf._new_positions = positions[int(args.sim_number)] * unit.nanometer
