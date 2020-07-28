@@ -25,6 +25,7 @@ system:
   ewaldErrorTolerance: 0.00025
   flexibleConstraints: True
   splitDihedrals: False
+  verbose: True
 
   alchemical:
     softcore_alpha: 0.5
