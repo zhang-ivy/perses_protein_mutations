@@ -12,7 +12,7 @@ logger:
   stream: True
   
 structure:
-  filename: ../input/ser_vacuum.pdb
+  filename: ../input/ser_solvated.pdb
   # xyz: ../input/ser_vacuum.pdb
 
 system:
