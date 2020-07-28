@@ -18,7 +18,7 @@ structure:
 system:
   nonbondedMethod: NoCutoff
   nonbondedCutoff: 10 * angstroms
-  constraints: HBonds
+  # constraints: HBonds
   rigidWater: True
   removeCMMotion: False
   hydrogenMass: 4.0 * daltons
