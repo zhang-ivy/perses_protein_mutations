@@ -13,7 +13,7 @@ logger:
   
 structure:
   filename: ../input/ser_vacuum.pdb
-  xyz: ../input/ser_vacuum.pdb
+  # xyz: ../input/ser_vacuum.pdb
 
 system:
   nonbondedMethod: NoCutoff
