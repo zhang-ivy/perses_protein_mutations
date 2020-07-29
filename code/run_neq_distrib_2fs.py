@@ -8,9 +8,6 @@ import argparse
 import os
 import time
 import mdtraj as md
-import bz2
-from simtk.openmm import XmlSerializer
-
 
 # Set up logger
 _logger = logging.getLogger()
@@ -45,22 +42,13 @@ platform_name = 'CUDA'
 
 # Read in htf
 i = os.path.basename(os.path.dirname(args.dir))
-# Read in htf
-with open(os.path.join(args.dir, f"{i}_{args.phase}.npz"), 'rb') as f:
-    htf = np.load(f, allow_pickle=True)
-    htf = htf.get('arr_0')
-    htf = htf.flatten()[0]
+with open(os.path.join(args.dir, f"{i}_{args.phase}.pickle"), 'rb') as f:
+    htf = pickle.load(f)
+system = htf.hybrid_system
+positions = htf.hybrid_positions
 
 # Set up integrator
 integrator = PeriodicNonequilibriumIntegrator(DEFAULT_ALCHEMICAL_FUNCTIONS, nsteps_eq, nsteps_neq, neq_splitting, timestep=timestep)
-
-# Deserialize system file 
-with bz2.open(os.path.join(args.dir, f"{i}_{args.phase}_system.xml.bz2"), 'rb') as f:
-    system = XmlSerializer.deserialize(f.read().decode("utf-8"))
-
-# Deserialize state file
-with bz2.open(os.path.join(args.dir, f"{i}_{args.phase}_state.xml.bz2"), 'rb') as infile:
-    state = XmlSerializer.deserialize(infile.read().decode('utf-8'))
 
 # Set up context
 platform = openmm.Platform.getPlatformByName(platform_name)
@@ -69,9 +57,8 @@ if platform_name in ['CUDA', 'OpenCL']:
 if platform_name in ['CUDA']:
     platform.setPropertyDefaultValue('DeterministicForces', 'true')
 context = openmm.Context(system, integrator, platform)
-context.setPeriodicBoxVectors(*state.getPeriodicBoxVectors())
-context.setPositions(state.getPositions())
-context.setVelocities(state.getVelocities())
+context.setPeriodicBoxVectors(*system.getDefaultPeriodicBoxVectors())
+context.setPositions(positions)
 
 # Minimize
 openmm.LocalEnergyMinimizer.minimize(context)
@@ -142,17 +129,17 @@ for cycle in range(ncycles):
     with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_reverse.npy"), 'wb') as f:
         np.save(f, reverse_works_master)
 
-    # Save trajs
-    with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_forward_eq_old.npy"), 'wb') as f:
-        np.save(f, forward_eq_old)
-    with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_reverse_eq_new.npy"), 'wb') as f:
-        np.save(f, reverse_eq_new)
-    with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_forward_neq_old.npy"), 'wb') as f:
-        np.save(f, forward_neq_old)
-    with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_forward_neq_new.npy"), 'wb') as f:
-        np.save(f, forward_neq_new)
-    with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_reverse_neq_old.npy"), 'wb') as f:
-        np.save(f, reverse_neq_old)
-    with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_reverse_neq_new.npy"), 'wb') as f:
-        np.save(f, reverse_neq_new)
+    # # Save trajs
+    # with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_forward_eq_old.npy"), 'wb') as f:
+    #     np.save(f, forward_eq_old)
+    # with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_reverse_eq_new.npy"), 'wb') as f:
+    #     np.save(f, reverse_eq_new)
+    # with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_forward_neq_old.npy"), 'wb') as f:
+    #     np.save(f, forward_neq_old)
+    # with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_forward_neq_new.npy"), 'wb') as f:
+    #     np.save(f, forward_neq_new)
+    # with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_reverse_neq_old.npy"), 'wb') as f:
+    #     np.save(f, reverse_neq_old)
+    # with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_reverse_neq_new.npy"), 'wb') as f:
+    #     np.save(f, reverse_neq_new)
 
