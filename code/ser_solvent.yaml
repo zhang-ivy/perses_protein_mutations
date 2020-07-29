@@ -40,10 +40,11 @@ system:
     annihilate_sterics : False
 
 simulation:
-  platform: Reference
-  # properties:
-  #   CudaPrecision: mixed
-  #   CudaDeviceIndex: 0
+  # platform: Reference
+  platform: CUDA
+  properties:
+    CudaPrecision: mixed
+    CudaDeviceIndex: 0
   dt: 0.004 * picoseconds
   friction: 1 * 1/picoseconds
   temperature: 300 * kelvin
