@@ -12,8 +12,8 @@ logger:
   stream: True
   
 structure:
-  filename: ../input/tleap_ivy/thr_solvated_tleap.prmtop
-  xyz: ../input/tleap_ivy/thr_solvated_tleap.inpcrd
+  filename: ../input/tleap/thr_solvated_tleap.prmtop
+  xyz: ../input/tleap/thr_solvated_tleap.inpcrd
 
 system:
   nonbondedMethod: PME
