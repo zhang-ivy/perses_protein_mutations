@@ -18,7 +18,7 @@ structure:
 system:
   nonbondedMethod: PME
   nonbondedCutoff: 10 * angstroms
-  # constraints: HBonds
+  constraints: HBonds
   rigidWater: True
   removeCMMotion: False
   hydrogenMass: 4.0 * daltons
@@ -45,12 +45,12 @@ simulation:
   properties:
     CudaPrecision: mixed
     CudaDeviceIndex: 0
-  dt: 0.002 * picoseconds
+  dt: 0.004 * picoseconds
   friction: 1 * 1/picoseconds
   temperature: 300 * kelvin
   nIter: 5
-  nstepsMD: 2000
-  nstepsNC: 2000
+  nstepsMD: 1000
+  nstepsNC: 1000
   pressure: 1 * atmospheres
   #Default
   nprop: 1
