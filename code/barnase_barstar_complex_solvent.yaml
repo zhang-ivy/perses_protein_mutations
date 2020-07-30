@@ -50,10 +50,10 @@ simulation:
   temperature: 300 * kelvin
   nIter: 5
   nstepsMD: 2000
-  nstepsNC: 6000
+  nstepsNC: 8000
   pressure: 1 * atmospheres
   #Default
-  nprop: 3
+  nprop: 4
   propLambda: 0.3
   ###Advanced: Add additional relaxation steps in NCMC simulation###
   # Suggested options for nprop and nstepsNC
@@ -90,8 +90,8 @@ ncmc_reporters:
     protocolWork: True
   stream:
     title: ncmc
-    reportInterval: 500
-    totalSteps: 6000
+    reportInterval: 1000
+    totalSteps: 8000
     step: True
     speed: True
     progress: True
