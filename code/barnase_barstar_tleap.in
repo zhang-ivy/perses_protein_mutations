@@ -1,16 +1,16 @@
 source leaprc.protein.ff14SB #  Source leaprc file for ff14SB protein force field
 source leaprc.water.tip3p #  Source leaprc file for TIP3P water model (and ions)
-mol = loadpdb mmc2_barstar_tleap.pdb
+mol = loadpdb mmc2_complex_tleap.pdb
 solvateBox mol TIP3PBOX 10 
-addionsrand mol Na+ 10 Cl- 4
-savepdb mol barstar_solvated_tleap.pdb
-saveamberparm mol barstar_solvated_tleap.prmtop barstar_solvated_tleap.inpcrd
+addionsrand mol Na+ 12 Cl- 8
+savepdb mol barnase_barstar_solvated_tleap.pdb
+saveamberparm mol barnase_barstar_solvated_tleap.prmtop barnase_barstar_solvated_tleap.inpcrd
 
 # from math import floor
-# numWaters = 4776
+# numWaters = 8527
 # numPositive = 0
 # numNegative = 0 
-# totalCharge = -6
+# totalCharge = -4.0
 # ionicStrength = 0.05
 
 # if totalCharge > 0:
@@ -23,5 +23,5 @@ saveamberparm mol barstar_solvated_tleap.prmtop barstar_solvated_tleap.inpcrd
 # numPositive += numPairs
 # numNegative += numPairs
 
-# numPositive = 10
-# numNegative = 4
+# numPositive = 12
+# numNegative = 8
