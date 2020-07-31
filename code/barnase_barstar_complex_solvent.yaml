@@ -49,11 +49,11 @@ simulation:
   friction: 1 * 1/picoseconds
   temperature: 300 * kelvin
   nIter: 5
-  nstepsMD: 2000
-  nstepsNC: 8000
+  nstepsMD: 500
+  nstepsNC: 1000
   pressure: 1 * atmospheres
   #Default
-  nprop: 4
+  nprop: 1
   propLambda: 0.3
   ###Advanced: Add additional relaxation steps in NCMC simulation###
   # Suggested options for nprop and nstepsNC
@@ -69,14 +69,14 @@ md_reporters:
   traj_netcdf:
     reportInterval: 500
   restart:
-    reportInterval: 2000
+    reportInterval: 1000
   progress:
-    totalSteps: 2000
+    totalSteps: 1000
     reportInterval: 20
   stream:
     title: md
     reportInterval: 500
-    totalSteps: 2000
+    totalSteps: 1000
     step: True
     speed: True
     progress: True
@@ -91,7 +91,7 @@ ncmc_reporters:
   stream:
     title: ncmc
     reportInterval: 1000
-    totalSteps: 8000
+    totalSteps: 1000
     step: True
     speed: True
     progress: True
