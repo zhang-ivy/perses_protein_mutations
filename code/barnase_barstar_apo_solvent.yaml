@@ -49,8 +49,8 @@ simulation:
   friction: 1 * 1/picoseconds
   temperature: 300 * kelvin
   nIter: 5
-  nstepsMD: 1000
-  nstepsNC: 1000
+  nstepsMD: 500
+  nstepsNC: 500
   pressure: 1 * atmospheres
   #Default
   nprop: 1
@@ -69,14 +69,14 @@ md_reporters:
   traj_netcdf:
     reportInterval: 500
   restart:
-    reportInterval: 2000
+    reportInterval: 500
   progress:
-    totalSteps: 2000
+    totalSteps: 500
     reportInterval: 20
   stream:
     title: md
     reportInterval: 500
-    totalSteps: 1000
+    totalSteps: 500
     step: True
     speed: True
     progress: True
@@ -90,8 +90,8 @@ ncmc_reporters:
     protocolWork: True
   stream:
     title: ncmc
-    reportInterval: 200
-    totalSteps: 1000
+    reportInterval: 500
+    totalSteps: 500
     step: True
     speed: True
     progress: True
