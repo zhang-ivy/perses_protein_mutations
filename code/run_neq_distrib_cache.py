@@ -18,6 +18,8 @@ parser = argparse.ArgumentParser(description='run perses protein mutation on cap
 parser.add_argument('dir', type=str, help='path to input/output dir')
 parser.add_argument('phase', type=str, help='solvent or vacuum')
 parser.add_argument('sim_number', type=str, help='number in job name - 1')
+parser.add_argument('old_name', type=str, help='three letter code of old amino acid')
+parser.add_argument('new_name', type=str, help='three letter code of new amino acid')
 args = parser.parse_args()
 
 # Define lambda functions
@@ -47,14 +49,14 @@ with open(os.path.join(args.dir, f"{i}_{args.phase}.pickle"), 'rb') as f:
 system = htf.hybrid_system
 
 # Read in ser cache
-with open(os.path.join(args.dir, f"ser_pos_hybrid.npy"), 'rb') as f:
+with open(os.path.join(args.dir, f"{args.old_name}_pos_hybrid.npy"), 'rb') as f:
     ser_pos_hybrid = np.load(f)
 
 # Read in indices of uncorrelated ser snapshots
-with open(os.path.join(args.dir, f"ser_indices.npy"), 'rb') as f:
+with open(os.path.join(args.dir, f"{args.old_name}_indices.npy"), 'rb') as f:
     ser_indices = np.load(f)
 
-# Get equilbrium snapshot of ala
+# Get equilbrium snapshot of ser
 positions = ser_pos_hybrid[ser_indices[int(args.sim_number)]]
 
 # Set up integrator
@@ -98,14 +100,14 @@ for fwd_step in range(nsteps_neq):
 forward_works_master.append(forward_works)
 
 # Read in ala cache
-with open(os.path.join(args.dir, f"ala_pos_hybrid.npy"), 'rb') as f:
+with open(os.path.join(args.dir, f"{args.new_name}_pos_hybrid.npy"), 'rb') as f:
     ala_pos_hybrid = np.load(f)
 
 # Read in indices of uncorrelated ala snapshots
-with open(os.path.join(args.dir, f"ala_indices.npy"), 'rb') as f:
+with open(os.path.join(args.dir, f"{args.new_name}_indices.npy"), 'rb') as f:
     ala_indices = np.load(f)
 
-# Get equilbrium snapshot of ser
+# Get equilbrium snapshot of ala
 positions = ala_pos_hybrid[ala_indices[int(args.sim_number)]]
 context.setPositions(positions)
 
