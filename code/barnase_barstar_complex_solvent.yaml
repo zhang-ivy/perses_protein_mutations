@@ -48,7 +48,7 @@ simulation:
   dt: 0.004 * picoseconds
   friction: 1 * 1/picoseconds
   temperature: 300 * kelvin
-  nIter: 5
+  nIter: 120
   nstepsMD: 500
   nstepsNC: 2000
   pressure: 1 * atmospheres
