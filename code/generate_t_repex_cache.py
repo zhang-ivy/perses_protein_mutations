@@ -38,7 +38,7 @@ compound_states = [states.CompoundThermodynamicState(thermodynamic_state=thermod
                         for thermodynamic_state in thermodynamic_states]
 
 # Set up sampler
-move = mcmc.GHMCMove(timestep=2.0*unit.femtoseconds, n_steps=500)
+move = mcmc.GHMCMove(timestep=4.0*unit.femtoseconds, n_steps=250)
 simulation = multistate.ReplicaExchangeSampler(mcmc_moves=move, number_of_iterations=args.length*1000)
 
 # Run t-repex
