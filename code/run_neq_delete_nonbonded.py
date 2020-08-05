@@ -129,14 +129,13 @@ with open(os.path.join(args.dir, f"{i}_{args.phase}_forward.npy"), 'wb') as f: #
 with open(os.path.join(args.dir, f"{i}_{args.phase}_reverse.npy"), 'wb') as f:
     np.save(f, reverse_works_master)
 
-top_old = md.Topology.from_openmm(htf._topology_proposal.old_topology)
-top_new = md.Topology.from_openmm(htf._topology_proposal.new_topology)
-traj = md.Trajectory(np.array(forward_traj_old), top_old)
-traj.save(os.path.join(args.dir, f"{i}_{args.phase}_forward_old.pdb"))
-traj = md.Trajectory(np.array(forward_traj_new), top_new)
-traj.save(os.path.join(args.dir, f"{i}_{args.phase}_forward_new.pdb"))
-traj = md.Trajectory(np.array(reverse_traj_old), top_old)
-traj.save(os.path.join(args.dir, f"{i}_{args.phase}_reverse_old.pdb"))
-traj = md.Trajectory(np.array(reverse_traj_new), top_new)
-traj.save(os.path.join(args.dir, f"{i}_{args.phase}_reverse_new.pdb"))
+# Save positions
+with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_forward_old.npy"), 'wb') as f:
+    np.save(f, forward_traj_old)
+with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_forward_new.npy"), 'wb') as f:
+    np.save(f, forward_traj_new)
+with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_reverse_old.npy"), 'wb') as f:
+    np.save(f, reverse_traj_old)
+with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_reverse_new.npy"), 'wb') as f:
+    np.save(f, reverse_traj_new)
 

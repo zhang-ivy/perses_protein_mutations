@@ -1,4 +1,4 @@
-# YAML configuration for simulating SER in vacuum
+# YAML configuration for simulating SER in solvent
 # Simulation on a CUDA device with index 0
 # NPT simulation with Hydrogen Mass Repartioning + 4fs timesteps
 # 5 BLUES iterations (sidechain move proposals), 1000 steps of NCMC and MD per iteration

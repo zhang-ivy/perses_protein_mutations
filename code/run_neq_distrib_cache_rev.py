@@ -83,7 +83,7 @@ openmm.LocalEnergyMinimizer.minimize(context)
 reverse_works_master = list()
 reverse_neq_old, reverse_neq_new = list(), list()
 
-# reverse (0 -> 1)
+# reverse (1 -> 0)
 reverse_works = [integrator.get_protocol_work(dimensionless=True)]
 for rev_step in range(nsteps_neq):
     initial_time = time.time()
