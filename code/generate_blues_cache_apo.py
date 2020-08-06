@@ -271,7 +271,7 @@ class SystemFactoryOpenMM(SystemFactory):
         return system_generator.create_system(structure.topology)
 
 # Instantiate (modified) BLUES SystemFactory
-systems = SystemFactoryOpenMM(structure, sidechain.atom_indices, system_generator, topology, cfg['system'])
+systems = SystemFactoryOpenMM(structure, sidechain.atom_indices, system_generator, cfg['system'])
 
 ## Subclass BLUES SimulationFactory object to avoid using parmed.Structure object, and instead use an
 ## OpenMM Modeller object. (Changes involves how box vectors are checked/set)
