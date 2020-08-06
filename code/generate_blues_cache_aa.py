@@ -23,7 +23,7 @@ args = parser.parse_args()
 
 # Read in htf
 i = os.path.basename(os.path.dirname(args.outdir))
-with open(os.path.join(args.outdir, f"{i}_{args.phase}.pickle"), 'rb') as f:
+with open(os.path.join(args.outdir, f"{i}_vacuum.pickle"), 'rb') as f:
     htf = pickle.load(f)
 
 # Read in PDB
@@ -35,7 +35,7 @@ vectors = htf.hybrid_system.getDefaultPeriodicBoxVectors()
 pdb.topology.setPeriodicBoxVectors(vectors)
 
 # Parse a YAML configuration, return as Dict
-cfg = Settings(args.yaml).asDict()
+cfg = Settings(os.path.join(outdir, "blues/thr_vacuum.yaml")).asDict()
 
 # Overwrite the parmed structure object in the cfg dict with pdb object
 cfg['Structure'] = pdb
