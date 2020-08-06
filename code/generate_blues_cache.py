@@ -1,9 +1,12 @@
 from blues.moves import SideChainMove
 from blues.moves import MoveEngine
-from blues.simulation import SimulationFactory, SystemFactory
+from blues.simulation import SimulationFactory, SystemFactory, BLUESSimulation
 import json
 from blues.settings import Settings
 import openeye.oechem as oechem
+import os
+import subprocess
+from blues.reporters import NetCDF4Reporter
 
 # Parse a YAML configuration, return as Dict
 cfg = Settings('thr_vacuum.yaml').asDict()
