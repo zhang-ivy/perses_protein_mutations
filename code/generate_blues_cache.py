@@ -3,6 +3,7 @@ from blues.moves import MoveEngine
 from blues.simulation import SimulationFactory
 import json
 from blues.settings import Settings
+import openeye.oechem as oechem
 
 # Parse a YAML configuration, return as Dict
 cfg = Settings('thr_vacuum.yaml').asDict()
