@@ -1,11 +1,11 @@
 # YAML configuration for simulating barnase:barstar in solvent
 # Simulation on a CUDA device with index 0
-# NPT simulation with Hydrogen Mass Repartioning + 4fs timesteps
+# NPT simulation with Hydrogen Mass Repartioning + 2fs timesteps
 # 5 BLUES iterations (sidechain move proposals), 1000 steps of NCMC and MD per iteration
 # MD Reporters: State (energies), NetCDF, Restart, and speed for benchmarking
 # NCMC Reporters: NetCDF (stores protocol work at 1st, mid, and last frame) and speed for benchmarking
 
-output_dir: /data/chodera/zhangi/perses_benchmark/blues/barnase_barstar/apo/
+output_dir: /data/chodera/zhangi/perses_benchmark/blues/barnase_barstar/apo/thr_cache
 outfname: barnase_barstar
 logger:
   level: info
@@ -18,7 +18,7 @@ structure:
 system:
   nonbondedMethod: PME
   nonbondedCutoff: 10 * angstroms
-  constraints: HBonds
+  # constraints: HBonds
   rigidWater: True
   removeCMMotion: False
   hydrogenMass: 4.0 * daltons
@@ -45,7 +45,7 @@ simulation:
   properties:
     CudaPrecision: mixed
     CudaDeviceIndex: 0
-  dt: 0.004 * picoseconds
+  dt: 0.002 * picoseconds
   friction: 1 * 1/picoseconds
   temperature: 300 * kelvin
   nIter: 5
