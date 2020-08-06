@@ -405,7 +405,7 @@ for i in range(100):
     cfg['md_reporters'] = [cfg['md_reporters'][0]] + [reporter] + cfg['md_reporters'][2:] 
 
     # Run simulation
-    simulations = SimulationFactory(systems, sidechain_mover, cfg['simulation'], cfg['md_reporters'],
+    simulations = SimulationFactoryOpenMM(systems, sidechain_mover, cfg['simulation'], cfg['md_reporters'],
                                 cfg['ncmc_reporters'])
     simulations.md.minimizeEnergy(maxIterations=0)
     simulations.md.step(500)
