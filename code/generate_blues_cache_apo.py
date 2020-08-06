@@ -38,7 +38,7 @@ vectors = htf.hybrid_system.getDefaultPeriodicBoxVectors()
 pdb.topology.setPeriodicBoxVectors(vectors)
 
 # Parse a YAML configuration, return as Dict
-cfg = Settings(args.yaml).asDict()
+cfg = Settings(os.path.join(args.outdir, "blues/apo.yaml")).asDict()
 
 # Overwrite the parmed structure object in the cfg dict with pdb object
 cfg['Structure'] = pdb
