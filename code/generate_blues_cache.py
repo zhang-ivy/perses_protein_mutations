@@ -134,6 +134,6 @@ for i in range(100):
     try:
         blues.run()
     except:
-        subprocess.call(['rm', outfile])
+        # subprocess.call(['rm', outfile])
         continue
 
