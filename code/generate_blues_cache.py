@@ -1,6 +1,6 @@
 from blues.moves import SideChainMove
 from blues.moves import MoveEngine
-from blues.simulation import SimulationFactory
+from blues.simulation import SimulationFactory, SystemFactory
 import json
 from blues.settings import Settings
 import openeye.oechem as oechem
