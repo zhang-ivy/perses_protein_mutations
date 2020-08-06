@@ -1,18 +1,7 @@
-from blues.moves import SideChainMove
-from blues.moves import MoveEngine
-from blues.simulation import SimulationFactory, SystemFactory, BLUESSimulation
-import json
-from blues.settings import Settings
-import openeye.oechem as oechem
-import os
-import subprocess
-from blues.reporters import NetCDF4Reporter
-import argparse
-from simtk import openmm
-
 import pickle
 import numpy as np
 import os
+import argparse
 
 # Read args
 parser = argparse.ArgumentParser(description='run perses protein mutation on capped amino acid')
@@ -28,6 +17,18 @@ with open(os.path.join(args.outdir, f"{i}_{phase}.npz"), 'rb') as f:
     htf = np.load(f, allow_pickle=True)
     htf = htf.get('arr_0')
     htf = htf.flatten()[0]
+
+from blues.moves import SideChainMove
+from blues.moves import MoveEngine
+from blues.simulation import SimulationFactory, SystemFactory, BLUESSimulation
+import json
+from blues.settings import Settings
+import openeye.oechem as oechem
+import os
+import subprocess
+from blues.reporters import NetCDF4Reporter
+
+from simtk import openmm
 
 # Read in PDB
 from simtk.openmm import app

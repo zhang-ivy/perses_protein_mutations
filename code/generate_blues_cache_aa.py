@@ -28,14 +28,14 @@ from simtk import openmm
 
 # Read in PDB
 from simtk.openmm import app
-pdb = app.PDBFile(os.path.join(outdir, "blues/thr_vacuum.pdb"))
+pdb = app.PDBFile(os.path.join(args.outdir, "blues/thr_vacuum.pdb"))
 
 # Set periodic box vectors
 vectors = htf.hybrid_system.getDefaultPeriodicBoxVectors()
 pdb.topology.setPeriodicBoxVectors(vectors)
 
 # Parse a YAML configuration, return as Dict
-cfg = Settings(os.path.join(outdir, "blues/thr_vacuum.yaml")).asDict()
+cfg = Settings(os.path.join(args.outdir, "blues/thr_vacuum.yaml")).asDict()
 
 # Overwrite the parmed structure object in the cfg dict with pdb object
 cfg['Structure'] = pdb
