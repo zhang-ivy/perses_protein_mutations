@@ -1,6 +1,14 @@
 import pickle
 import numpy as np
 import os
+import argparse
+
+# Read args
+parser = argparse.ArgumentParser(description='run perses protein mutation on capped amino acid')
+parser.add_argument('yaml', type=str, help='yaml file for blues')
+parser.add_argument('resid', type=int, help='resid of sidechain that needs to be sampled')
+parser.add_argument('outdir', type=str, help='outdir for blues nc files')
+args = parser.parse_args()
 
 # Read in htf
 i = os.path.basename(os.path.dirname(args.outdir))
@@ -16,15 +24,7 @@ import openeye.oechem as oechem
 import os
 import subprocess
 from blues.reporters import NetCDF4Reporter
-import argparse
 from simtk import openmm
-
-# Read args
-parser = argparse.ArgumentParser(description='run perses protein mutation on capped amino acid')
-parser.add_argument('yaml', type=str, help='yaml file for blues')
-parser.add_argument('resid', type=int, help='resid of sidechain that needs to be sampled')
-parser.add_argument('outdir', type=str, help='outdir for blues nc files')
-args = parser.parse_args()
 
 # Read in PDB
 from simtk.openmm import app
