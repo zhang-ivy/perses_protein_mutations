@@ -176,7 +176,7 @@ sidechain_mover = MoveEngine(sidechain)
 ## Subclass the BLUES SystemFactory object to take in an OpenMM SystemGenerator
 
 class SystemFactoryOpenMM(SystemFactory):
-    def __init__(self, structure, atom_indices, system_generator, topology, config=None):
+    def __init__(self, structure, atom_indices, system_generator, config=None):
         self.structure = structure
         self.atom_indices = atom_indices
         self._config = config
@@ -188,10 +188,10 @@ class SystemFactoryOpenMM(SystemFactory):
             else:
                 # Use function defaults if none is provided
                 self.alch_config = {}
-            self.md =  SystemFactoryOpenMM.generateSystem(self, self.structure, system_generator, topology, **self._config)
+            self.md =  SystemFactoryOpenMM.generateSystem(self, self.structure, system_generator, **self._config)
             self.alch = SystemFactory.generateAlchSystem(self.md, self.atom_indices, **self.alch_config)
               
-    def generateSystem(self, structure, system_generator, topology, **kwargs):
+    def generateSystem(self, structure, system_generator, **kwargs):
         """
         Construct an OpenMM System representing the topology described by the
         prmtop file. This function is just a wrapper for parmed Structure.createSystem().
@@ -322,7 +322,7 @@ simulations = SimulationFactoryOpenMM(systems, sidechain_mover, cfg['simulation'
 
 for i in range(100):
     print(f"iter: {i}")
-    outfile = os.path.join(args.outdir, f'thr_{i}.nc')
+    outfile = os.path.join(args.outdir, f'blues/thr_{i}.nc')
 
     # Manually set new reporter for each iteration i
     reporter = NetCDF4Reporter(outfile, reportInterval=500)
