@@ -12,7 +12,7 @@ import argparse
 # Read args
 parser = argparse.ArgumentParser(description='run perses protein mutation on capped amino acid')
 parser.add_argument('yaml', type=str, help='yaml file for blues')
-parser.add_argument('resid', type=str, help='resid of sidechain that needs to be sampled')
+parser.add_argument('resid', type=int, help='resid of sidechain that needs to be sampled')
 parser.add_argument('outdir', type=str, help='outdir for blues nc files')
 args = parser.parse_args()
 
