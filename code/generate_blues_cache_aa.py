@@ -1,3 +1,12 @@
+import pickle
+import numpy as np
+import os
+
+# Read in htf
+i = os.path.basename(os.path.dirname(args.outdir))
+with open(os.path.join(args.outdir, f"{i}_vacuum.pickle"), 'rb') as f:
+    htf = pickle.load(f)
+
 from blues.moves import SideChainMove
 from blues.moves import MoveEngine
 from blues.simulation import SimulationFactory, SystemFactory, BLUESSimulation
@@ -10,21 +19,12 @@ from blues.reporters import NetCDF4Reporter
 import argparse
 from simtk import openmm
 
-import pickle
-import numpy as np
-import os
-
 # Read args
 parser = argparse.ArgumentParser(description='run perses protein mutation on capped amino acid')
 parser.add_argument('yaml', type=str, help='yaml file for blues')
 parser.add_argument('resid', type=int, help='resid of sidechain that needs to be sampled')
 parser.add_argument('outdir', type=str, help='outdir for blues nc files')
 args = parser.parse_args()
-
-# Read in htf
-i = os.path.basename(os.path.dirname(args.outdir))
-with open(os.path.join(args.outdir, f"{i}_vacuum.pickle"), 'rb') as f:
-    htf = pickle.load(f)
 
 # Read in PDB
 from simtk.openmm import app
