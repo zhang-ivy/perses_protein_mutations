@@ -45,12 +45,12 @@ platform_name = 'CUDA'
 
 # # Read in htf
 i = os.path.basename(os.path.dirname(args.dir))
-# with open(os.path.join(args.dir, f"{i}_{args.phase}.pickle"), 'rb') as f:
-#     htf = pickle.load(f)
-with open(os.path.join(args.dir, f"{i}_{phase}.npz"), 'rb') as f:
-    htf = np.load(f, allow_pickle=True)
-    htf = htf.get('arr_0')
-    htf = htf.flatten()[0]
+with open(os.path.join(args.dir, f"{i}_{args.phase}.pickle"), 'rb') as f:
+    htf = pickle.load(f)
+# with open(os.path.join(args.dir, f"{i}_{args.phase}.npz"), 'rb') as f:
+#     htf = np.load(f, allow_pickle=True)
+#     htf = htf.get('arr_0')
+#     htf = htf.flatten()[0]
 system = htf.hybrid_system
 
 # Read in cache
