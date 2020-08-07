@@ -54,7 +54,7 @@ with open(os.path.join(args.dir, f"blues/{args.old_name}_pos_hybrid.npy"), 'rb')
     pos_hybrid = np.load(f)
 
 # Get equilbrium snapshot of ser
-old_positions = pos_hybrid[int(args.sim_number)]
+old_positions = pos_hybrid[int(args.sim_number)] * unit.nanometer
 
 # Make geometry engine
 geometry_engine = FFAllAngleGeometryEngine(metadata=None,
