@@ -52,6 +52,6 @@ hss = HybridRepexSampler(mcmc_moves=mcmc.LangevinSplittingDynamicsMove(timestep=
                                                                       splitting="V R R R O R R R V",
                                                                       constraint_tolerance=1e-06),
                                                                       hybrid_factory=apo_htf, online_analysis_interval=10)
-hss.setup(n_states=n_states, temperature=300*unit.kelvin, storage_file=reporter, lambda_protocol=lambda_protocol, endstates=False)
+hss.setup(n_states=n_states, temperature=300*unit.kelvin, storage_file=reporter, lambda_protocol=lambda_protocol)
 hss.extend(n_cycles)
 
