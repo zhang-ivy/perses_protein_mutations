@@ -348,7 +348,7 @@ class SystemFactoryOpenMM(SystemFactory):
         rmsd_force = RMSDForce(structure.positions, [0, 1, 2, 3, 4, 5, 6, 7, 11, 12, 20, 21, 22, 23, 24, 25])
         system.addForce(rmsd_force)
 
-        return 
+        return system
 
 # Instantiate (modified) BLUES SystemFactory
 systems = SystemFactoryOpenMM(structure, sidechain.atom_indices, system_generator, cfg['system'])
