@@ -53,12 +53,8 @@ with open(os.path.join(args.dir, f"{i}_{args.phase}.pickle"), 'rb') as f:
 #     htf = htf.flatten()[0]
 system = htf.hybrid_system
 
-# # Read in cache
-# with open(os.path.join(args.dir, f"blues/{args.old_name}_pos_hybrid.npy"), 'rb') as f:
-#     pos_hybrid = np.load(f)
-
 # Read in cache
-with open(os.path.join(args.dir, f"{args.old_name}_pos_hybrid.npy"), 'rb') as f:
+with open(os.path.join(args.dir, f"blues/{args.old_name}_pos_hybrid.npy"), 'rb') as f:
     pos_hybrid = np.load(f)
 
 # Get equilbrium snapshot of ser
