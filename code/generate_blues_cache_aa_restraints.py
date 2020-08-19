@@ -403,7 +403,7 @@ class SimulationFactoryOpenMM(SimulationFactory):
 simulations = SimulationFactoryOpenMM(systems, sidechain_mover, cfg['simulation'], cfg['md_reporters'],
                                 cfg['ncmc_reporters'])
 
-for i in range(100):
+for i in range(34, 100):
     print(f"iter: {i}")
     outfile = os.path.join(args.outdir, f'blues/thr_{i}.nc')
 
