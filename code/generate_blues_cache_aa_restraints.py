@@ -25,6 +25,7 @@ import os
 import subprocess
 from blues.reporters import NetCDF4Reporter
 from simtk import openmm
+import mdtraj as md
 
 # Read in PDB
 from simtk.openmm import app
@@ -343,11 +344,23 @@ class SystemFactoryOpenMM(SystemFactory):
         
         system = system_generator.create_system(structure.topology)
 
-        # Add RMSD force
-        from simtk.openmm import RMSDForce
-        rmsd_force = RMSDForce(structure.positions, [0, 1, 2, 3, 4, 5, 6, 7, 11, 12, 20, 21, 22, 23, 24, 25])
-        system.addForce(rmsd_force)
+        # # Add RMSD force
+        # from simtk.openmm import RMSDForce
+        # rmsd_force = RMSDForce(structure.positions, [0, 1, 2, 3, 4, 5, 6, 7, 11, 12, 20, 21, 22, 23, 24, 25])
+        # system.addForce(rmsd_force)
 
+        # Multiply force constant in PeriodicTorsionForce by 100 for heavy atom non-sidechain dihedrals
+        top = md.Topology.from_openmm(structure.topology)
+        atom_indices = top.select("not name hydrogen and not sidechain")
+        force = system.getForce(5)
+        for i in range(force.getNumTorsions()):
+            torsion = force.getTorsionParameters(i)
+            atoms = torsion[:4]
+            result = all(atom in atom_indices for atom in atoms) # Check that all atom indices are in non-sidechain heavy atom list
+            if result:
+                print(i, torsion)
+                force.setTorsionParameters(i, torsion[0], torsion[1], torsion[2], torsion[3], torsion[4], torsion[5], torsion[6]*100)
+        print(system.getForce(5).getTorsionParameters(47))
         return system
 
 # Instantiate (modified) BLUES SystemFactory
