@@ -352,7 +352,7 @@ class SystemFactoryOpenMM(SystemFactory):
         # Multiply force constant in PeriodicTorsionForce by 100 for heavy atom non-sidechain dihedrals
         top = md.Topology.from_openmm(structure.topology)
         atom_indices = top.select("not name hydrogen and not sidechain")
-        force = system.getForce(5)
+        force = system.getForce(2)
         for i in range(force.getNumTorsions()):
             torsion = force.getTorsionParameters(i)
             atoms = torsion[:4]
@@ -360,7 +360,7 @@ class SystemFactoryOpenMM(SystemFactory):
             if result:
                 print(i, torsion)
                 force.setTorsionParameters(i, torsion[0], torsion[1], torsion[2], torsion[3], torsion[4], torsion[5], torsion[6]*100)
-        print(system.getForce(5).getTorsionParameters(47))
+        print(system.getForce(2).getTorsionParameters(11))
         return system
 
 # Instantiate (modified) BLUES SystemFactory
