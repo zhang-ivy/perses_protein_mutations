@@ -66,7 +66,7 @@ for i in range(force.getNumTorsions()):
     result = all(atom in atom_indices for atom in atoms) # Check that all atom indices are in non-sidechain heavy atom list
     if result:
         print(i, torsion)
-        force.setTorsionParameters(i, torsion[0], torsion[1], torsion[2], torsion[3], torsion[4], torsion[5], torsion[6]*100)
+        force.setTorsionParameters(i, torsion[0], torsion[1], torsion[2], torsion[3], torsion[4], torsion[5], torsion[6]*10)
 print(system.getForce(5).getTorsionParameters(47))
 
 system = htf.hybrid_system
