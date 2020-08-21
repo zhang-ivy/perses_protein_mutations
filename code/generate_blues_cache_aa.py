@@ -30,9 +30,10 @@ from simtk import openmm
 from simtk.openmm import app
 pdb = app.PDBFile(os.path.join(args.outdir, "blues/thr_vacuum.pdb"))
 
-# Set periodic box vectors
-vectors = htf.hybrid_system.getDefaultPeriodicBoxVectors()
-pdb.topology.setPeriodicBoxVectors(vectors)
+## DO NOT SET PERIODIC BOX VECTORS FOR VACUUM
+## Set periodic box vectors
+# vectors = htf.hybrid_system.getDefaultPeriodicBoxVectors()
+# pdb.topology.setPeriodicBoxVectors(vectors)
 
 # Parse a YAML configuration, return as Dict
 cfg = Settings(os.path.join(args.outdir, "blues/thr_vacuum.yaml")).asDict()
