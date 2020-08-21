@@ -60,6 +60,7 @@ simulation = multistate.ReplicaExchangeSampler(mcmc_moves=move, number_of_iterat
 
 # Run t-repex
 reporter_file = os.path.join(args.dir, f"{i}_{args.phase}_{args.name.lower()}_{args.length}ns.nc")
+print(reporter_file)
 reporter = multistate.MultiStateReporter(reporter_file, checkpoint_interval=1)
 simulation.create(thermodynamic_states=compound_states,
                   sampler_states=states.SamplerState(htf.hybrid_positions),
