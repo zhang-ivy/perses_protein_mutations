@@ -28,6 +28,7 @@ htf = pickle.load(open(os.path.join(args.dir, f"{i}_{args.phase}.pickle"), "rb" 
 # htf.hybrid_system.addForce(rmsd_force)
 
 # Multiply force constant in PeriodicTorsionForce by 100 for heavy atom non-sidechain dihedrals
+atom_indices = htf.hybrid_topology.select("not name hydrogen and not sidechain")
 force = htf.hybrid_system.getForce(5)
 for i in range(force.getNumTorsions()):
     torsion = force.getTorsionParameters(i)
@@ -36,6 +37,7 @@ for i in range(force.getNumTorsions()):
     if result:
         print(i, torsion)
         force.setTorsionParameters(i, torsion[0], torsion[1], torsion[2], torsion[3], torsion[4], torsion[5], torsion[6]*100)
+print(htf.hybrid_system.getForce(5).getTorsionParameters(47))
 
 # Create states for each replica
 n_replicas = 12  # Number of temperature replicas.
