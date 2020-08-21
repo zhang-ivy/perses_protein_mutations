@@ -31,9 +31,7 @@ import mdtraj as md
 from simtk.openmm import app
 pdb = app.PDBFile(os.path.join(args.outdir, "blues/thr_vacuum.pdb"))
 
-# Set periodic box vectors
-vectors = htf.hybrid_system.getDefaultPeriodicBoxVectors()
-pdb.topology.setPeriodicBoxVectors(vectors)
+## NOTE: Do not set periodic box vectors for vacuum
 
 # Parse a YAML configuration, return as Dict
 cfg = Settings(os.path.join(args.outdir, "blues/thr_vacuum.yaml")).asDict()
@@ -244,7 +242,7 @@ class SideChainMoveOpenMM2(SideChainMove):
 #             mod_prot = model.save(filename, overwrite=True)
         return context
 
-sidechain = SideChainMoveOpenMM2(structure, [1], [10, 11, 12, 13, 14, 15, 16, 17], write_move=True)
+sidechain = SideChainMoveOpenMM2(structure, [1], [10, 13, 14, 15, 16, 17, 18, 19], write_move=True)
 sidechain_mover = MoveEngine(sidechain)
 
 ## Subclass the BLUES SystemFactory object to take in an OpenMM SystemGenerator
