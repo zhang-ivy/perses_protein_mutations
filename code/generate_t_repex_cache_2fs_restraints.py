@@ -20,7 +20,7 @@ parser.add_argument('length', type=int, help='in ns')
 args = parser.parse_args()
 
 dir_num = os.path.basename(os.path.dirname(args.dir))
-htf = pickle.load(open(os.path.join(args.dir, f"{i}_{args.phase}.pickle"), "rb" ))
+htf = pickle.load(open(os.path.join(args.dir, f"{dir_num}_{args.phase}.pickle"), "rb" ))
 
 # # Add RMSD force
 # from simtk.openmm import RMSDForce
