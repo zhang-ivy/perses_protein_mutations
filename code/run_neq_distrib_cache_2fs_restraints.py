@@ -52,10 +52,22 @@ with open(os.path.join(args.dir, f"{i}_{args.phase}.pickle"), 'rb') as f:
 #     htf = htf.get('arr_0')
 #     htf = htf.flatten()[0]
 
-# Add RMSD force
-from simtk.openmm import RMSDForce
-rmsd_force = RMSDForce(htf.hybrid_positions, [0, 1, 2, 3, 4, 5, 6, 7, 13, 14, 16, 17, 18, 19, 20, 21])
-htf.hybrid_system.addForce(rmsd_force)
+# # Add RMSD force
+# from simtk.openmm import RMSDForce
+# rmsd_force = RMSDForce(htf.hybrid_positions, [0, 1, 2, 3, 4, 5, 6, 7, 13, 14, 16, 17, 18, 19, 20, 21])
+# htf.hybrid_system.addForce(rmsd_force)
+
+# Multiply force constant in PeriodicTorsionForce by 100 for heavy atom non-sidechain dihedrals
+atom_indices = htf.hybrid_topology.select("not name hydrogen and not sidechain")
+force = htf.hybrid_system.getForce(5)
+for i in range(force.getNumTorsions()):
+    torsion = force.getTorsionParameters(i)
+    atoms = torsion[:4]
+    result = all(atom in atom_indices for atom in atoms) # Check that all atom indices are in non-sidechain heavy atom list
+    if result:
+        print(i, torsion)
+        force.setTorsionParameters(i, torsion[0], torsion[1], torsion[2], torsion[3], torsion[4], torsion[5], torsion[6]*100)
+print(htf.hybrid_system.getForce(5).getTorsionParameters(47))
 
 system = htf.hybrid_system
 
