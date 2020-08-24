@@ -57,6 +57,8 @@ with open(os.path.join(args.dir, f"{i}_{args.phase}.pickle"), 'rb') as f:
 # rmsd_force = RMSDForce(htf.hybrid_positions, [0, 1, 2, 3, 4, 5, 6, 7, 13, 14, 16, 17, 18, 19, 20, 21])
 # htf.hybrid_system.addForce(rmsd_force)
 
+system = htf.hybrid_system
+
 # Multiply force constant in PeriodicTorsionForce by 100 for heavy atom non-sidechain dihedrals
 atom_indices = htf.hybrid_topology.select("not name hydrogen and not sidechain")
 force = system.getForce(5)
@@ -68,8 +70,6 @@ for i in range(force.getNumTorsions()):
         print(i, torsion)
         force.setTorsionParameters(i, torsion[0], torsion[1], torsion[2], torsion[3], torsion[4], torsion[5], torsion[6]*10)
 print(system.getForce(5).getTorsionParameters(47))
-
-system = htf.hybrid_system
 
 # Read in cache
 with open(os.path.join(args.dir, f"blues/{args.old_name}_pos_hybrid.npy"), 'rb') as f:
