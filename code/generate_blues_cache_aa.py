@@ -508,10 +508,12 @@ simulations = SimulationFactoryOpenMM(systems, sidechain_mover, cfg['simulation'
                             cfg['ncmc_reporters'])
 simulations.md.minimizeEnergy(maxIterations=0)
 simulations.md.step(500)
-blues = BLUESSimulation2(simulations, i, cfg['simulation'])
-try:
-    blues.run(write_move=True)
-except:
-    # subprocess.call(['rm', outfile])
-    continue
+blues = BLUESSimulation2(simulations, 0, cfg['simulation'])
+blues.run(write_move=True)
+
+# try:
+#     blues.run(write_move=True)
+# except:
+#     # subprocess.call(['rm', outfile])
+#     continue
 
