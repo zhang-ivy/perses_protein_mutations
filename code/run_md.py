@@ -8,6 +8,7 @@ import argparse
 import mdtraj as md
 from openmmforcefields.generators import SystemGenerator
 from tqdm import tqdm
+import os
 
 # Read args
 parser = argparse.ArgumentParser(description='run perses protein mutation on capped amino acid')
