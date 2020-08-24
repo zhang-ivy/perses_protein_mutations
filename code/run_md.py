@@ -41,7 +41,7 @@ integrator = openmm.LangevinIntegrator(temperature, collision_rate, timestep)
 
 # Minimize
 print('Minimizing energy...')
-context = openmm.Context(htf._topology.proposal.old_system, integrator)
+context = openmm.Context(htf._topology_proposal.old_system, integrator)
 context.setPositions(htf.old_positions(htf.hybrid_positions))
 print('  initial : %8.3f kcal/mol' % (context.getState(getEnergy=True).getPotentialEnergy()/unit.kilocalories_per_mole))
 openmm.LocalEnergyMinimizer.minimize(context)
