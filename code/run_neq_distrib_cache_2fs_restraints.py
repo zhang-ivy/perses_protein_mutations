@@ -71,8 +71,11 @@ print(system.getForce(5).getTorsionParameters(47))
 with open(os.path.join(args.dir, f"{args.old_name}_pos.npy"), 'rb') as f:
     pos_hybrid = np.load(f)
 
+with open(os.path.join(args.dir, f"{args.old_name}_indices.npy"), 'rb') as f:
+    indices = np.load(f)
+
 # Get equilbrium snapshot of ser
-old_positions = pos_hybrid[int(args.sim_number)] * unit.nanometer
+old_positions = pos_hybrid[indices[int(args.sim_number)]] * unit.nanometer
 
 # Make geometry engine
 geometry_engine = FFAllAngleGeometryEngine(metadata=None,
