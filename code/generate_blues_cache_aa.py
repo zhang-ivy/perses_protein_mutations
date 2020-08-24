@@ -25,6 +25,11 @@ import os
 import subprocess
 from blues.reporters import NetCDF4Reporter
 from simtk import openmm
+import math
+import numpy as np
+import sys
+import logging
+logger = logging.getLogger("simulation")
 
 # Read in PDB
 from simtk.openmm import app
@@ -390,12 +395,105 @@ class SimulationFactoryOpenMM(SimulationFactory):
 
         return simulation
 
+## Subclass BLUESSimulation object to save accepted frames as npys
+
+class BLUESSimulation2(BLUESSimulation):
+    def __init__(self, simulations, iteration, config=None):
+        self._move_engine = simulations._move_engine
+        self._md_sim = simulations.md
+        self._alch_sim = simulations.alch
+        self._ncmc_sim = simulations.ncmc
+        self._iteration = iteration
+
+        # Check if configuration has been specified in `SimulationFactory` object
+        if not config:
+            if hasattr(simulations, 'config'):
+                self._config = simulations.config
+        else:
+            #Otherwise take specified config
+            self._config = config
+        if self._config:
+            self._printSimulationTiming()
+
+        self.accept = 0
+        self.reject = 0
+        self.acceptRatio = 0
+        self.currentIter = 0
+
+        #Dict to keep track of each simulation state before/after each iteration
+        self.stateTable = {'md': {'state0': {}, 'state1': {}}, 'ncmc': {'state0': {}, 'state1': {}}}
+
+        #specify nc integrator variables to report in verbose output
+        self._integrator_keys_ = ['lambda', 'shadow_work', 'protocol_work', 'Eold', 'Enew']
+
+        self._state_keys = {
+            'getPositions': True,
+            'getVelocities': True,
+            'getForces': False,
+            'getEnergy': True,
+            'getParameters': True,
+            'enforcePeriodicBox': True
+        }
+    
+    def _acceptRejectMove(self, write_move=False):
+        """Choose to accept or reject the proposed move based
+        on the acceptance criterion.
+        Parameters
+        ----------
+        write_move : bool, default=False
+            If True, writes the proposed NCMC move to a PDB file.
+        """
+        work_ncmc = self._ncmc_sim.context._integrator.getLogAcceptanceProbability(self._ncmc_sim.context)
+        randnum = math.log(np.random.random())
+
+        # Compute correction if work_ncmc is not NaN
+        if not np.isnan(work_ncmc):
+            correction_factor = self._computeAlchemicalCorrection()
+            logger.debug(
+                'NCMCLogAcceptanceProbability = %.6f + Alchemical Correction = %.6f' % (work_ncmc, correction_factor))
+            work_ncmc = work_ncmc + correction_factor
+
+        if work_ncmc > randnum:
+            self.accept += 1
+            logger.info('NCMC MOVE ACCEPTED: work_ncmc {} > randnum {}'.format(work_ncmc, randnum))
+
+            # If accept move, sync NCMC state to MD context
+            ncmc_state1 = self.stateTable['ncmc']['state1']
+            self._md_sim.context = self.setContextFromState(self._md_sim.context, ncmc_state1, velocities=False)
+
+            if write_move:
+                outname = self._config['outfname'] + f"_{self._iteration}_{self.currentIter}.npy"
+                
+                # Save npy
+                with open(outname, 'wb') as f:
+                    state = self._md_sim.context.getState(getPositions=True, enforcePeriodicBox=True)
+                    np.save(f, state.getPositions()) 
+
+                logger.info(f'\tSaving Frame to: {outname}')
+
+        else:
+            self.reject += 1
+            logger.info('NCMC MOVE REJECTED: work_ncmc {} < {}'.format(work_ncmc, randnum))
+
+            # If reject move, do nothing,
+            # NCMC simulation be updated from MD Simulation next iteration.
+
+            # Potential energy should be from last MD step in the previous iteration
+            md_state0 = self.stateTable['md']['state0']
+            md_PE = self._md_sim.context.getState(getEnergy=True).getPotentialEnergy()
+            if not math.isclose(md_state0['potential_energy']._value, md_PE._value, rel_tol=float('1e-%s' % rtol)):
+                logger.error(
+                    'Last MD potential energy %s != Current MD potential energy %s. Potential energy should match the prior state.'
+                    % (md_state0['potential_energy'], md_PE))
+                sys.exit(1)
+
+
 # simulations = SimulationFactory(systems, sidechain_mover, cfg['simulation'], cfg['md_reporters'],
 #                                 cfg['ncmc_reporters'])
 
-# Instantiate BLUES SimulationFactory
-simulations = SimulationFactoryOpenMM(systems, sidechain_mover, cfg['simulation'], cfg['md_reporters'],
-                                cfg['ncmc_reporters'])
+# # Instantiate BLUES SimulationFactory
+# simulations = SimulationFactoryOpenMM(systems, sidechain_mover, cfg['simulation'], cfg['md_reporters'],
+#                                 cfg['ncmc_reporters'])
 
 for i in range(100):
     print(f"iter: {i}")
@@ -410,9 +508,9 @@ for i in range(100):
                                 cfg['ncmc_reporters'])
     simulations.md.minimizeEnergy(maxIterations=0)
     simulations.md.step(500)
-    blues = BLUESSimulation(simulations, cfg['simulation'])
+    blues = BLUESSimulation2(simulations, i, cfg['simulation'])
     try:
-        blues.run()
+        blues.run(write_move=True)
     except:
         # subprocess.call(['rm', outfile])
         continue
