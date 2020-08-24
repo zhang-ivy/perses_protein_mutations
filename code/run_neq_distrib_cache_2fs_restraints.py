@@ -44,13 +44,9 @@ timestep = 2.0 * unit.femtosecond
 platform_name = 'CUDA'
 
 # # Read in htf
-i = os.path.basename(os.path.dirname(args.dir))
-with open(os.path.join(args.dir, f"{i}_{args.phase}.pickle"), 'rb') as f:
+dir_num = os.path.basename(os.path.dirname(args.dir))
+with open(os.path.join(args.dir, f"{dir_num}_{args.phase}.pickle"), 'rb') as f:
     htf = pickle.load(f)
-# with open(os.path.join(args.dir, f"{i}_{args.phase}.npz"), 'rb') as f:
-#     htf = np.load(f, allow_pickle=True)
-#     htf = htf.get('arr_0')
-#     htf = htf.flatten()[0]
 
 # # Add RMSD force
 # from simtk.openmm import RMSDForce
@@ -169,18 +165,18 @@ for rev_step in range(nsteps_neq):
 reverse_works_master.append(reverse_works)
 
 # Save works
-with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_forward.npy"), 'wb') as f:
+with open(os.path.join(args.dir, f"{dir_num}_{args.phase}_{args.sim_number}_forward.npy"), 'wb') as f:
     np.save(f, forward_works_master)
-with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_reverse.npy"), 'wb') as f:
+with open(os.path.join(args.dir, f"{dir_num}_{args.phase}_{args.sim_number}_reverse.npy"), 'wb') as f:
     np.save(f, reverse_works_master)
 
 # Save trajs
-with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_forward_neq_old.npy"), 'wb') as f:
+with open(os.path.join(args.dir, f"{dir_num}_{args.phase}_{args.sim_number}_forward_neq_old.npy"), 'wb') as f:
     np.save(f, forward_neq_old)
-with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_forward_neq_new.npy"), 'wb') as f:
+with open(os.path.join(args.dir, f"{dir_num}_{args.phase}_{args.sim_number}_forward_neq_new.npy"), 'wb') as f:
     np.save(f, forward_neq_new)
-with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_reverse_neq_old.npy"), 'wb') as f:
+with open(os.path.join(args.dir, f"{dir_num}_{args.phase}_{args.sim_number}_reverse_neq_old.npy"), 'wb') as f:
     np.save(f, reverse_neq_old)
-with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_reverse_neq_new.npy"), 'wb') as f:
+with open(os.path.join(args.dir, f"{dir_num}_{args.phase}_{args.sim_number}_reverse_neq_new.npy"), 'wb') as f:
     np.save(f, reverse_neq_new)
 
