@@ -59,7 +59,7 @@ with open(os.path.join(args.dir, f"{i}_{args.phase}.pickle"), 'rb') as f:
 
 system = htf.hybrid_system
 
-# Multiply force constant in PeriodicTorsionForce by 100 for heavy atom non-sidechain dihedrals
+# Multiply force constant in PeriodicTorsionForce by 10 for heavy atom non-sidechain dihedrals
 atom_indices = htf.hybrid_topology.select("not name hydrogen and not sidechain")
 force = system.getForce(5)
 for i in range(force.getNumTorsions()):
@@ -71,11 +71,11 @@ for i in range(force.getNumTorsions()):
         force.setTorsionParameters(i, torsion[0], torsion[1], torsion[2], torsion[3], torsion[4], torsion[5], torsion[6]*10)
 print(system.getForce(5).getTorsionParameters(47))
 
-# Read in cache
+# Read in cache -- these aren't actually hybrid pos
 with open(os.path.join(args.dir, f"blues/{args.old_name}_pos_hybrid.npy"), 'rb') as f:
     pos_hybrid = np.load(f)
 
-# Get equilbrium snapshot of ser
+# Get equilbrium snapshot of thr
 old_positions = pos_hybrid[int(args.sim_number)] * unit.nanometer
 
 # Make geometry engine
