@@ -495,23 +495,23 @@ class BLUESSimulation2(BLUESSimulation):
 # simulations = SimulationFactoryOpenMM(systems, sidechain_mover, cfg['simulation'], cfg['md_reporters'],
 #                                 cfg['ncmc_reporters'])
 
-for i in range(100):
-    print(f"iter: {i}")
-    outfile = os.path.join(args.outdir, f'blues/thr_{i}.nc')
+# for i in range(100):
+    # print(f"iter: {i}")
+outfile = os.path.join(args.outdir, f'blues/thr_{0}.nc')
 
-    # Manually set new reporter for each iteration i
-    reporter = NetCDF4Reporter(outfile, reportInterval=500)
-    cfg['md_reporters'] = [cfg['md_reporters'][0]] + [reporter] + cfg['md_reporters'][2:] 
+# Manually set new reporter for each iteration i
+reporter = NetCDF4Reporter(outfile, reportInterval=500)
+cfg['md_reporters'] = [cfg['md_reporters'][0]] + [reporter] + cfg['md_reporters'][2:] 
 
-    # Run simulation
-    simulations = SimulationFactoryOpenMM(systems, sidechain_mover, cfg['simulation'], cfg['md_reporters'],
-                                cfg['ncmc_reporters'])
-    simulations.md.minimizeEnergy(maxIterations=0)
-    simulations.md.step(500)
-    blues = BLUESSimulation2(simulations, i, cfg['simulation'])
-    try:
-        blues.run(write_move=True)
-    except:
-        # subprocess.call(['rm', outfile])
-        continue
+# Run simulation
+simulations = SimulationFactoryOpenMM(systems, sidechain_mover, cfg['simulation'], cfg['md_reporters'],
+                            cfg['ncmc_reporters'])
+simulations.md.minimizeEnergy(maxIterations=0)
+simulations.md.step(500)
+blues = BLUESSimulation2(simulations, i, cfg['simulation'])
+try:
+    blues.run(write_move=True)
+except:
+    # subprocess.call(['rm', outfile])
+    continue
 
