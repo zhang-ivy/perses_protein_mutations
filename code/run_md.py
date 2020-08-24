@@ -9,6 +9,7 @@ import mdtraj as md
 from openmmforcefields.generators import SystemGenerator
 from tqdm import tqdm
 import os
+import pickle
 
 # Read args
 parser = argparse.ArgumentParser(description='run perses protein mutation on capped amino acid')
