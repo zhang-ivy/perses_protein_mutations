@@ -1,13 +1,13 @@
 #!/bin/env python
 
 import time
-import progressbar
 from simtk import openmm, unit
 from simtk.openmm import app
 from openmmtools.integrators import LangevinIntegrator
 import argparse 
 import mdtraj as md
 from openmmforcefields.generators import SystemGenerator
+from tqdm import tqdm
 
 # Read args
 parser = argparse.ArgumentParser(description='run perses protein mutation on capped amino acid')
@@ -49,7 +49,7 @@ print('  final   : %8.3f kcal/mol' % (context.getState(getEnergy=True).getPotent
 print('Equilibrating...')
 initial_time = time.time()
 positions = []
-for iteration in range(niterations):
+for iteration in tqdm(range(niterations)):
     integrator.step(nsteps)
     pos = context.getState(getPositions=True, enforcePeriodicBox=False).getPositions(asNumpy=True)
     positions.append(pos.value_in_unit_system(unit.md_unit_system))
