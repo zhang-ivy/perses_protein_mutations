@@ -60,8 +60,8 @@ elapsed_time = (time.time() - initial_time) * unit.seconds
 simulation_time = niterations * nsteps * timestep
 print('    Equilibration took %.3f s for %.3f ns (%8.3f ns/day)' % (elapsed_time / unit.seconds, simulation_time / unit.nanoseconds, simulation_time / elapsed_time * unit.day / unit.nanoseconds))
 
-with open(output_prefix + equilibrated_pdb_filename, 'w') as outfile:
-    app.PDBFile.writeFile(pdb.topology, context.getState(getPositions=True,enforcePeriodicBox=True).getPositions(), file=outfile, keepIds=True)
+with open(os.path.join(args.dir, equilibrated_pdb_filename), 'w') as outfile:
+    app.PDBFile.writeFile(htf._topology_proposal.old_topology, context.getState(getPositions=True,enforcePeriodicBox=True).getPositions(), file=outfile, keepIds=True)
 print('  final   : %8.3f kcal/mol' % (context.getState(getEnergy=True).getPotentialEnergy()/unit.kilocalories_per_mole))
 
 # Save trajs
