@@ -24,7 +24,7 @@ import openeye.oechem as oechem
 import os
 import subprocess
 from blues.reporters import NetCDF4Reporter
-from simtk import openmm
+from simtk import openmm, unit
 import mdtraj as md
 import math
 import numpy as np
@@ -371,7 +371,7 @@ class SystemFactoryOpenMM(SystemFactory):
         top = md.Topology.from_openmm(structure.topology)
         atom_indices = top.select("not name hydrogen and not sidechain")
         for index in top.atoms:
-            system.setParticleMass(index, 0*u.dalton)
+            system.setParticleMass(index, 0*unit.dalton)
 
         return system
 
