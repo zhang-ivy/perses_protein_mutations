@@ -42,7 +42,7 @@ htf = pickle.load(open(os.path.join(args.dir, f"{dir_num}_{args.phase}.pickle"),
 # Set particle mass of backbone and cap atoms 0
 top = md.Topology.from_openmm(htf._topology_proposal.old_topology)
 atom_indices = top.select("not name hydrogen and not sidechain")
-for index in top.atoms:
+for index in atom_indices:
     htf.hybrid_system.setParticleMass(index, 0.0)
 
 # Create states for each replica
