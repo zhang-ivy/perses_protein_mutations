@@ -33,6 +33,8 @@ import numpy as np
 import sys
 import logging
 logger = logging.getLogger("simulation")
+finfo = np.finfo(np.float32)
+rtol = finfo.precision
 
 # Read in PDB
 from simtk.openmm import app
