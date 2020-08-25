@@ -537,7 +537,8 @@ for i in range(10):
         simulations.md.step(500)
         blues = BLUESSimulation2(simulations, i, cfg['simulation'])
         blues.run(write_move=True)
-    except:
+    except Exception as e:
         # subprocess.call(['rm', outfile])
+        print(e)
         continue
 
