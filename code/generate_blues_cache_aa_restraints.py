@@ -377,7 +377,7 @@ class SystemFactoryOpenMM(SystemFactory):
 
 # Instantiate (modified) BLUES SystemFactory
 systems = SystemFactoryOpenMM(structure, sidechain.atom_indices, system_generator, cfg['system'])
-systems.alch = SystemFactoryOpenmm.restrain_positions(structure, systems.alch)
+systems.alch = SystemFactoryOpenMM.restrain_positions(structure, systems.alch)
 
 ## Subclass BLUES SimulationFactory object to avoid using parmed.Structure object, and instead use an
 ## OpenMM Modeller object. (Changes involves how box vectors are checked/set)
