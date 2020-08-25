@@ -368,15 +368,16 @@ class SystemFactoryOpenMM(SystemFactory):
         # print(system.getForce(2).getTorsionParameters(11))
 
         # First compute the system mass
-        top = md.Topology.from_openmm(structure.topology)
-        atom_indices = top.select("not name hydrogen and not sidechain")
-        for index in atom_indices:
-            system.setParticleMass(int(index), 0.0)
+        # top = md.Topology.from_openmm(structure.topology)
+        # atom_indices = top.select("not name hydrogen and not sidechain")
+        # for index in atom_indices:
+        #     system.setParticleMass(int(index), 0.0)
 
         return system
 
 # Instantiate (modified) BLUES SystemFactory
 systems = SystemFactoryOpenMM(structure, sidechain.atom_indices, system_generator, cfg['system'])
+systems.alch = SystemFactoryOpenmm.restrain_positions(structure, systems.alch)
 
 ## Subclass BLUES SimulationFactory object to avoid using parmed.Structure object, and instead use an
 ## OpenMM Modeller object. (Changes involves how box vectors are checked/set)
@@ -542,8 +543,8 @@ class BLUESSimulation2(BLUESSimulation):
 #                                 cfg['ncmc_reporters'])
 
 # Instantiate BLUES SimulationFactory
-simulations = SimulationFactoryOpenMM(systems, sidechain_mover, cfg['simulation'], cfg['md_reporters'],
-                                cfg['ncmc_reporters'])
+# simulations = SimulationFactoryOpenMM(systems, sidechain_mover, cfg['simulation'], cfg['md_reporters'],
+#                                 cfg['ncmc_reporters'])
 
 for i in range(100):
     logger.info(f"iter: {i}")
