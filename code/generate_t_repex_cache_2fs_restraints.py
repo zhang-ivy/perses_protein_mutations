@@ -43,7 +43,7 @@ htf = pickle.load(open(os.path.join(args.dir, f"{dir_num}_{args.phase}.pickle"),
 top = md.Topology.from_openmm(htf._topology_proposal.old_topology)
 atom_indices = top.select("not name hydrogen and not sidechain")
 for index in atom_indices:
-    htf.hybrid_system.setParticleMass(index, 0.0)
+    htf.hybrid_system.setParticleMass(int(index), 0.0)
 
 # Create states for each replica
 n_replicas = 12  # Number of temperature replicas.
