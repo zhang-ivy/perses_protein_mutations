@@ -521,8 +521,8 @@ class BLUESSimulation2(BLUESSimulation):
 simulations = SimulationFactoryOpenMM(systems, sidechain_mover, cfg['simulation'], cfg['md_reporters'],
                                 cfg['ncmc_reporters'])
 
-for i in range(10):
-    print(f"iter: {i}")
+for i in range(100):
+    logger.info(f"iter: {i}")
     outfile = os.path.join(args.outdir, f'blues/thr_{i}.nc')
 
     # Manually set new reporter for each iteration i
@@ -539,6 +539,6 @@ for i in range(10):
         blues.run(write_move=True)
     except Exception as e:
         # subprocess.call(['rm', outfile])
-        print(e)
+        logger.info(e)
         continue
 
