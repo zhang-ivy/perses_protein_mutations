@@ -512,6 +512,30 @@ class BLUESSimulation2(BLUESSimulation):
                     'Last MD potential energy %s != Current MD potential energy %s. Potential energy should match the prior state.'
                     % (md_state0['potential_energy'], md_PE))
                 sys.exit(1)
+    def _stepMD(self, nstepsMD):
+        """Advance the MD simulation.
+        Parameters
+        ----------
+        nstepsMD : int
+            The number of steps to advance the MD simulation.
+        """
+        logger.info('Advancing %i MD steps...' % (nstepsMD))
+        self._md_sim.currentIter = self.currentIter
+        # Retrieve MD state before proposed move
+        # Helps determine if previous iteration placed ligand poorly
+        md_state0 = self.stateTable['md']['state0']
+
+        for md_step in range(int(nstepsMD)):
+            try:
+                self._md_sim.step(1)
+            except Exception as e:
+                logger.error(e, exc_info=True)
+                logger.error('potential energy before NCMC: %s' % md_state0['potential_energy'])
+                logger.error('kinetic energy before NCMC: %s' % md_state0['kinetic_energy'])
+                #Write out broken frame
+                utils.saveSimulationFrame(self._md_sim,
+                                          'MD-fail-it%s-md%i.pdb' % (self.currentIter, self._md_sim.currentStep))
+                # sys.exit(1)
 
 
 # simulations = SimulationFactory(systems, sidechain_mover, cfg['simulation'], cfg['md_reporters'],
