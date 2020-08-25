@@ -27,17 +27,23 @@ htf = pickle.load(open(os.path.join(args.dir, f"{dir_num}_{args.phase}.pickle"),
 # rmsd_force = RMSDForce(htf.hybrid_positions, [0, 1, 2, 3, 4, 5, 6, 7, 13, 14, 16, 17, 18, 19, 20, 21])
 # htf.hybrid_system.addForce(rmsd_force)
 
-# Multiply force constant in PeriodicTorsionForce by 100 for heavy atom non-sidechain dihedrals
-atom_indices = htf.hybrid_topology.select("not name hydrogen and not sidechain")
-force = htf.hybrid_system.getForce(5)
-for i in range(force.getNumTorsions()):
-    torsion = force.getTorsionParameters(i)
-    atoms = torsion[:4]
-    result = all(atom in atom_indices for atom in atoms) # Check that all atom indices are in non-sidechain heavy atom list
-    if result:
-        print(i, torsion)
-        force.setTorsionParameters(i, torsion[0], torsion[1], torsion[2], torsion[3], torsion[4], torsion[5], torsion[6]*10)
-print(htf.hybrid_system.getForce(5).getTorsionParameters(47))
+# # Multiply force constant in PeriodicTorsionForce by 100 for heavy atom non-sidechain dihedrals
+# atom_indices = htf.hybrid_topology.select("not name hydrogen and not sidechain")
+# force = htf.hybrid_system.getForce(5)
+# for i in range(force.getNumTorsions()):
+#     torsion = force.getTorsionParameters(i)
+#     atoms = torsion[:4]
+#     result = all(atom in atom_indices for atom in atoms) # Check that all atom indices are in non-sidechain heavy atom list
+#     if result:
+#         print(i, torsion)
+#         force.setTorsionParameters(i, torsion[0], torsion[1], torsion[2], torsion[3], torsion[4], torsion[5], torsion[6]*10)
+# print(htf.hybrid_system.getForce(5).getTorsionParameters(47))
+
+# Set particle mass of backbone and cap atoms 0
+top = md.Topology.from_openmm(htf._topology_proposal.old_topology)
+atom_indices = top.select("not name hydrogen and not sidechain")
+for index in top.atoms:
+    system.setParticleMass(index, 0*unit.dalton)
 
 # Create states for each replica
 n_replicas = 12  # Number of temperature replicas.
