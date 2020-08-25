@@ -511,7 +511,7 @@ class BLUESSimulation2(BLUESSimulation):
                 
                 # Save npy
                 with open(outname, 'wb') as f:
-                    state = self._md_sim.context.getState(getPositions=True, enforcePeriodicBox=True)
+                    state = self._md_sim.context.getState(getPositions=True, enforcePeriodicBox=False)
                     np.save(f, state.getPositions(asNumpy=True)) 
 
                 logger.info(f'\tSaving Frame to: {outname}')
