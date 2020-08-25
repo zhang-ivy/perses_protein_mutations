@@ -373,11 +373,29 @@ class SystemFactoryOpenMM(SystemFactory):
         # for index in atom_indices:
         #     system.setParticleMass(int(index), 0.0)
 
+        top = md.Topology.from_openmm(structure.topology)
+        atom_indices = top.select("not name hydrogen and not sidechain")
+
+        # Use quadratic restraint
+        force = openmm.CustomExternalForce('k_restr*periodicdistance(x, y, z, x0, y0, z0)^2')
+        # Add the restraint weight as a global parameter in kcal/mol/A^2
+        force.addGlobalParameter("k_restr", weight)
+        #force.addGlobalParameter("k_restr", weight*unit.kilocalories_per_mole/unit.angstroms**2)
+        # Define the target xyz coords for the restraint as per-atom (per-particle) parameters
+        force.addPerParticleParameter("x0")
+        force.addPerParticleParameter("y0")
+        force.addPerParticleParameter("z0")
+
+        for i, atom_crd in enumerate(structure.positions):
+            if i in atom_indices:
+                logger.info(i)
+                force.addParticle(i, atom_crd.value_in_unit(unit.nanometers))
+        system.addForce(force)
+
         return system
 
 # Instantiate (modified) BLUES SystemFactory
 systems = SystemFactoryOpenMM(structure, sidechain.atom_indices, system_generator, cfg['system'])
-systems.alch = SystemFactoryOpenMM.restrain_positions(structure, systems.alch)
 
 ## Subclass BLUES SimulationFactory object to avoid using parmed.Structure object, and instead use an
 ## OpenMM Modeller object. (Changes involves how box vectors are checked/set)
