@@ -371,7 +371,7 @@ class SystemFactoryOpenMM(SystemFactory):
         top = md.Topology.from_openmm(structure.topology)
         atom_indices = top.select("not name hydrogen and not sidechain")
         for index in top.atoms:
-            system.setParticleMass(index, 0)
+            system.setParticleMass(index, 0.0)
 
         return system
 
