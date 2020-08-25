@@ -379,7 +379,7 @@ class SystemFactoryOpenMM(SystemFactory):
         # Use quadratic restraint
         force = openmm.CustomExternalForce('k_restr*periodicdistance(x, y, z, x0, y0, z0)^2')
         # Add the restraint weight as a global parameter in kcal/mol/A^2
-        force.addGlobalParameter("k_restr", weight)
+        force.addGlobalParameter("k_restr", 5.0)
         #force.addGlobalParameter("k_restr", weight*unit.kilocalories_per_mole/unit.angstroms**2)
         # Define the target xyz coords for the restraint as per-atom (per-particle) parameters
         force.addPerParticleParameter("x0")
