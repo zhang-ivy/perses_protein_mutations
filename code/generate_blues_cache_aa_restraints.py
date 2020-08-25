@@ -532,10 +532,10 @@ for i in range(10):
     # Run simulation
     simulations = SimulationFactoryOpenMM(systems, sidechain_mover, cfg['simulation'], cfg['md_reporters'],
                                 cfg['ncmc_reporters'])
-    simulations.md.minimizeEnergy(maxIterations=0)
-    simulations.md.step(500)
-    blues = BLUESSimulation2(simulations, i, cfg['simulation'])
     try:
+        simulations.md.minimizeEnergy(maxIterations=0)
+        simulations.md.step(500)
+        blues = BLUESSimulation2(simulations, i, cfg['simulation'])
         blues.run(write_move=True)
     except:
         # subprocess.call(['rm', outfile])
