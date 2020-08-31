@@ -8,6 +8,7 @@ import argparse
 import os
 import time
 import mdtraj as md
+from tqdm import tqdm
 
 # Set up logger
 _logger = logging.getLogger()
@@ -68,7 +69,7 @@ ncycles = 1
 forward_works_master, reverse_works_master = list(), list()
 forward_eq_old, forward_neq_old, forward_neq_new = list(), list(), list()
 reverse_eq_new, reverse_neq_old, reverse_neq_new = list(), list(), list()
-for cycle in range(ncycles):
+for cycle in tqdm(range(ncycles)):
     # Equilibrium (lambda = 0)
     for step in range(nsteps_eq):
         initial_time = time.time()
