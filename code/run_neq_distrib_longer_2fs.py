@@ -34,8 +34,8 @@ DEFAULT_ALCHEMICAL_FUNCTIONS = {
                              'lambda_torsions': x}
 
 # Define simulation parameters
-nsteps_eq = 2500000 # 2.5 ns
-nsteps_neq = 2500000 # 2.5 ns
+nsteps_eq = 5000000 # 10 ns
+nsteps_neq = 1000000 # 2 ns
 neq_splitting='V R H O R V'
 timestep = 2.0 * unit.femtosecond
 platform_name = 'CUDA'
