@@ -23,10 +23,10 @@ args = parser.parse_args()
 #
 
 pressure = 1.0 * unit.atmospheres
-temperature = 310 * unit.kelvin
+temperature = 300 * unit.kelvin
 collision_rate = 1.0 / unit.picoseconds
 timestep = 2.0 * unit.femtoseconds
-splitting = 'V R O R V'
+splitting="V R H O R V"
 nsteps = 5000 # 10 ps
 niterations = 5000 # 50 ns
 
@@ -38,7 +38,7 @@ with open(os.path.join(args.dir, f"{dir_num}_{args.phase}.pickle"), 'rb') as f:
 equilibrated_pdb_filename = f'{args.phase}_equilibrated.pdb'
 
 # Make integrator
-integrator = openmm.LangevinIntegrator(temperature, collision_rate, timestep)
+integrator = openmm.LangevinIntegrator(temperature, collision_rate, timestep, splitting=spltting)
 
 # Minimize
 print('Minimizing energy...')
