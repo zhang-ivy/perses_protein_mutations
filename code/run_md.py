@@ -27,15 +27,15 @@ temperature = 310 * unit.kelvin
 collision_rate = 1.0 / unit.picoseconds
 timestep = 2.0 * unit.femtoseconds
 splitting = 'V R O R V'
-nsteps = 1000 # 2 ps
-niterations = 2500 # 5 ns
+nsteps = 5000 # 10 ps
+niterations = 5000 # 50 ns
 
 # Read in htf
 dir_num = os.path.basename(os.path.dirname(args.dir))
 with open(os.path.join(args.dir, f"{dir_num}_{args.phase}.pickle"), 'rb') as f:
     htf = pickle.load(f)
 
-equilibrated_pdb_filename = 'equilibrated.pdb'
+equilibrated_pdb_filename = f'{args.phase}_equilibrated.pdb'
 
 # Make integrator
 integrator = openmm.LangevinIntegrator(temperature, collision_rate, timestep)
@@ -66,8 +66,8 @@ with open(os.path.join(args.dir, equilibrated_pdb_filename), 'w') as outfile:
 print('  final   : %8.3f kcal/mol' % (context.getState(getEnergy=True).getPotentialEnergy()/unit.kilocalories_per_mole))
 
 # Save trajs
-with open(os.path.join(args.dir, "positions.npy"), 'wb') as f:
+with open(os.path.join(args.dir, f"{args.phase}_positions.npy"), 'wb') as f:
     np.save(f, positions)
 traj = md.Trajectory(np.array(np.array(positions)), md.Topology.from_openmm(htf._topology_proposal.old_topology))
-traj.save(os.path.join(args.dir, "traj.dcd"))
+traj.save(os.path.join(args.dir, f"{args.phase}_traj.dcd"))
 
