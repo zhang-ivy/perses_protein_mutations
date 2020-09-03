@@ -38,7 +38,7 @@ with open(os.path.join(args.dir, f"{dir_num}_{args.phase}.pickle"), 'rb') as f:
 equilibrated_pdb_filename = f'{args.phase}_equilibrated.pdb'
 
 # Make integrator
-integrator = openmm.LangevinIntegrator(temperature, collision_rate, timestep, splitting=spltting)
+integrator = openmm.LangevinIntegrator(temperature, collision_rate, timestep, splitting=splitting)
 
 # Minimize
 print('Minimizing energy...')
