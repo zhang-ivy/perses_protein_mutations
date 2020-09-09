@@ -26,9 +26,9 @@ pressure = 1.0 * unit.atmospheres
 temperature = 300 * unit.kelvin
 collision_rate = 1.0 / unit.picoseconds
 timestep = 2.0 * unit.femtoseconds
-splitting="V R H O R V"
+# splitting="V R H O R V"
 nsteps = 5000 # 10 ps
-niterations = 5000 # 50 ns
+niterations = 25000 # 250 ns
 
 # Read in htf
 dir_num = os.path.basename(os.path.dirname(args.dir))
