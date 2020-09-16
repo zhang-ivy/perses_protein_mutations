@@ -20,7 +20,7 @@ _logger.setLevel(logging.DEBUG)
 parser = argparse.ArgumentParser(description='run perses protein mutation on capped amino acid')
 parser.add_argument('dir', type=str, help='path to input/output dir')
 parser.add_argument('phase', type=str, help='solvent or vacuum')
-parse.add_argument('endstate', type=int, help="0 or 1")
+parser.add_argument('endstate', type=int, help="0 or 1")
 args = parser.parse_args()
 
 # Define lambda functions
