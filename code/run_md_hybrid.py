@@ -66,7 +66,7 @@ if platform_name in ['CUDA', 'OpenCL']:
     platform.setPropertyDefaultValue('Precision', 'mixed')
 if platform_name in ['CUDA']:
     platform.setPropertyDefaultValue('DeterministicForces', 'true')
-context = one_endstate.create_context(integrator, platform=platform)
+context = thermodynamic_state.create_context(integrator, platform=platform)
 context.setPeriodicBoxVectors(*system.getDefaultPeriodicBoxVectors())
 context.setPositions(positions)
 
