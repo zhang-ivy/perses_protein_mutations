@@ -74,21 +74,6 @@ context.setPositions(positions)
 openmm.LocalEnergyMinimizer.minimize(context)
 
 # Run equilibration
-traj_old = list()
-pos = context.getState(getPositions=True, enforcePeriodicBox=False).getPositions(asNumpy=True)
-old_pos = np.asarray(htf.old_positions(pos))
-traj_old.append(old_pos)
-for step in range(nsteps_eq):
-    if step % 750 == 0:
-        pos = context.getState(getPositions=True, enforcePeriodicBox=False).getPositions(asNumpy=True)
-        old_pos = np.asarray(htf.old_positions(pos))
-        traj_old.append(old_pos)
-    initial_time = time.time()
-    integrator.step(1)
-    elapsed_time = (time.time() - initial_time) * unit.seconds
-    _logger.info(f'Step: {step} took {elapsed_time} seconds')
-
-# Run equilibration
 final_pos = np.empty(shape=(1001, htf.hybrid_topology.n_atoms, 3))
 pos = context.getState(getPositions=True, enforcePeriodicBox=False).getPositions(asNumpy=True)
 i = 0
