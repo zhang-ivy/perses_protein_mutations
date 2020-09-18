@@ -5,6 +5,7 @@ from simtk import openmm, unit
 from openmmtools.mcmc import LangevinSplittingDynamicsMove, GHMCMove
 from openmmtools.multistate import ReplicaExchangeSampler, MultiStateReporter
 import argparse
+import os
 
 # Read args
 parser = argparse.ArgumentParser(description='run perses protein mutation on capped amino acid')
