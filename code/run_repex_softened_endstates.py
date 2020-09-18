@@ -55,7 +55,7 @@ simulation = ReplicaExchangeSampler(mcmc_moves=langevin_move, number_of_iteratio
 
 #  LangevinSplittingDynamicsMove
 i = os.path.basename(os.path.dirname(args.dir))
-reporter_file = f"{args.dir}/{i}_vacuum_thr_1ns.nc"
+reporter_file = f"{args.dir}/{i}_{args.endstate}_vacuum_thr_1ns.nc"
 reporter = MultiStateReporter(reporter_file, checkpoint_interval=1)
 simulation.create(thermodynamic_states=compound_states,
                   sampler_states=states.SamplerState(htf.hybrid_positions),
