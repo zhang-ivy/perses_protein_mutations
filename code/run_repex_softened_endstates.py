@@ -26,10 +26,7 @@ htf = generate_dipeptide_top_pos_sys(atp.topology,
                                          repartitioned=True, endstate=args.endstate, validate_endstate_energy=False)
 
 # Alchemify the hybrid system
-if args.endstate == 0:
-	atoms_to_alchemify = htf._atom_classes['unique_new_atoms']
-else:
-	atoms_to_alchemify = htf._atom_classes['unique_old_atoms']
+atoms_to_alchemify = htf._atom_classes['unique_new_atoms'] + htf._atom_classes['unique_old_atoms']
 
 alch_factory = AbsoluteAlchemicalFactory(consistent_exceptions=False)
 alchemical_region = AlchemicalRegion(alchemical_atoms=list(atoms_to_alchemify), alchemical_torsions=True)
