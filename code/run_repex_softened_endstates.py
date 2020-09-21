@@ -11,6 +11,7 @@ import os
 parser = argparse.ArgumentParser(description='run perses protein mutation on capped amino acid')
 parser.add_argument('dir', type=str, help='path to input/output dir')
 parser.add_argument('endstate', type=int, help='0 or 1')
+parser.add_argument('length', type=int, help='1 or 5 ns')
 args = parser.parse_args()
 
 # Generate htf for capped ALA->THR in vacuum
@@ -44,7 +45,7 @@ compound_states = states.create_thermodynamic_state_protocol(alchemical_system,
 
 # Set up the sampler
 n_steps = 500 # 1 ps
-n_iterations = 5000 # 5 ns
+n_iterations = args.length*1000 
 
 # Propagate the replicas with Langevin dynamics.
 langevin_move = LangevinSplittingDynamicsMove(timestep=2.0*unit.femtosecond, n_steps=n_steps)
@@ -53,7 +54,7 @@ simulation = ReplicaExchangeSampler(mcmc_moves=langevin_move, number_of_iteratio
 
 #  LangevinSplittingDynamicsMove
 i = os.path.basename(os.path.dirname(args.dir))
-reporter_file = f"{args.dir}/{i}_{args.endstate}_vacuum_thr_1ns.nc"
+reporter_file = f"{args.dir}/{i}_{args.endstate}_vacuum_thr_{args.length}ns.nc"
 reporter = MultiStateReporter(reporter_file, checkpoint_interval=1)
 simulation.create(thermodynamic_states=compound_states,
                   sampler_states=states.SamplerState(htf.hybrid_positions),
