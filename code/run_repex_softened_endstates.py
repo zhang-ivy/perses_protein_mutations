@@ -44,7 +44,7 @@ compound_states = states.create_thermodynamic_state_protocol(alchemical_system,
 
 # Set up the sampler
 n_steps = 500 # 1 ps
-n_iterations = 1000 # 1 ns
+n_iterations = 5000 # 5 ns
 
 # Propagate the replicas with Langevin dynamics.
 langevin_move = LangevinSplittingDynamicsMove(timestep=2.0*unit.femtosecond, n_steps=n_steps)
