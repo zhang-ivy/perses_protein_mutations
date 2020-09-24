@@ -23,7 +23,6 @@ parser.add_argument('length', type=int, help='in ns')
 args = parser.parse_args()
 
 i = os.path.basename(os.path.dirname(args.dir))
-htf = pickle.load(open(os.path.join(args.dir, f"{i}_{args.phase}.pickle"), "rb" ))
 
 # Generate system
 pdb = app.PDBFile(os.path.join(args.dir, f"{args.name.lower()}_vacuum.pdb"))
