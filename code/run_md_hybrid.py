@@ -38,7 +38,7 @@ DEFAULT_ALCHEMICAL_FUNCTIONS = {
 
 # Define simulation parameters
 temperature = 300 * unit.kelvin
-nsteps_eq = 125000000 # 250 ns
+nsteps_eq = 10000000 # 20 ns
 nsteps_neq = 20000 # 80 ps
 neq_splitting ='V R H O R V'
 timestep = 2.0 * unit.femtosecond
@@ -74,14 +74,14 @@ context.setPositions(positions)
 openmm.LocalEnergyMinimizer.minimize(context)
 
 # Run equilibration
-final_pos = np.empty(shape=(1001, htf.hybrid_topology.n_atoms, 3))
+final_pos = np.empty(shape=(4001, htf.hybrid_topology.n_atoms, 3))
 pos = context.getState(getPositions=True, enforcePeriodicBox=False).getPositions(asNumpy=True)
 i = 0
 final_pos[i] = pos * unit.nanometers
 for step in tqdm(range(nsteps_eq)):
     initial_time = time.time()
     integrator.step(1)
-    if step % 125000 == 0:
+    if step % 2500 == 0:
         pos = context.getState(getPositions=True, enforcePeriodicBox=False).getPositions(asNumpy=True)
         final_pos[i] = pos *unit.nanometers
         i += 1
