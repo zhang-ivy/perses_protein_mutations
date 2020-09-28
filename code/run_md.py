@@ -16,6 +16,7 @@ import numpy as np
 parser = argparse.ArgumentParser(description='run perses protein mutation on capped amino acid')
 parser.add_argument('dir', type=str, help='path to input/output dir')
 parser.add_argument('phase', type=str, help='complex or apo')
+parser.add_argument('state', type=int, help="lambda value, i.e. 0 or 1")
 args = parser.parse_args()
 
 #
@@ -27,23 +28,29 @@ temperature = 300 * unit.kelvin
 collision_rate = 1.0 / unit.picoseconds
 timestep = 2.0 * unit.femtoseconds
 # splitting="V R H O R V"
-nsteps = 125000 # 250 ps
-niterations = 1000 # 250 ns
+nsteps = 2500 # 5 ps
+niterations = 4000 # 20 ns
 
 # Read in htf
 dir_num = os.path.basename(os.path.dirname(args.dir))
 with open(os.path.join(args.dir, f"{dir_num}_{args.phase}.pickle"), 'rb') as f:
     htf = pickle.load(f)
+if args.state == 0:
+	system = htf._topology_proposal.old_system
+	positions = htf.old_positions(htf.hybrid_positions)
+elif args.state == 1:
+	system = htf._topology_proposal.new_system
+	positions = htf.new_positions(htf.hybrid_positions)
 
-equilibrated_pdb_filename = f'{args.phase}_equilibrated.pdb'
+equilibrated_pdb_filename = f'{args.state}_{args.phase}_equilibrated.pdb'
 
 # Make integrator
 integrator = LangevinIntegrator(temperature, collision_rate, timestep)
 
 # Minimize
 print('Minimizing energy...')
-context = openmm.Context(htf._topology_proposal.old_system, integrator)
-context.setPositions(htf.old_positions(htf.hybrid_positions))
+context = openmm.Context(system, integrator)
+context.setPositions(positions)
 print('  initial : %8.3f kcal/mol' % (context.getState(getEnergy=True).getPotentialEnergy()/unit.kilocalories_per_mole))
 openmm.LocalEnergyMinimizer.minimize(context)
 print('  final   : %8.3f kcal/mol' % (context.getState(getEnergy=True).getPotentialEnergy()/unit.kilocalories_per_mole))
@@ -66,7 +73,7 @@ with open(os.path.join(args.dir, equilibrated_pdb_filename), 'w') as outfile:
 print('  final   : %8.3f kcal/mol' % (context.getState(getEnergy=True).getPotentialEnergy()/unit.kilocalories_per_mole))
 
 # Save trajs
-with open(os.path.join(args.dir, f"{args.phase}_positions.npy"), 'wb') as f:
+with open(os.path.join(args.dir, f"{args.state}_{args.phase}_positions.npy"), 'wb') as f:
     np.save(f, positions)
 traj = md.Trajectory(np.array(np.array(positions)), md.Topology.from_openmm(htf._topology_proposal.old_topology))
 traj.save(os.path.join(args.dir, f"{args.phase}_traj.dcd"))
