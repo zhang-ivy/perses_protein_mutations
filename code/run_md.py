@@ -38,9 +38,11 @@ with open(os.path.join(args.dir, f"{dir_num}_{args.phase}.pickle"), 'rb') as f:
 if args.state == 0:
 	system = htf._topology_proposal.old_system
 	positions = htf.old_positions(htf.hybrid_positions)
+	topology = htf._topology_proposal.old_topology
 elif args.state == 1:
 	system = htf._topology_proposal.new_system
 	positions = htf.new_positions(htf.hybrid_positions)
+	topology = htf._topology_proposal.new_topology
 
 equilibrated_pdb_filename = f'{args.state}_{args.phase}_equilibrated.pdb'
 
@@ -69,12 +71,12 @@ simulation_time = niterations * nsteps * timestep
 print('    Equilibration took %.3f s for %.3f ns (%8.3f ns/day)' % (elapsed_time / unit.seconds, simulation_time / unit.nanoseconds, simulation_time / elapsed_time * unit.day / unit.nanoseconds))
 
 with open(os.path.join(args.dir, equilibrated_pdb_filename), 'w') as outfile:
-    app.PDBFile.writeFile(htf._topology_proposal.old_topology, context.getState(getPositions=True,enforcePeriodicBox=True).getPositions(), file=outfile, keepIds=True)
+    app.PDBFile.writeFile(topology, context.getState(getPositions=True,enforcePeriodicBox=True).getPositions(), file=outfile, keepIds=True)
 print('  final   : %8.3f kcal/mol' % (context.getState(getEnergy=True).getPotentialEnergy()/unit.kilocalories_per_mole))
 
 # Save trajs
 with open(os.path.join(args.dir, f"{args.state}_{args.phase}_positions.npy"), 'wb') as f:
     np.save(f, positions)
-traj = md.Trajectory(np.array(np.array(positions)), md.Topology.from_openmm(htf._topology_proposal.old_topology))
+traj = md.Trajectory(np.array(np.array(positions)), md.Topology.from_openmm(topology))
 traj.save(os.path.join(args.dir, f"{args.phase}_traj.dcd"))
 
