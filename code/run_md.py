@@ -78,5 +78,5 @@ print('  final   : %8.3f kcal/mol' % (context.getState(getEnergy=True).getPotent
 with open(os.path.join(args.dir, f"{args.state}_{args.phase}_positions.npy"), 'wb') as f:
     np.save(f, positions)
 traj = md.Trajectory(np.array(np.array(positions)), md.Topology.from_openmm(topology))
-traj.save(os.path.join(args.dir, f"{args.phase}_traj.dcd"))
+traj.save(os.path.join(args.dir, f"{args.state}_{args.phase}_traj.dcd"))
 
