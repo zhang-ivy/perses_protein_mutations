@@ -29,7 +29,7 @@ collision_rate = 1.0 / unit.picoseconds
 timestep = 2.0 * unit.femtoseconds
 # splitting="V R H O R V"
 nsteps = 2500 # 5 ps
-niterations = 4000 # 20 ns
+niterations = 40000 # 200 ns
 
 # Read in htf
 dir_num = os.path.basename(os.path.dirname(args.dir))
@@ -44,7 +44,7 @@ elif args.state == 1:
 	positions = htf.new_positions(htf.hybrid_positions)
 	topology = htf._topology_proposal.new_topology
 
-equilibrated_pdb_filename = f'{args.state}_{args.phase}_equilibrated.pdb'
+equilibrated_pdb_filename = f'{args.state}_{args.phase}_equilibrated_200ns.pdb'
 
 # Make integrator
 integrator = LangevinIntegrator(temperature, collision_rate, timestep)
@@ -75,8 +75,8 @@ with open(os.path.join(args.dir, equilibrated_pdb_filename), 'w') as outfile:
 print('  final   : %8.3f kcal/mol' % (context.getState(getEnergy=True).getPotentialEnergy()/unit.kilocalories_per_mole))
 
 # Save trajs
-with open(os.path.join(args.dir, f"{args.state}_{args.phase}_positions.npy"), 'wb') as f:
+with open(os.path.join(args.dir, f"{args.state}_{args.phase}_positions_200ns.npy"), 'wb') as f:
     np.save(f, positions)
 traj = md.Trajectory(np.array(np.array(positions)), md.Topology.from_openmm(topology))
-traj.save(os.path.join(args.dir, f"{args.state}_{args.phase}_traj.dcd"))
+traj.save(os.path.join(args.dir, f"{args.state}_{args.phase}_traj_200ns.dcd"))
 

@@ -38,14 +38,13 @@ DEFAULT_ALCHEMICAL_FUNCTIONS = {
 
 # Define simulation parameters
 temperature = 300 * unit.kelvin
-nsteps_eq = 10000000 # 20 ns
+nsteps_eq = 100000000 # 200 ns
 nsteps_neq = 20000 # 80 ps
 neq_splitting ='V R H O R V'
 timestep = 2.0 * unit.femtosecond
 platform_name = 'CUDA'
 
 # Read in htf
-i = os.path.basename(os.path.dirname(args.dir))
 with open(os.path.join(args.dir, f"{i}_{args.phase}.pickle"), 'rb') as f:
     htf = pickle.load(f)
 system = htf.hybrid_system
@@ -74,7 +73,7 @@ context.setPositions(positions)
 openmm.LocalEnergyMinimizer.minimize(context)
 
 # Run equilibration
-final_pos = np.empty(shape=(4001, htf.hybrid_topology.n_atoms, 3))
+final_pos = np.empty(shape=(40001, htf.hybrid_topology.n_atoms, 3))
 pos = context.getState(getPositions=True, enforcePeriodicBox=False).getPositions(asNumpy=True)
 i = 0
 final_pos[i] = pos * unit.nanometers
@@ -89,5 +88,6 @@ for step in tqdm(range(nsteps_eq)):
         _logger.info(f'Step: {step} took {elapsed_time} seconds')
 
 # Save traj
-with open(os.path.join(args.dir, f"{i}_{args.phase}_equil_hybrid_{args.endstate}.npy"), 'wb') as f:
+i = os.path.basename(os.path.dirname(args.dir))
+with open(os.path.join(args.dir, f"{i}_{args.phase}_equil_hybrid_{args.endstate}_200ns.npy"), 'wb') as f:
     np.save(f, final_pos)
