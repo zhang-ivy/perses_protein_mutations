@@ -25,7 +25,7 @@ args = parser.parse_args()
 i = os.path.basename(os.path.dirname(args.dir))
 
 # Generate system
-pdb = app.PDBFile(os.path.join(args.dir, f"{args.name.lower()}_vacuum.pdb"))
+pdb = app.PDBFile(os.path.join(args.dir, f"{args.name.lower()}_vacuum_fixed.pdb"))
 
 forcefield_files = ['amber14/protein.ff14SB.xml', 'amber14/tip3p.xml']
 barostat = None
