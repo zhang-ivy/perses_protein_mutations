@@ -71,6 +71,7 @@ if platform_name in ['CUDA']:
 context = openmm.Context(system, integrator, platform)
 context.setPeriodicBoxVectors(*system.getDefaultPeriodicBoxVectors())
 context.setPositions(positions)
+context.setVelocitiesToTemperature(temperature)
 
 # Minimize
 openmm.LocalEnergyMinimizer.minimize(context)
@@ -108,6 +109,7 @@ with open(os.path.join(args.dir, f"{args.new_name}_indices.npy"), 'rb') as f:
 # Get equilbrium snapshot of ala
 positions = ala_pos_hybrid[ala_indices[int(args.sim_number)]]
 context.setPositions(positions)
+context.setVelocitiesToTemperature(temperature)
 
 # Run eq reverse (1 -> 0)
 initial_time = time.time()
