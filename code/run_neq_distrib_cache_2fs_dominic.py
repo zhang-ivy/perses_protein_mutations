@@ -35,12 +35,14 @@ DEFAULT_ALCHEMICAL_FUNCTIONS = {
                              'lambda_angles': x,
                              'lambda_torsions': x}
 
+
 # Define simulation parameters
 nsteps_eq = 10
 nsteps_neq = 40000 # 80 ps
 neq_splitting='V R H O R V'
 timestep = 2.0 * unit.femtosecond
 platform_name = 'CUDA'
+temperature = 300 * unit.kelvin
 
 # Read in htf
 i = os.path.basename(os.path.dirname(args.dir))
