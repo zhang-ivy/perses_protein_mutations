@@ -9,6 +9,10 @@ from perses.annihilation.lambda_protocol import RelativeAlchemicalState
 import mdtraj as md
 import numpy as np
 from simtk.unit.quantity import Quantity
+from perses.tests.test_topology_proposal import generate_atp, generate_dipeptide_top_pos_sys
+from simtk.openmm import app
+from openmmforcefields.generators import SystemGenerator
+
 
 # Read args
 parser = argparse.ArgumentParser(description='run t-repex')
