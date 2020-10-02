@@ -35,8 +35,9 @@ if args.direction == "forward":
 	                                         conduct_htf_prop=True,
 	                                         flatten_torsions=True, 
 	                                         validate_endstate_energy=False)
-elif args.direction == 'reverse':
+	pickle.dump(htf, open(os.path.join(args.dir, f"{i}_vacuum.pickle"), "wb" ))
 
+elif args.direction == 'reverse':
 	# Generate htf for capped THR->ALA in vacuum
 	pdb = app.PDBFile("../input/thr_vacuum.pdb")
 
@@ -64,6 +65,7 @@ elif args.direction == 'reverse':
 	                                         conduct_htf_prop=True, 
 	                                         flatten_torsions=True, 
 	                                         validate_endstate_energy=False)
+	pickle.dump(htf, open(os.path.join(args.dir, f"{i}_vacuum.pickle"), "wb" ))
 
 # Render atom map
 atom_map_filename = f'{args.dir}/atom_map.png'
