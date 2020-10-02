@@ -6,6 +6,7 @@ from simtk import openmm, unit
 from simtk.openmm import app
 from openmmtools.mcmc import LangevinSplittingDynamicsMove, GHMCMove
 from openmmtools.multistate import ReplicaExchangeSampler, MultiStateReporter
+from perses.utils.smallmolecules import  render_protein_residue_atom_mapping
 import argparse
 import os
 import numpy as np
@@ -42,7 +43,14 @@ htf = generate_dipeptide_top_pos_sys(pdb.topology,
                                          positions = positions,
                                          system_generator = system_generator, 
                                          conduct_htf_prop=True,
-                                         repartitioned=True, endstate=args.endstate, validate_endstate_energy=False)
+                                         repartitioned=True, 
+                                         flatten_torsions=True,
+                                         endstate=args.endstate, 
+                                         validate_endstate_energy=False)
+
+# Render atom map
+atom_map_filename = f'{args.dir}/atom_map.png'
+render_protein_residue_atom_mapping(htf._topology_proposal, atom_map_filename)
 
 # Alchemify the hybrid system
 atoms_to_alchemify = list(htf._atom_classes['unique_new_atoms']) + list(htf._atom_classes['unique_old_atoms'])
