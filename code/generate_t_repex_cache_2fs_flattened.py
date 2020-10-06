@@ -70,7 +70,7 @@ htf = HybridTopologyFactory(topology_proposal=htf_at._topology_proposal,
                      omitted_terms=None,
                      flatten_torsions=True)
 
-pickle.dump(htf, open(os.path.join(args.output_dir, f"{i}_vacuum_{args.name.lower()}.pickle"), "wb" ))
+pickle.dump(htf, open(os.path.join(args.dir, f"{i}_vacuum_{args.name.lower()}.pickle"), "wb" ))
 
 # Render atom map
 atom_map_filename = f'{args.dir}/atom_map_{args.name.lower()}.png'
