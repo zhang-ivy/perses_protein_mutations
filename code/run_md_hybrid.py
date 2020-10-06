@@ -38,7 +38,7 @@ DEFAULT_ALCHEMICAL_FUNCTIONS = {
 
 # Define simulation parameters
 temperature = 300 * unit.kelvin
-nsteps_eq = 100000000 # 200 ns
+nsteps_eq = 10000000 # 20 ns
 nsteps_neq = 20000 # 80 ps
 neq_splitting ='V R H O R V'
 timestep = 2.0 * unit.femtosecond
@@ -69,6 +69,7 @@ if platform_name in ['CUDA']:
 context = thermodynamic_state.create_context(integrator, platform=platform)
 context.setPeriodicBoxVectors(*system.getDefaultPeriodicBoxVectors())
 context.setPositions(positions)
+context.setVelocitiesToTemperature(temperature)
 
 # Minimize
 openmm.LocalEnergyMinimizer.minimize(context)
