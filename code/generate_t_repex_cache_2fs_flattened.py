@@ -39,7 +39,7 @@ for i in range(nb_force.getNumExceptions()):
     if p1 in [10, 11, 12, 13] or p2 in [10, 11, 12, 13]:
         nb_force.setExceptionParameters(i, p1, p2, 0, sigma, 0)
 
- nb_force = new_system.getForce(3)
+nb_force = new_system.getForce(3)
 for i in range(nb_force.getNumExceptions()):
     p1, p2, chargeProd, sigma, epsilon = nb_force.getExceptionParameters(i)
     if p1 in [10, 13, 14, 15, 16, 17, 18, 19] or p2 in [10, 13, 14, 15, 16, 17, 18, 19]:
