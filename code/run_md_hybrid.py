@@ -66,7 +66,7 @@ final_pos = np.empty(shape=(40001, htf.hybrid_topology.n_atoms, 3))
 pos = context.getState(getPositions=True, enforcePeriodicBox=False).getPositions(asNumpy=True)
 i = 0
 final_pos[i] = pos * unit.nanometers
-for step in tqdm(range(nsteps_eq)):
+for step in tqdm(range(nsteps)):
     initial_time = time.time()
     integrator.step(1)
     if step % 2500 == 0:
