@@ -1,7 +1,7 @@
 import logging
 import pickle
 import numpy as np
-from openmmtools.integrators import PeriodicNonequilibriumIntegrator
+from openmmtools.integrators import LangevinIntegrator
 from openmmtools.states import ThermodynamicState, CompoundThermodynamicState
 from perses.annihilation.lambda_protocol import RelativeAlchemicalState, LambdaProtocol
 from simtk import openmm, unit
@@ -23,23 +23,9 @@ parser.add_argument('phase', type=str, help='solvent or vacuum')
 parser.add_argument('endstate', type=int, help="0 or 1")
 args = parser.parse_args()
 
-# Define lambda functions
-x = 'lambda'
-DEFAULT_ALCHEMICAL_FUNCTIONS = {
-                             'lambda_sterics_core': x,
-                             'lambda_electrostatics_core': x,
-                             'lambda_sterics_insert': f"select(step({x} - 0.5), 1.0, 2.0 * {x})",
-                             'lambda_sterics_delete': f"select(step({x} - 0.5), 2.0 * ({x} - 0.5), 0.0)",
-                             'lambda_electrostatics_insert': f"select(step({x} - 0.5), 2.0 * ({x} - 0.5), 0.0)",
-                             'lambda_electrostatics_delete': f"select(step({x} - 0.5), 1.0, 2.0 * {x})",
-                             'lambda_bonds': x,
-                             'lambda_angles': x,
-                             'lambda_torsions': x}
-
 # Define simulation parameters
 temperature = 300 * unit.kelvin
-nsteps_eq = 10000000 # 20 ns
-nsteps_neq = 20000 # 80 ps
+nsteps = 10000000 # 20 ns
 neq_splitting ='V R H O R V'
 timestep = 2.0 * unit.femtosecond
 platform_name = 'CUDA'
@@ -58,7 +44,7 @@ lambda_alchemical_state.set_alchemical_parameters(args.endstate, lambda_protocol
 thermodynamic_state = CompoundThermodynamicState(ThermodynamicState(system, temperature=temperature), composable_states=[lambda_alchemical_state])
 
 # Set up integrator
-integrator = PeriodicNonequilibriumIntegrator(DEFAULT_ALCHEMICAL_FUNCTIONS, nsteps_eq, nsteps_neq, neq_splitting, timestep=timestep, temperature=temperature)
+integrator = LangevinIntegrator(temperature, collision_rate, timestep)
 
 # Set up context
 platform = openmm.Platform.getPlatformByName(platform_name)
