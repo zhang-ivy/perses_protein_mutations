@@ -27,53 +27,53 @@ args = parser.parse_args()
 
 i = os.path.basename(os.path.dirname(args.dir))
 
-if args.direction == "forward":
-	# Generate htf for capped ALA->THR in vacuum
-	atp, sys_gen = generate_atp()
+with open(os.path.join(args.dir, f"{i}_vacuum.pickle" ), "rb") as f:
+    htf_at = pickle.load(f)
 
-	# At alanine endstate
-	htf = generate_dipeptide_top_pos_sys(atp.topology, 
-	                                         new_res = 'THR', 
-	                                         system = atp.system, 
-	                                         positions = atp.positions,
-	                                         system_generator = sys_gen, 
-	                                         conduct_htf_prop=True,
-	                                         flatten_torsions=True, 
-	                                         validate_endstate_energy=False)
-	pickle.dump(htf, open(os.path.join(args.dir, f"{i}_vacuum.pickle"), "wb" ))
+old_system = htf_at._topology_proposal.old_system
+new_system = htf_at._topology_proposal.new_system
 
-elif args.direction == 'reverse':
-	# Generate htf for capped THR->ALA in vacuum
-	pdb = app.PDBFile("../input/thr_vacuum.pdb")
+nb_force = old_system.getForce(3)
+for i in range(nb_force.getNumExceptions()):
+    p1, p2, chargeProd, sigma, epsilon = nb_force.getExceptionParameters(i)
+    if p1 in [10, 11, 12, 13] or p2 in [10, 11, 12, 13]:
+        nb_force.setExceptionParameters(i, p1, p2, 0, sigma, 0)
 
-	forcefield_files = ['amber14/protein.ff14SB.xml', 'amber14/tip3p.xml']
-	barostat = None
-	system_generator = SystemGenerator(forcefields=forcefield_files,
-	                               barostat=barostat,
-	                               forcefield_kwargs={'removeCMMotion': False,
-	                                                    'ewaldErrorTolerance': 1e-4,
-	                                                    'constraints' : app.HBonds,
-	                                                    'hydrogenMass' : 4 * unit.amus},
-	                                periodic_forcefield_kwargs=None,
-	                                small_molecule_forcefield='gaff-2.11',
-	                                nonperiodic_forcefield_kwargs = {'nonbondedMethod': app.NoCutoff}, 
-	                                   molecules=None, 
-	                                   cache=None)
-	system = system_generator.create_system(pdb.topology) 
-	positions = unit.quantity.Quantity(value = np.array([list(atom_pos) for atom_pos in pdb.positions.value_in_unit_system(unit.md_unit_system)]), unit = unit.nanometers)
+ nb_force = new_system.getForce(3)
+for i in range(nb_force.getNumExceptions()):
+    p1, p2, chargeProd, sigma, epsilon = nb_force.getExceptionParameters(i)
+    if p1 in [10, 13, 14, 15, 16, 17, 18, 19] or p2 in [10, 13, 14, 15, 16, 17, 18, 19]:
+        nb_force.setExceptionParameters(i, p1, p2, 0, sigma, 0)
 
-	htf = generate_dipeptide_top_pos_sys(pdb.topology, 
-	                                         new_res = 'ALA', 
-	                                         system = system, 
-	                                         positions = positions,
-	                                         system_generator = system_generator, 
-	                                         conduct_htf_prop=True, 
-	                                         flatten_torsions=True, 
-	                                         validate_endstate_energy=False)
-	pickle.dump(htf, open(os.path.join(args.dir, f"{i}_vacuum.pickle"), "wb" ))
+# Build new htf
+htf_at._topology_proposal._old_system = old_system
+htf_at._topology_proposal._new_system = new_system
+
+from perses.annihilation.relative import HybridTopologyFactory
+htf = HybridTopologyFactory(topology_proposal=htf_at._topology_proposal,
+                     current_positions=htf_at.old_positions(htf_at.hybrid_positions),
+                     new_positions=htf_at.new_positions(htf_at.hybrid_positions),
+                     use_dispersion_correction=False,
+                     functions=None,
+                     softcore_alpha=None,
+                     bond_softening_constant=1.0,
+                     angle_softening_constant=1.0,
+                     soften_only_new=False,
+                     neglected_new_angle_terms=[],
+                     neglected_old_angle_terms=[],
+                     softcore_LJ_v2=True,
+                     softcore_electrostatics=True,
+                     softcore_LJ_v2_alpha=0.85,
+                     softcore_electrostatics_alpha=0.3,
+                     softcore_sigma_Q=1.0,
+                     interpolate_old_and_new_14s=False,
+                     omitted_terms=None,
+                     flatten_torsions=True)
+
+pickle.dump(htf, open(os.path.join(args.output_dir, f"{i}_vacuum_{args.name.lower()}.pickle"), "wb" ))
 
 # Render atom map
-atom_map_filename = f'{args.dir}/atom_map.png'
+atom_map_filename = f'{args.dir}/atom_map_{args.name.lower()}.png'
 render_protein_residue_atom_mapping(htf._topology_proposal, atom_map_filename)
 
 # Create states for each replica
