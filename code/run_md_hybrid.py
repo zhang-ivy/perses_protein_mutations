@@ -27,7 +27,6 @@ args = parser.parse_args()
 temperature = 300 * unit.kelvin
 collision_rate = 1.0 / unit.picoseconds
 nsteps = 10000000 # 20 ns
-neq_splitting ='V R H O R V'
 timestep = 2.0 * unit.femtosecond
 platform_name = 'CUDA'
 
