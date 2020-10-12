@@ -28,16 +28,16 @@ if args.direction == "forward":
 	# Generate htf for capped ALA->THR in vacuum
 	atp, sys_gen = generate_atp()
 
-    # At alanine endstate
-    htf = generate_dipeptide_top_pos_sys(atp.topology, 
-                                             new_res='THR', 
-                                             system=atp.system, 
-                                             positions=atp.positions,
-                                             system_generator=sys_gen, 
-                                             conduct_htf_prop=True,
-                                             flatten_torsions=True,
-                                             flatten_exceptions=True,
-                                             validate_endstate_energy=False)
+	# At alanine endstate
+	htf = generate_dipeptide_top_pos_sys(atp.topology, 
+	                                         new_res='THR', 
+	                                         system=atp.system, 
+	                                         positions=atp.positions,
+	                                         system_generator=sys_gen, 
+	                                         conduct_htf_prop=True,
+	                                         flatten_torsions=True,
+	                                         flatten_exceptions=True,
+	                                         validate_endstate_energy=False)
 
 	# old_system = htf._topology_proposal.old_system
 	# new_system = htf._topology_proposal.new_system
@@ -102,7 +102,7 @@ elif args.direction == 'reverse':
 	                                         system_generator=system_generator, 
 	                                         conduct_htf_prop=True, 
 	                                         flatten_torsions=True,
-                                             flatten_exceptions=True,
+	                                         flatten_exceptions=True,
 	                                         validate_endstate_energy=False)
 
 # Render atom map
