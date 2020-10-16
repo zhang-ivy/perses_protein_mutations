@@ -7,6 +7,7 @@ from openmmtools.multistate import ReplicaExchangeSampler, MultiStateReporter
 from perses.utils.smallmolecules import  render_protein_residue_atom_mapping
 from simtk.openmm import app
 from openmmforcefields.generators import SystemGenerator
+import numpy as np
 import pickle
 import argparse
 import os
