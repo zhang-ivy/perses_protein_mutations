@@ -31,6 +31,8 @@ if args.direction == "forward":
 	                                         conduct_htf_prop=True,
 	                                         repartitioned=True,
 	                                         endstate=args.endstate,
+	                                         flatten_torsions=True,
+	                                         flatten_exceptions=True,
 	                                         validate_endstate_energy=False)
 
 elif args.direction == 'reverse':
@@ -61,6 +63,8 @@ elif args.direction == 'reverse':
 	                                         conduct_htf_prop=True, 
 	                                         repartitioned=True,
 	                                         endstate=args.endstate,
+	                                         flatten_torsions=True,
+	                                         flatten_exceptions=True,
 	                                         validate_endstate_energy=False)
 
 # Render atom map
