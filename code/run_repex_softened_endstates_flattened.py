@@ -5,6 +5,8 @@ from simtk import openmm, unit
 from openmmtools.mcmc import LangevinSplittingDynamicsMove, GHMCMove
 from openmmtools.multistate import ReplicaExchangeSampler, MultiStateReporter
 from perses.utils.smallmolecules import  render_protein_residue_atom_mapping
+from simtk.openmm import app
+from openmmforcefields.generators import SystemGenerator
 import pickle
 import argparse
 import os
@@ -98,12 +100,12 @@ n_steps = 500 # 1 ps
 n_iterations = args.length*1000 
 
 # Propagate the replicas with Langevin dynamics.
-# langevin_move = LangevinSplittingDynamicsMove(timestep=2.0*unit.femtosecond, n_steps=n_steps)
-# simulation = ReplicaExchangeSampler(mcmc_moves=langevin_move, number_of_iterations=n_iterations)
+langevin_move = LangevinSplittingDynamicsMove(timestep=2.0*unit.femtosecond, n_steps=n_steps)
+simulation = ReplicaExchangeSampler(mcmc_moves=langevin_move, number_of_iterations=n_iterations)
 
-# Propagate the replicas with GHMC move.
-ghmc_move = GHMCMove(timestep=2.0*unit.femtosecond, n_steps=n_steps)
-simulation = ReplicaExchangeSampler(mcmc_moves=ghmc_move, number_of_iterations=n_iterations)
+# # Propagate the replicas with GHMC move.
+# ghmc_move = GHMCMove(timestep=2.0*unit.femtosecond, n_steps=n_steps)
+# simulation = ReplicaExchangeSampler(mcmc_moves=ghmc_move, number_of_iterations=n_iterations)
 
 # Run simulation
 i = os.path.basename(os.path.dirname(args.dir))
