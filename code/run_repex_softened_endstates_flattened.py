@@ -5,6 +5,7 @@ from simtk import openmm, unit
 from openmmtools.mcmc import LangevinSplittingDynamicsMove, GHMCMove
 from openmmtools.multistate import ReplicaExchangeSampler, MultiStateReporter
 from perses.utils.smallmolecules import  render_protein_residue_atom_mapping
+import pickle
 import argparse
 import os
 
