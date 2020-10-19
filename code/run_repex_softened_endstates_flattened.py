@@ -100,13 +100,13 @@ compound_states = states.create_thermodynamic_state_protocol(alchemical_system,
 n_steps = 500 # 1 ps
 n_iterations = args.length*1000 
 
-# Propagate the replicas with Langevin dynamics.
-langevin_move = LangevinSplittingDynamicsMove(timestep=2.0*unit.femtosecond, n_steps=n_steps)
-simulation = ReplicaExchangeSampler(mcmc_moves=langevin_move, number_of_iterations=n_iterations)
+# # Propagate the replicas with Langevin dynamics.
+# langevin_move = LangevinSplittingDynamicsMove(timestep=2.0*unit.femtosecond, n_steps=n_steps)
+# simulation = ReplicaExchangeSampler(mcmc_moves=langevin_move, number_of_iterations=n_iterations)
 
-# # Propagate the replicas with GHMC move.
-# ghmc_move = GHMCMove(timestep=2.0*unit.femtosecond, n_steps=n_steps)
-# simulation = ReplicaExchangeSampler(mcmc_moves=ghmc_move, number_of_iterations=n_iterations)
+# Propagate the replicas with GHMC move.
+ghmc_move = GHMCMove(timestep=2.0*unit.femtosecond, n_steps=n_steps)
+simulation = ReplicaExchangeSampler(mcmc_moves=ghmc_move, number_of_iterations=n_iterations)
 
 # Run simulation
 i = os.path.basename(os.path.dirname(args.dir))
