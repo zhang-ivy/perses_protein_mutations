@@ -154,7 +154,7 @@ for cycle in tqdm(range(ncycles)):
         np.save(f, forward_eq_new)
     with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_reverse_eq_new.npy"), 'wb') as f:
         np.save(f, reverse_eq_new)
-     with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_reverse_eq_old.npy"), 'wb') as f:
+    with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_reverse_eq_old.npy"), 'wb') as f:
         np.save(f, reverse_eq_old)
     with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_forward_neq_old.npy"), 'wb') as f:
         np.save(f, forward_neq_old)
