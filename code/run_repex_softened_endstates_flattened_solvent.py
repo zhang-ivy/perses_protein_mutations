@@ -57,13 +57,13 @@ elif args.direction == 'reverse':
 	                                   molecules=None, 
 	                                   cache=None)
 	modeller = app.Modeller(atp.topology, atp.positions)
-    modeller.addSolvent(system_generator.forcefield, model='tip3p', padding=9*unit.angstroms, ionicStrength=0.15*unit.molar)
-    solvated_topology = modeller.getTopology()
-    solvated_positions = modeller.getPositions()
+	modeller.addSolvent(system_generator.forcefield, model='tip3p', padding=9*unit.angstroms, ionicStrength=0.15*unit.molar)
+	solvated_topology = modeller.getTopology()
+	solvated_positions = modeller.getPositions()
 
-    # Canonicalize the solvated positions: turn tuples into np.array
-    positions = unit.quantity.Quantity(value=np.array([list(atom_pos) for atom_pos in solvated_positions.value_in_unit_system(unit.md_unit_system)]), unit=unit.nanometers)
-    system = system_generator.create_system(solvated_topology)
+	# Canonicalize the solvated positions: turn tuples into np.array
+	positions = unit.quantity.Quantity(value=np.array([list(atom_pos) for atom_pos in solvated_positions.value_in_unit_system(unit.md_unit_system)]), unit=unit.nanometers)
+	system = system_generator.create_system(solvated_topology)
 
 	htf = generate_dipeptide_top_pos_sys(solvated_topology, 
 	                                         new_res='ALA', 
