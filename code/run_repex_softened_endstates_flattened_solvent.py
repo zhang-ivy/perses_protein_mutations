@@ -114,11 +114,15 @@ n_iterations = args.length*1000
 ghmc_move = GHMCMove(timestep=2.0*unit.femtosecond, n_steps=n_steps)
 simulation = ReplicaExchangeSampler(mcmc_moves=ghmc_move, number_of_iterations=n_iterations)
 
+# Create sampler state
+sampler_state = states.SamplerState(htf.hybrid_positions)
+sampler_state.box_vectors = htf.hybrid_system.getDefaultPeriodicBoxVectors()
+
 # Run simulation
 i = os.path.basename(os.path.dirname(args.dir))
 reporter_file = os.path.join(args.dir, f"{i}_{args.phase}_{args.name.lower()}_{args.length}ns.nc")
 reporter = MultiStateReporter(reporter_file, checkpoint_interval=1)
 simulation.create(thermodynamic_states=compound_states,
-                  sampler_states=states.SamplerState(htf.hybrid_positions),
+                  sampler_states=sampler_state,
                   storage=reporter)
 simulation.run()
