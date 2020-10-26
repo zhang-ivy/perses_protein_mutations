@@ -18,8 +18,11 @@ _logger.setLevel(logging.INFO)
 # Read args
 parser = argparse.ArgumentParser(description='run perses protein mutation on capped amino acid')
 parser.add_argument('dir', type=str, help='path to input/output dir')
-parser.add_argument('phase', type=str, help='solvent or vacuum')
+parser.add_argument('phase', type=str, help='apo or complex')
 parser.add_argument('sim_number', type=str, help='number in job name - 1')
+parser.add_argument('eq_length', type=int, help='in ns')
+parser.add_argument('neq_length', type=int, help='in ns')
+parser.add_argument('direction', type=str, help="forward or reverse")
 args = parser.parse_args()
 
 # Define lambda functions
@@ -36,25 +39,41 @@ DEFAULT_ALCHEMICAL_FUNCTIONS = {
                              'lambda_torsions': x}
 
 # Define simulation parameters
-nsteps_eq = 2500000 # 10 ns
-nsteps_neq = 500000 # 2 ns
+timestep_no_units = 4.0
+nsteps_eq = args.eq_length / timestep_no_units
+nsteps_neq = args.neq_length / timestep_no_units
 neq_splitting='V R H O R V'
-timestep = 4.0 * unit.femtosecond
+timestep = timestep_no_units * unit.femtosecond
 platform_name = 'CUDA'
 temperature = 300 * unit.kelvin
 
 # Create htf
 i = os.path.basename(os.path.dirname(args.dir))
-solvent_delivery = PointMutationExecutor("../input/mmc2_barstar.pdb", 
-                        '1', # First chain is the barstar one
-                        '42', 
-                        'ALA',
-                        ligand_file="../input/mmc2_barnase.pdb",
-                        ionic_strength=0.05*unit.molar,
-                        flatten_torsions=True,
-                        flatten_exceptions=True
-                       )
-htf = solvent_delivery.get_apo_htf()
+if args.direction == 'forward':
+    solvent_delivery = PointMutationExecutor("../input/mmc2_barstar.pdb", 
+                            '1', # First chain is the barstar one
+                            '42', 
+                            'ALA',
+                            ligand_file="../input/mmc2_barnase.pdb",
+                            ionic_strength=0.05*unit.molar,
+                            flatten_torsions=True,
+                            flatten_exceptions=True
+                           )
+
+elif args.direction == 'reverse':
+    solvent_delivery = PointMutationExecutor("../input/mmc2_barstar_T42A.pdb", 
+                            '1', # First chain is the barstar one
+                            '42', 
+                            'THR',
+                            ligand_file="../input/mmc2_barnase.pdb",
+                            ionic_strength=0.05*unit.molar,
+                            flatten_torsions=True,
+                            flatten_exceptions=True
+                           )
+if args.phase == 'apo':
+    htf = solvent_delivery.get_apo_htf()
+elif args.phase == 'complex':
+    htf = solvent_delivery.get_complex_htf()
 pickle.dump(htf, open(os.path.join(args.dir, f"{i}_{args.phase}.pickle"), "wb" ))
 
 system = htf.hybrid_system
