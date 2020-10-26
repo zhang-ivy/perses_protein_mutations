@@ -51,9 +51,9 @@ elif args.direction == 'reverse':
 	                                                    'ewaldErrorTolerance': 1e-4,
 	                                                    'constraints' : app.HBonds,
 	                                                    'hydrogenMass' : 4 * unit.amus},
-	                                periodic_forcefield_kwargs=None,
+	                                periodic_forcefield_kwargs={'nonbondedMethod': app.PME},
 	                                small_molecule_forcefield='gaff-2.11',
-	                                nonperiodic_forcefield_kwargs = {'nonbondedMethod': app.NoCutoff}, 
+	                                nonperiodic_forcefield_kwargs=None, 
 	                                   molecules=None, 
 	                                   cache=None)
 	modeller = app.Modeller(atp.topology, atp.positions)
