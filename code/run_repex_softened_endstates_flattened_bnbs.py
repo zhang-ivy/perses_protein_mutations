@@ -11,6 +11,8 @@ import numpy as np
 import pickle
 import argparse
 import os
+from perses.app.relative_point_mutation_setup import PointMutationExecutor
+
 
 # Read args
 parser = argparse.ArgumentParser(description='run perses protein mutation on capped amino acid')
