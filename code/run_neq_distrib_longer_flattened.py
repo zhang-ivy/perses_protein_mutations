@@ -22,7 +22,6 @@ parser.add_argument('phase', type=str, help='apo or complex')
 parser.add_argument('sim_number', type=str, help='number in job name - 1')
 parser.add_argument('eq_length', type=int, help='in ns')
 parser.add_argument('neq_length', type=int, help='in ns')
-parser.add_argument('direction', type=str, help="forward or reverse")
 args = parser.parse_args()
 
 # Define lambda functions
@@ -40,41 +39,19 @@ DEFAULT_ALCHEMICAL_FUNCTIONS = {
 
 # Define simulation parameters
 timestep_no_units = 4.0
-nsteps_eq = args.eq_length / timestep_no_units
-nsteps_neq = args.neq_length / timestep_no_units
+nsteps_eq = args.eq_length*1000000 / timestep_no_units
+nsteps_neq = args.neq_length*1000000 / timestep_no_units
 neq_splitting='V R H O R V'
 timestep = timestep_no_units * unit.femtosecond
 platform_name = 'CUDA'
 temperature = 300 * unit.kelvin
+save_freq_eq = nsteps_eq / 1000
+save_freq_neq = nsteps_neq / 1000
 
-# Create htf
+# Read htf
 i = os.path.basename(os.path.dirname(args.dir))
-if args.direction == 'forward':
-    solvent_delivery = PointMutationExecutor("../input/mmc2_barstar.pdb", 
-                            '1', # First chain is the barstar one
-                            '42', 
-                            'ALA',
-                            ligand_file="../input/mmc2_barnase.pdb",
-                            ionic_strength=0.05*unit.molar,
-                            flatten_torsions=True,
-                            flatten_exceptions=True
-                           )
-
-elif args.direction == 'reverse':
-    solvent_delivery = PointMutationExecutor("../input/mmc2_barstar_T42A.pdb", 
-                            '1', # First chain is the barstar one
-                            '42', 
-                            'THR',
-                            ligand_file="../input/mmc2_barnase.pdb",
-                            ionic_strength=0.05*unit.molar,
-                            flatten_torsions=True,
-                            flatten_exceptions=True
-                           )
-if args.phase == 'apo':
-    htf = solvent_delivery.get_apo_htf()
-elif args.phase == 'complex':
-    htf = solvent_delivery.get_complex_htf()
-pickle.dump(htf, open(os.path.join(args.dir, f"{i}_{args.phase}.pickle"), "wb" ))
+with open(os.path.join(args.dir, f"{i}_{args.phase}.pickle"), "rb") as f:
+    htf = pickle.load(f)
 
 system = htf.hybrid_system
 positions = htf.hybrid_positions
@@ -107,7 +84,7 @@ for cycle in tqdm(range(ncycles)):
         initial_time = time.time()
         integrator.step(1)
         elapsed_time = (time.time() - initial_time) * unit.seconds
-        if step % 5000 == 0:
+        if step % save_freq_eq == 0:
             _logger.info(f'Cycle: {cycle}, Step: {step}, equilibrating at lambda = 0, took: {elapsed_time / unit.seconds} seconds')
             pos = context.getState(getPositions=True, enforcePeriodicBox=False).getPositions(asNumpy=True)
             old_pos = np.asarray(htf.old_positions(pos))
@@ -122,7 +99,7 @@ for cycle in tqdm(range(ncycles)):
         integrator.step(1)
         elapsed_time = (time.time() - initial_time) * unit.seconds
         forward_works.append(integrator.get_protocol_work(dimensionless=True))
-        if fwd_step % 5000 == 0:
+        if fwd_step % save_freq_neq == 0:
             _logger.info(f'Cycle: {cycle}, forward NEQ step: {fwd_step}, took: {elapsed_time / unit.seconds} seconds')
             pos = context.getState(getPositions=True, enforcePeriodicBox=False).getPositions(asNumpy=True)
             old_pos = np.asarray(htf.old_positions(pos))
@@ -136,7 +113,7 @@ for cycle in tqdm(range(ncycles)):
         initial_time = time.time()
         integrator.step(1)
         elapsed_time = (time.time() - initial_time) * unit.seconds
-        if step % 5000 == 0:
+        if step % save_freq_eq == 0:
             _logger.info(f'Cycle: {cycle}, Step: {step}, equilibrating at lambda = 1, took: {elapsed_time / unit.seconds} seconds')
             pos = context.getState(getPositions=True, enforcePeriodicBox=False).getPositions(asNumpy=True)
             new_pos = np.asarray(htf.new_positions(pos))
@@ -151,7 +128,7 @@ for cycle in tqdm(range(ncycles)):
         integrator.step(1)
         elapsed_time = (time.time() - initial_time) * unit.seconds
         reverse_works.append(integrator.get_protocol_work(dimensionless=True))
-        if rev_step % 5000 == 0:
+        if rev_step % save_freq_neq == 0:
             _logger.info(f'Cycle: {cycle}, reverse NEQ step: {rev_step}, took: {elapsed_time / unit.seconds} seconds')
             pos = context.getState(getPositions=True, enforcePeriodicBox=False).getPositions(asNumpy=True)
             old_pos = np.asarray(htf.old_positions(pos))
