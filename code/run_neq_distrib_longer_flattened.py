@@ -57,7 +57,7 @@ system = htf.hybrid_system
 positions = htf.hybrid_positions
 
 # Set up integrator
-integrator = PeriodicNonequilibriumIntegrator(DEFAULT_ALCHEMICAL_FUNCTIONS, nsteps_eq, nsteps_neq, neq_splitting, timestep=timestep)
+integrator = PeriodicNonequilibriumIntegrator(DEFAULT_ALCHEMICAL_FUNCTIONS, nsteps_eq, nsteps_neq, neq_splitting, timestep=timestep, temperature=temperature)
 
 # Set up context
 platform = openmm.Platform.getPlatformByName(platform_name)
