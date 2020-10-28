@@ -20,8 +20,8 @@ parser = argparse.ArgumentParser(description='run perses protein mutation on cap
 parser.add_argument('dir', type=str, help='path to input/output dir')
 parser.add_argument('phase', type=str, help='apo or complex')
 parser.add_argument('sim_number', type=str, help='number in job name - 1')
-parser.add_argument('eq_length', type=int, help='in ns')
-parser.add_argument('neq_length', type=int, help='in ns')
+parser.add_argument('eq_length', type=float, help='in ns')
+parser.add_argument('neq_length', type=float, help='in ns')
 args = parser.parse_args()
 
 # Define lambda functions
