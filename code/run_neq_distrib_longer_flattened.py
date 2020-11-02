@@ -88,9 +88,15 @@ for cycle in tqdm(range(ncycles)):
             _logger.info(f'Cycle: {cycle}, Step: {step}, equilibrating at lambda = 0, took: {elapsed_time / unit.seconds} seconds')
             pos = context.getState(getPositions=True, enforcePeriodicBox=False).getPositions(asNumpy=True)
             old_pos = np.asarray(htf.old_positions(pos))
+            old_traj = md.Trajectory(old_pos, md.Topology.from_openmm(htf._topology_proposal.old_topology))
+            old_pos_solute = old_traj.atom_slice(old_traj.top.select("not water")).xyz[0]
+            
             new_pos = np.asarray(htf.new_positions(pos))
-            forward_eq_old.append(old_pos)
-            forward_eq_new.append(new_pos)
+            new_traj = md.Trajectory(new_pos, md.Topology.from_openmm(htf._topology_proposal.new_topology))
+            new_pos_solute = new_traj.atom_slice(new_traj.top.select("not water")).xyz[0]
+            
+            forward_eq_old.append(old_pos_solute)
+            forward_eq_new.append(new_pos_solute)
 
     # Forward (0 -> 1)
     forward_works = [integrator.get_protocol_work(dimensionless=True)]
@@ -103,9 +109,15 @@ for cycle in tqdm(range(ncycles)):
             _logger.info(f'Cycle: {cycle}, forward NEQ step: {fwd_step}, took: {elapsed_time / unit.seconds} seconds')
             pos = context.getState(getPositions=True, enforcePeriodicBox=False).getPositions(asNumpy=True)
             old_pos = np.asarray(htf.old_positions(pos))
+            old_traj = md.Trajectory(old_pos, md.Topology.from_openmm(htf._topology_proposal.old_topology))
+            old_pos_solute = old_traj.atom_slice(old_traj.top.select("not water")).xyz[0]
+            
             new_pos = np.asarray(htf.new_positions(pos))
-            forward_neq_old.append(old_pos)
-            forward_neq_new.append(new_pos)
+            new_traj = md.Trajectory(new_pos, md.Topology.from_openmm(htf._topology_proposal.new_topology))
+            new_pos_solute = new_traj.atom_slice(new_traj.top.select("not water")).xyz[0]
+            
+            forward_neq_old.append(old_pos_solute)
+            forward_neq_new.append(new_pos_solute)
     forward_works_master.append(forward_works)
     
     # Equilibrium (lambda = 1)
@@ -116,10 +128,16 @@ for cycle in tqdm(range(ncycles)):
         if step % save_freq_eq == 0:
             _logger.info(f'Cycle: {cycle}, Step: {step}, equilibrating at lambda = 1, took: {elapsed_time / unit.seconds} seconds')
             pos = context.getState(getPositions=True, enforcePeriodicBox=False).getPositions(asNumpy=True)
-            new_pos = np.asarray(htf.new_positions(pos))
             old_pos = np.asarray(htf.old_positions(pos))
-            reverse_eq_new.append(new_pos)
-            reverse_eq_old.append(old_pos)
+            old_traj = md.Trajectory(old_pos, md.Topology.from_openmm(htf._topology_proposal.old_topology))
+            old_pos_solute = old_traj.atom_slice(old_traj.top.select("not water")).xyz[0]
+            
+            new_pos = np.asarray(htf.new_positions(pos))
+            new_traj = md.Trajectory(new_pos, md.Topology.from_openmm(htf._topology_proposal.new_topology))
+            new_pos_solute = new_traj.atom_slice(new_traj.top.select("not water")).xyz[0]
+
+            reverse_eq_new.append(new_pos_solute)
+            reverse_eq_old.append(old_pos_solute)
 
     # Reverse work (1 -> 0)
     reverse_works = [integrator.get_protocol_work(dimensionless=True)]
@@ -132,11 +150,17 @@ for cycle in tqdm(range(ncycles)):
             _logger.info(f'Cycle: {cycle}, reverse NEQ step: {rev_step}, took: {elapsed_time / unit.seconds} seconds')
             pos = context.getState(getPositions=True, enforcePeriodicBox=False).getPositions(asNumpy=True)
             old_pos = np.asarray(htf.old_positions(pos))
+            old_traj = md.Trajectory(old_pos, md.Topology.from_openmm(htf._topology_proposal.old_topology))
+            old_pos_solute = old_traj.atom_slice(old_traj.top.select("not water")).xyz[0]
+            
             new_pos = np.asarray(htf.new_positions(pos))
-            reverse_neq_old.append(old_pos)
-            reverse_neq_new.append(new_pos)
+            new_traj = md.Trajectory(new_pos, md.Topology.from_openmm(htf._topology_proposal.new_topology))
+            new_pos_solute = new_traj.atom_slice(new_traj.top.select("not water")).xyz[0]
+
+            reverse_neq_old.append(old_pos_solute)
+            reverse_neq_new.append(new_pos_solute)
     reverse_works_master.append(reverse_works)
-        
+
     # Save works
     with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_forward.npy"), 'wb') as f:
         np.save(f, forward_works_master)
@@ -145,19 +169,19 @@ for cycle in tqdm(range(ncycles)):
 
     # Save trajs
     with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_forward_eq_old.npy"), 'wb') as f:
-        np.save(f, forward_eq_old)
+        np.save(f, np.array(forward_eq_old))
     with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_forward_eq_new.npy"), 'wb') as f:
-        np.save(f, forward_eq_new)
+        np.save(f, np.array(forward_eq_new))
     with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_reverse_eq_new.npy"), 'wb') as f:
-        np.save(f, reverse_eq_new)
+        np.save(f, np.array(reverse_eq_new))
     with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_reverse_eq_old.npy"), 'wb') as f:
-        np.save(f, reverse_eq_old)
+        np.save(f, np.array(reverse_eq_old))
     with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_forward_neq_old.npy"), 'wb') as f:
-        np.save(f, forward_neq_old)
+        np.save(f, np.array(forward_neq_old))
     with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_forward_neq_new.npy"), 'wb') as f:
-        np.save(f, forward_neq_new)
+        np.save(f, np.array(forward_neq_new))
     with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_reverse_neq_old.npy"), 'wb') as f:
-        np.save(f, reverse_neq_old)
+        np.save(f, np.array(reverse_neq_old))
     with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_reverse_neq_new.npy"), 'wb') as f:
-        np.save(f, reverse_neq_new)
+        np.save(f, np.array(reverse_neq_new))
 
