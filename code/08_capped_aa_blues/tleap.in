@@ -1,0 +1,27 @@
+source leaprc.protein.ff14SB #  Source leaprc file for ff14SB protein force field
+source leaprc.water.tip3p #  Source leaprc file for TIP3P water model (and ions)
+mol = loadpdb ser_vacuum_tleap.pdb
+solvateBox mol TIP3PBOX 10 
+addionsrand mol Na+ 1 Cl- 1
+savepdb mol ser_solvated_tleap.pdb
+saveamberparm mol ser_solvated_tleap.prmtop ser_solvated_tleap.inpcrd
+
+# from math import floor
+# numWaters = 635
+# numPositive = 0
+# numNegative = 0 
+# totalCharge = 0
+# ionicStrength = 0.05
+
+# if totalCharge > 0:
+#     numNegative += totalCharge
+# else:
+#     numPositive -= totalCharge
+
+# numIons = (numWaters - numPositive - numNegative) * ionicStrength / (55.4)  # Pure water is about 55.4 molar (depending on temperature)
+# numPairs = int(floor(numIons + 0.5))
+# numPositive += numPairs
+# numNegative += numPairs
+
+# numPositive = 1
+# numNegative = 1
