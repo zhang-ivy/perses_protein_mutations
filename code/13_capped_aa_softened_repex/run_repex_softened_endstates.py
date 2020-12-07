@@ -20,7 +20,6 @@ parser.add_argument('phase', type=str, help='solvent or vacuum')
 parser.add_argument('name', type=str, help='amino acid three letter code, e.g. ALA, corresponding to the endstate')
 parser.add_argument('endstate', type=int, help='aka lambda, e.g. 0 or 1')
 parser.add_argument('length', type=int, help='in ns')
-parser.add_argument('direction', type=str, help="forward or reverse")
 args = parser.parse_args()
 
 # Read htf
