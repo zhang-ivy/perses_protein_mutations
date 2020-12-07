@@ -24,7 +24,7 @@ args = parser.parse_args()
 
 # Read htf
 i = os.path.basename(os.path.dirname(args.dir))
-with open(os.path.join(args.dir, f"{i}_{args.phase}.pickle"), "rb") as f:
+with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.endstate}.pickle"), "rb") as f:
     htf = pickle.load(f)
 
 # Alchemify the hybrid system
