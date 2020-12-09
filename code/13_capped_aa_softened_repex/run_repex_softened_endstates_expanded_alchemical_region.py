@@ -31,9 +31,9 @@ with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.endstate}.pickle"), "r
 # atoms_to_alchemify = list(htf._atom_classes['unique_new_atoms']) + list(htf._atom_classes['unique_old_atoms'])
 if not args.all_protein:
     if args.endstate == 0:
-        atoms_to_alchemify = list(htf._atom_classes['unique_old_atoms']) + [0, 6, 7, 8, 9, 13, 14, 20, 21]
+        atoms_to_alchemify = list(htf._atom_classes['unique_old_atoms']) + [0, 1, 6, 7, 8, 9, 13, 14, 20, 22]
     elif args.endstate == 1:
-        atoms_to_alchemify = list(htf._atom_classes['unique_new_atoms']) + [0, 6, 7, 8, 9, 13, 14, 20, 21]
+        atoms_to_alchemify = list(htf._atom_classes['unique_new_atoms']) + [0, 1, 6, 7, 8, 9, 13, 14, 20, 22]
 else:
     atoms_to_alchemify = list(range(30))
 
