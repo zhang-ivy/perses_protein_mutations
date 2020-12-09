@@ -74,7 +74,7 @@ def plot_time_series(dihedrals, n_iter, outfile):
     t0, g, neff_max, a_t, uncorrelated_indices = feptasks.compute_timeseries(dihedrals)
 
     plt.scatter(range(n_iter), dihedrals)
-    plt.ylabel("sin(dihedral)")
+    plt.ylabel("dihedral")
     plt.xlabel("iteration number")
     plt.ylim(-np.pi, np.pi)
     plt.savefig(outfile, dpi=300)
