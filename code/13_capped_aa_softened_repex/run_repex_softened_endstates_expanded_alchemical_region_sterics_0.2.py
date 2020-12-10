@@ -44,7 +44,7 @@ alchemical_system = alch_factory.create_alchemical_system(htf.hybrid_system, alc
 # Initialize compound thermodynamic states at different temperatures and alchemical states.
 protocol = {'temperature': [300]*unit.kelvin*11,
             'lambda_electrostatics': [1.0, 0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1, 0.0],
-            'lambda_sterics': [1.0, 0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1, 0.0],
+            'lambda_sterics': [1.0, 0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.2, 0.2],
            'lambda_torsions': [1.0, 0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1, 0.0]}
 
 alchemical_state = AlchemicalState.from_system(alchemical_system)
