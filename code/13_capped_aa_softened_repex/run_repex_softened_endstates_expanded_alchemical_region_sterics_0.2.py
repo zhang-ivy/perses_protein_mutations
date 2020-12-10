@@ -38,7 +38,7 @@ else:
     atoms_to_alchemify = list(range(30))
 
 alch_factory = AbsoluteAlchemicalFactory(consistent_exceptions=False)
-alchemical_region = AlchemicalRegion(alchemical_atoms=list(atoms_to_alchemify), alchemical_torsions=True, annihilate_sterics=True, annihilate_electrostatics=True)
+alchemical_region = AlchemicalRegion(alchemical_atoms=list(atoms_to_alchemify), alchemical_torsions=True, , annihilate_sterics=True, annihilate_electrostatics=True)
 alchemical_system = alch_factory.create_alchemical_system(htf.hybrid_system, alchemical_region)
 
 # Initialize compound thermodynamic states at different temperatures and alchemical states.
