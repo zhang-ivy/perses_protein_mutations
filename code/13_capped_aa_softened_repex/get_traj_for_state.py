@@ -47,7 +47,7 @@ i = os.path.basename(os.path.dirname(args.dir))
 with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.endstate}.pickle"), "rb") as f:
     htf = pickle.load(f)
 
-new, old = get_trajs_for_state(i, args.name, args.phase, args.length, args.dir, htf, args.index)
+new, old = get_trajs_for_state(i, args.name.lower(), args.phase, args.length, args.dir, htf, args.index)
 
 traj_new = md.Trajectory(new, md.Topology.from_openmm(htf._topology_proposal.new_topology))
 traj_new.save(os.path.join(args.dir, f"new_{args.index}.dcd"))
