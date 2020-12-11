@@ -20,11 +20,6 @@ args = parser.parse_args()
 _logger = logging.getLogger()
 _logger.setLevel(logging.INFO)
 
-from matplotlib import pyplot as plt
-from simtk.openmm import app
-from openmmforcefields.generators import SystemGenerator
-from perses.tests.test_topology_proposal import generate_atp, generate_dipeptide_top_pos_sys
-
 def get_trajs_for_state(i, aa, phase, length, out_dir, htf, index):
     new_top = md.Topology.from_openmm(htf._topology_proposal.new_topology)
     old_top = md.Topology.from_openmm(htf._topology_proposal.old_topology)
