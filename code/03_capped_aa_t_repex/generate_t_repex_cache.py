@@ -20,7 +20,7 @@ parser.add_argument('length', type=int, help='in ns')
 args = parser.parse_args()
 
 i = os.path.basename(os.path.dirname(args.dir))
-htf = pickle.load(open(os.path.join(args.dir, f"{i}_{args.phase}_{args.state}.pickle"), "rb" ))
+htf = pickle.load(open(os.path.join(args.dir, f"{i}_{args.phase}.pickle"), "rb" ))
 
 # Create states for each replica
 n_replicas = 12  # Number of temperature replicas.
