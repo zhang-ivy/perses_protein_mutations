@@ -37,6 +37,10 @@ thermodynamic_states = [states.ThermodynamicState(system=htf.hybrid_system, temp
 compound_states = [states.CompoundThermodynamicState(thermodynamic_state=thermodynamic_state, composable_states=[alchemical_state])
                         for thermodynamic_state in thermodynamic_states]
 
+# Create sampler state
+sampler_state = states.SamplerState(htf.hybrid_positions)
+sampler_state.box_vectors = htf.hybrid_system.getDefaultPeriodicBoxVectors()
+
 # Set up sampler
 move = mcmc.GHMCMove(timestep=4.0*unit.femtoseconds, n_steps=250)
 simulation = multistate.ReplicaExchangeSampler(mcmc_moves=move, number_of_iterations=args.length*1000)
@@ -45,6 +49,6 @@ simulation = multistate.ReplicaExchangeSampler(mcmc_moves=move, number_of_iterat
 reporter_file = os.path.join(args.dir, f"{i}_{args.phase}_{args.name.lower()}_{args.length}ns.nc")
 reporter = multistate.MultiStateReporter(reporter_file, checkpoint_interval=1)
 simulation.create(thermodynamic_states=compound_states,
-                  sampler_states=states.SamplerState(htf.hybrid_positions),
+                  sampler_states=sampler_state,
                   storage=reporter)
 simulation.run()
