@@ -24,7 +24,7 @@ i = os.path.basename(os.path.dirname(args.dir))
 htf = pickle.load(open(os.path.join(args.dir, f"{i}_{args.phase}_{args.state}.pickle"), "rb" ))
 
 # Build REST factory
-factory = RESTTopologyFactory(htf.hybrid_system, solute_region=list(range(6, 10)) + [0, 1, 20, 22])
+factory = RESTTopologyFactory(htf.hybrid_system, solute_region=list(range(6, 20)) + [0, 1, 20, 22])
 
 # Get REST system
 REST_system = factory.REST_system
@@ -52,12 +52,11 @@ for temperature in temperatures:
     thermodynamic_state_list.append(compound_thermodynamic_state_copy)
 
 # Set up sampler
-length = 5 # 5 ns
 move = mcmc.GHMCMove(timestep=4.0*unit.femtoseconds, n_steps=250)
-simulation = multistate.ReplicaExchangeSampler(mcmc_moves=move, number_of_iterations=length*1000)
+simulation = multistate.ReplicaExchangeSampler(mcmc_moves=move, number_of_iterations=args.length*1000)
 
 # Run t-repex
-reporter_file = os.path.join(args.dir, f"{i}_{args.phase}_{args.name}_{args.length}ns.nc")
+reporter_file = os.path.join(args.dir, f"{i}_{args.phase}_{args.name.lower()}_{args.length}ns.nc")
 reporter = multistate.MultiStateReporter(reporter_file, checkpoint_interval=1)
 simulation.create(thermodynamic_states=thermodynamic_state_list,
                   sampler_states=sampler_state,
