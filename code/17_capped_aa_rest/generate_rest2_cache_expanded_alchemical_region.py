@@ -12,6 +12,7 @@ from openmmtools.constants import kB
 from openmmtools import mcmc, multistate
 import argparse
 import copy
+from perses.dispersed import feptasks
 
 # Read args
 parser = argparse.ArgumentParser(description='run t-repex')
