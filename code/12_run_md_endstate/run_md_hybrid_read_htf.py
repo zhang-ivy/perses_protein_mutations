@@ -31,7 +31,7 @@ timestep = 4.0 * unit.femtosecond
 platform_name = 'CUDA'
 
 i = os.path.basename(os.path.dirname(args.dir))
-htf = pickle.load(open(os.path.join(args.dir, f"{i}_{args.phase}_.pickle"), "wb" ))
+htf = pickle.load(open(os.path.join(args.dir, f"{i}_{args.phase}_.pickle"), "rb" ))
 
 system = htf.hybrid_system
 positions = htf.hybrid_positions
