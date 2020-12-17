@@ -16,6 +16,7 @@ from perses.dispersed import feptasks
 import numpy as np
 from simtk.openmm import app
 from openmmforcefields.generators import SystemGenerator
+import pickle
 
 # Read args
 parser = argparse.ArgumentParser(description='run t-repex')
@@ -59,6 +60,13 @@ solvated_positions = modeller.getPositions()
 positions = unit.quantity.Quantity(value=np.array([list(atom_pos) for atom_pos in solvated_positions.value_in_unit_system(unit.md_unit_system)]), unit=unit.nanometers)
 sys = system_generator.create_system(solvated_topology)
 
+# Save vanilla topology and system
+i = os.path.basename(os.path.dirname(args.dir))
+with open(os.path.join(args.dir, f"{i}_{args.name.lower()}_vanilla_system.pickle"), "wb") as f:
+    pickle.dump(sys, f)
+with open(os.path.join(args.dir, f"{i}_{args.name.lower()}_vanilla_topology.pickle"), "wb") as f:
+    pickle.dump(solvated_topology, f)
+
 # Build REST factory
 factory = RESTTopologyFactory(sys, solute_region=list(range(22)))
 
@@ -100,7 +108,6 @@ move = mcmc.GHMCMove(timestep=4.0*unit.femtoseconds, n_steps=250)
 simulation = multistate.ReplicaExchangeSampler(mcmc_moves=move, number_of_iterations=args.length*1000)
 
 # Run t-repex
-i = os.path.basename(os.path.dirname(args.dir))
 reporter_file = os.path.join(args.dir, f"{i}_{args.phase}_{args.name.lower()}_{args.length}ns.nc")
 reporter = multistate.MultiStateReporter(reporter_file, checkpoint_interval=1)
 simulation.create(thermodynamic_states=thermodynamic_state_list,
