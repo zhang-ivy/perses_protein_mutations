@@ -13,6 +13,9 @@ from openmmtools import mcmc, multistate
 import argparse
 import copy
 from perses.dispersed import feptasks
+import numpy as np
+from simtk.openmm import app
+from openmmforcefields.generators import SystemGenerator
 
 # Read args
 parser = argparse.ArgumentParser(description='run t-repex')
@@ -23,41 +26,38 @@ parser.add_argument('length', type=int, help='in ns')
 parser.add_argument('T_max', type=int, help='in kelvin')
 args = parser.parse_args()
 
-# Grab test system
+# Make test system
 if args.name == 'ALA':
-    from openmmtools.testsystems import AlanineDipeptideExplicit
-    ala = AlanineDipeptideExplicit()
-    sys = ala.system
-    sys.removeForce(4)
-    positions = ala.positions
+    # from openmmtools.testsystems import AlanineDipeptideExplicit
+    # ala = AlanineDipeptideExplicit()
+    # sys = ala.system
+    # sys.removeForce(4)
+    # positions = ala.positions
+    pdb = app.PDBFile("../../input/ala_vacuum.pdb")
 elif args.name == 'THR':
-    from simtk.openmm import app
-    from openmmforcefields.generators import SystemGenerator
-
-    # Generate htf for capped THR->ALA in solvent
     pdb = app.PDBFile("../../input/thr_vacuum.pdb")
 
-    forcefield_files = ['amber14/protein.ff14SB.xml', 'amber14/tip3p.xml']
-    barostat = openmm.MonteCarloBarostat(1.0 * unit.atmosphere, 298 * unit.kelvin, 50)
-    system_generator = SystemGenerator(forcefields=forcefield_files,
-                                   barostat=barostat,
-                                   forcefield_kwargs={'removeCMMotion': False,
-                                                        'ewaldErrorTolerance': 1e-4,
-                                                        'constraints' : app.HBonds,
-                                                        'hydrogenMass' : 4 * unit.amus},
-                                    periodic_forcefield_kwargs={'nonbondedMethod': app.PME},
-                                    small_molecule_forcefield='gaff-2.11',
-                                    nonperiodic_forcefield_kwargs=None, 
-                                       molecules=None, 
-                                       cache=None)
-    modeller = app.Modeller(pdb.topology, pdb.positions)
-    modeller.addSolvent(system_generator.forcefield, model='tip3p', padding=9*unit.angstroms, ionicStrength=0.15*unit.molar)
-    solvated_topology = modeller.getTopology()
-    solvated_positions = modeller.getPositions()
+forcefield_files = ['amber14/protein.ff14SB.xml', 'amber14/tip3p.xml']
+barostat = openmm.MonteCarloBarostat(1.0 * unit.atmosphere, 298 * unit.kelvin, 50)
+system_generator = SystemGenerator(forcefields=forcefield_files,
+                               barostat=barostat,
+                               forcefield_kwargs={'removeCMMotion': False,
+                                                    'ewaldErrorTolerance': 1e-4,
+                                                    'constraints' : app.HBonds,
+                                                    'hydrogenMass' : 4 * unit.amus},
+                                periodic_forcefield_kwargs={'nonbondedMethod': app.PME},
+                                small_molecule_forcefield='gaff-2.11',
+                                nonperiodic_forcefield_kwargs=None, 
+                                   molecules=None, 
+                                   cache=None)
+modeller = app.Modeller(pdb.topology, pdb.positions)
+modeller.addSolvent(system_generator.forcefield, model='tip3p', padding=9*unit.angstroms, ionicStrength=0.15*unit.molar)
+solvated_topology = modeller.getTopology()
+solvated_positions = modeller.getPositions()
 
-    # Canonicalize the solvated positions: turn tuples into np.array
-    positions = unit.quantity.Quantity(value=np.array([list(atom_pos) for atom_pos in solvated_positions.value_in_unit_system(unit.md_unit_system)]), unit=unit.nanometers)
-    sys = system_generator.create_system(solvated_topology)
+# Canonicalize the solvated positions: turn tuples into np.array
+positions = unit.quantity.Quantity(value=np.array([list(atom_pos) for atom_pos in solvated_positions.value_in_unit_system(unit.md_unit_system)]), unit=unit.nanometers)
+sys = system_generator.create_system(solvated_topology)
 
 # Build REST factory
 factory = RESTTopologyFactory(sys, solute_region=list(range(22)))
