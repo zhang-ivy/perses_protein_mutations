@@ -49,9 +49,9 @@ positions = htf.hybrid_positions
 atoms_to_alchemify = list(range(30))
 alch_factory = AbsoluteAlchemicalFactory(consistent_exceptions=False)
 alchemical_region = AlchemicalRegion(alchemical_atoms=list(atoms_to_alchemify), alchemical_torsions=True, annihilate_sterics=True, annihilate_electrostatics=True)
-alchemical_system = alch_factory.create_alchemical_system(htf.hybrid_system, alchemical_region)
+alchemical_system = alch_factory.create_alchemical_system(system, alchemical_region)
 alchemical_state = AlchemicalState.from_system(alchemical_system)
-thermodynamic_state = CompoundThermodynamicState(ThermodynamicState(system, temperature=temperature), composable_states=[alchemical_state])
+thermodynamic_state = CompoundThermodynamicState(ThermodynamicState(alchemical_system, temperature=temperature), composable_states=[alchemical_state])
 thermodynamic_state.set_alchemical_variable('lambda', 1.0) # this should be 1, not the same as the endstate lambda
 
 # Set up integrator
