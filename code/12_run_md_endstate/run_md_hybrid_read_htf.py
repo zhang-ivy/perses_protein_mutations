@@ -60,7 +60,7 @@ context.setVelocitiesToTemperature(temperature)
 openmm.LocalEnergyMinimizer.minimize(context)
 
 # Run equilibration
-final_pos = np.empty(shape=(10001, htf.hybrid_topology.n_atoms, 3))
+final_pos = np.empty(shape=(2501, htf.hybrid_topology.n_atoms, 3))
 pos = context.getState(getPositions=True, enforcePeriodicBox=False).getPositions(asNumpy=True)
 i = 0
 final_pos[i] = pos * unit.nanometers
