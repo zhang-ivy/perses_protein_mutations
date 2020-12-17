@@ -21,6 +21,7 @@ parser.add_argument('phase', type=str, help='solvent or vacuum')
 parser.add_argument('name', type=str, help='amino acid three letter code, e.g. ALA')
 parser.add_argument('state', type=int, help='aka lambda, e.g. 0 or 1')
 parser.add_argument('length', type=int, help='in ns')
+parser.add_argument('T_max', type=int, help='in kelvin')
 args = parser.parse_args()
 
 # Load rhtf
@@ -36,7 +37,7 @@ REST_system = factory.REST_system
 # Create states for each replica
 n_replicas = 12  # Number of temperature replicas.
 T_min = 298.0 * unit.kelvin  # Minimum temperature.
-T_max = 1200.0 * unit.kelvin  # Maximum temperature.
+T_max = args.T_max * unit.kelvin  # Maximum temperature.
 temperatures = [T_min + (T_max - T_min) * (math.exp(float(i) / float(n_replicas-1)) - 1.0) / (math.e - 1.0)
                 for i in range(n_replicas)]
 
