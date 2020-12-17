@@ -100,6 +100,7 @@ move = mcmc.GHMCMove(timestep=4.0*unit.femtoseconds, n_steps=250)
 simulation = multistate.ReplicaExchangeSampler(mcmc_moves=move, number_of_iterations=args.length*1000)
 
 # Run t-repex
+i = os.path.basename(os.path.dirname(args.dir))
 reporter_file = os.path.join(args.dir, f"{i}_{args.phase}_{args.name.lower()}_{args.length}ns.nc")
 reporter = multistate.MultiStateReporter(reporter_file, checkpoint_interval=1)
 simulation.create(thermodynamic_states=thermodynamic_state_list,
