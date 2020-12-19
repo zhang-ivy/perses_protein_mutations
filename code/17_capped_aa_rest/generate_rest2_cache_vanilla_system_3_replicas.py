@@ -75,7 +75,7 @@ REST_system = factory.REST_system
 
 # Create states for each replica
 T_min = 300 * unit.kelvin
-temperatures = [300, 420, 600]
+temperatures = [300 * unit.kelvin, 420 * unit.kelvin, 600 * unit.kelvin]
 
 # Create reference thermodynamic state
 lambda_zero_alchemical_state = RESTState.from_system(REST_system)
