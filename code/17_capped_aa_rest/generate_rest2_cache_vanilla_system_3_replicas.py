@@ -74,7 +74,7 @@ factory = RESTTopologyFactory(sys, solute_region=list(range(22)))
 REST_system = factory.REST_system
 
 # Create states for each replica
-T_min = 300
+T_min = 300 * unit.kelvin
 temperatures = [300, 420, 600]
 
 # Create reference thermodynamic state
