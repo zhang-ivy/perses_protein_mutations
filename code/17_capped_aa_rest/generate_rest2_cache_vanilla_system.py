@@ -68,7 +68,10 @@ with open(os.path.join(args.dir, f"{i}_{args.name.lower()}_vanilla_topology.pick
     pickle.dump(solvated_topology, f)
 
 # Build REST factory
-factory = RESTTopologyFactory(sys, solute_region=list(range(22)))
+if args.name == 'ALA':
+    factory = RESTTopologyFactory(sys, solute_region=list(range(22)))
+elif args.name == 'THR':
+    factory = RESTTopologyFactory(sys, solute_region=list(range(26)))
 
 # Get REST system
 REST_system = factory.REST_system
