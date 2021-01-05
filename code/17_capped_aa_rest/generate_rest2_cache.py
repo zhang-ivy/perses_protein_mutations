@@ -29,8 +29,12 @@ i = os.path.basename(os.path.dirname(args.dir))
 htf = pickle.load(open(os.path.join(args.dir, f"{i}_{args.phase}_{args.state}.pickle"), "rb" ))
 
 # Build REST factory
-# factory = RESTTopologyFactory(htf.hybrid_system, solute_region=list(range(6, 20)) + [0, 1, 20, 22])
-factory = RESTTopologyFactory(htf.hybrid_system, solute_region=list(range(6, 20)) + [1549, 1550, 1551, 1552]) # THR + off ALA atoms
+if args.phase == 'solvent':
+	# factory = RESTTopologyFactory(htf.hybrid_system, solute_region=list(range(6, 20)) + [0, 1, 20, 22])
+	factory = RESTTopologyFactory(htf.hybrid_system, solute_region=list(range(6, 20)) + [1549, 1550, 1551, 1552]) # THR + off ALA atoms
+elif args.phase == 'vacuum':
+	factory = RESTTopologyFactory(htf.hybrid_system, solute_region=list(range(6, 20)) + [26, 27, 28, 29]) # THR + off ALA atoms
+
 
 # Get REST system
 REST_system = factory.REST_system
