@@ -1,7 +1,7 @@
 import pickle
 import os
 from perses.annihilation.rest import RESTTopologyFactory
-from perses.annihilation.lambda_protocol import RESTState
+from perses.annihilation.lambda_protocol import RESTStateV2
 from openmmtools.states import SamplerState, ThermodynamicState, CompoundThermodynamicState
 from openmmtools import cache, utils
 from perses.dispersed.utils import configure_platform
@@ -21,6 +21,7 @@ parser.add_argument('phase', type=str, help='solvent or vacuum')
 parser.add_argument('name', type=str, help='amino acid three letter code, e.g. ALA')
 parser.add_argument('state', type=int, help='aka lambda, e.g. 0 or 1')
 parser.add_argument('length', type=int, help='in ns')
+parser.add_argument('T_max', type=int, help='in kelvin')
 args = parser.parse_args()
 
 # Load rhtf
@@ -28,7 +29,8 @@ i = os.path.basename(os.path.dirname(args.dir))
 htf = pickle.load(open(os.path.join(args.dir, f"{i}_{args.phase}_{args.state}.pickle"), "rb" ))
 
 # Build REST factory
-factory = RESTTopologyFactory(htf.hybrid_system, solute_region=list(range(6, 20)) + [0, 1, 20, 22])
+# factory = RESTTopologyFactory(htf.hybrid_system, solute_region=list(range(6, 20)) + [0, 1, 20, 22])
+factory = RESTTopologyFactory(htf.hybrid_system, solute_region=list(range(6, 20)) + [1549, 1550, 1551, 1552] # THR + off ALA atoms
 
 # Get REST system
 REST_system = factory.REST_system
@@ -36,12 +38,12 @@ REST_system = factory.REST_system
 # Create states for each replica
 n_replicas = 12  # Number of temperature replicas.
 T_min = 298.0 * unit.kelvin  # Minimum temperature.
-T_max = 600.0 * unit.kelvin  # Maximum temperature.
+T_max = args.T_max * unit.kelvin  # Maximum temperature.
 temperatures = [T_min + (T_max - T_min) * (math.exp(float(i) / float(n_replicas-1)) - 1.0) / (math.e - 1.0)
                 for i in range(n_replicas)]
 
 # Create reference thermodynamic state
-lambda_zero_alchemical_state = RESTState.from_system(REST_system)
+lambda_zero_alchemical_state = RESTStateV2.from_system(REST_system)
 thermostate = ThermodynamicState(REST_system, temperature=T_min)
 compound_thermodynamic_state = CompoundThermodynamicState(thermostate, composable_states=[lambda_zero_alchemical_state])
 
@@ -58,8 +60,8 @@ for temperature in temperatures:
     compound_thermodynamic_state_copy.set_alchemical_parameters(beta_0, beta_m)
     thermodynamic_state_list.append(compound_thermodynamic_state_copy)
 
-    # now generating a sampler_state for each thermodyanmic state, with relaxed positions
-    context, context_integrator = context_cache.get_context(compound_thermodynamic_state_copy)
+    # now generating a sampler_state for each thermodynamic state, with relaxed positions
+    # context, context_integrator = context_cache.get_context(compound_thermodynamic_state_copy)
     feptasks.minimize(compound_thermodynamic_state_copy, sampler_state)
     sampler_state_list.append(copy.deepcopy(sampler_state))
 
