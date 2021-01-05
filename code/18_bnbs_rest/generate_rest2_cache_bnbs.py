@@ -29,7 +29,11 @@ i = os.path.basename(os.path.dirname(args.dir))
 htf = pickle.load(open(os.path.join(args.dir, f"{i}_{args.phase}_{args.state}.pickle"), "rb" ))
 
 # Build REST factory
-factory = RESTTopologyFactory(htf.hybrid_system, solute_region=list(range(669, 683)) + list(range(14877, 14881)))
+if args.phase == 'apo':
+    factory = RESTTopologyFactory(htf.hybrid_system, solute_region=list(range(669, 683)) + list(range(14877, 14881)))
+elif args.phase == 'complex':
+    factory = RESTTopologyFactory(htf.hybrid_system, solute_region=list(range(669, 683)) + list(range(29474, 29478)))
+
 
 # Get REST system
 REST_system = factory.REST_system
