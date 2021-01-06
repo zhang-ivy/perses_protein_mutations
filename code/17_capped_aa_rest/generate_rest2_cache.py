@@ -36,9 +36,9 @@ if args.phase == 'solvent' and args.direction == 'forward':
 elif args.phase == 'vacuum' and args.direction == 'forward':
 	factory = RESTTopologyFactory(htf.hybrid_system, solute_region=list(range(6, 20)) + [26, 27, 28, 29]) # THR + off ALA atoms
 elif args.phase == 'solvent' and args.direction == 'backward':
-	factory = RESTTopologyFactory(htf.hybrid_system, solute_region=list(range(6, 16)) + list(range(22, 30))) # ALA + off THR atoms
-elif args.phase == 'vacuum' and args.direction == 'backward':
 	factory = RESTTopologyFactory(htf.hybrid_system, solute_region=list(range(6, 16)) + list(range(1557, 1565))) # ALA + off THR atoms
+elif args.phase == 'vacuum' and args.direction == 'backward':
+	factory = RESTTopologyFactory(htf.hybrid_system, solute_region=list(range(6, 16)) + list(range(22, 30))) # ALA + off THR atoms
 
 
 # Get REST system
