@@ -22,6 +22,7 @@ parser.add_argument('name', type=str, help='amino acid three letter code, e.g. A
 parser.add_argument('state', type=int, help='aka lambda, e.g. 0 or 1')
 parser.add_argument('length', type=int, help='in ns')
 parser.add_argument('T_max', type=int, help='in kelvin')
+parser.add_argument('direction', type=str, help='forward or backward', default='forward')
 args = parser.parse_args()
 
 # Load rhtf
@@ -29,10 +30,14 @@ i = os.path.basename(os.path.dirname(args.dir))
 htf = pickle.load(open(os.path.join(args.dir, f"{i}_{args.phase}_{args.state}.pickle"), "rb" ))
 
 # Build REST factory
-if args.phase == 'apo':
+if args.phase == 'apo' and args.direction == 'forward':
     factory = RESTTopologyFactory(htf.hybrid_system, solute_region=list(range(669, 683)) + list(range(14877, 14881)))
-elif args.phase == 'complex':
+elif args.phase == 'complex' and args.direction == 'forward':
     factory = RESTTopologyFactory(htf.hybrid_system, solute_region=list(range(669, 683)) + list(range(29474, 29478)))
+elif args.phase == 'apo' and args.direction == 'backward':
+    factory = RESTTopologyFactory(htf.hybrid_system, solute_region=list(range(669, 679)) + list(range(14873, 14881)))
+elif args.phase == 'complex' and args.direction == 'backward':
+    factory = RESTTopologyFactory(htf.hybrid_system, solute_region=list(range(669, 679)) + list(range(29470, 29478)))
 
 
 # Get REST system
