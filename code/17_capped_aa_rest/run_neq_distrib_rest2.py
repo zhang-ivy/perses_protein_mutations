@@ -45,11 +45,11 @@ platform_name = 'CUDA'
 
 # Read in vanilla htf
 i = os.path.basename(os.path.dirname(args.dir))
-with open(os.path.join(args.dir, f"{i}_{phase}.pickle"), 'rb') as f:
+with open(os.path.join(args.dir, f"{i}_{args.phase}.pickle"), 'rb') as f:
     htf = pickle.load(f)
 
 # Read in lambda = 0 cache
-with open(os.path.join(args.dir, f"{i}_{phase}_{args.old_name.lower()}_{args.length}ns_snapshots.npy"), 'rb') as f:
+with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.old_name.lower()}_{args.length}ns_snapshots.npy"), 'rb') as f:
     subset_pos = np.load(f)
 
 # Set system and positions 
