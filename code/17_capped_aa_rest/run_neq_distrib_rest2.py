@@ -97,7 +97,7 @@ for fwd_step in range(nsteps_neq):
 forward_works_master.append(forward_works)
 
 # Read in lambda = 1 cache
-with open(os.path.join(args.dir, f"{i}_{phase}_{args.new_name.lower()}_{args.length}ns_snapshots.npy"), 'rb') as f:
+with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.new_name.lower()}_{args.length}ns_snapshots.npy"), 'rb') as f:
     subset_pos = np.load(f)
 
 positions = subset_pos[args.sim_number-1]
