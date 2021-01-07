@@ -53,8 +53,8 @@ elif args.phase == 'complex' and args.direction == 'forward':
     query_indices = list(range(669, 679)) + list(range(29470, 29478))
 
 traj = md.Trajectory(np.array(htf.hybrid_positions), htf.hybrid_topology)
-rest_atoms = md.compute_neighbors(traj, 0.5, query_indices)[0]
-water_atoms = md.compute_neighbors(traj, 0.8, query_indices, haystack_indices=list(range(1441, htf.hybrid_topology.n_atoms)))[0]
+rest_atoms = list(md.compute_neighbors(traj, 0.5, query_indices)[0])
+water_atoms = list(md.compute_neighbors(traj, 0.8, query_indices, haystack_indices=list(range(1441, htf.hybrid_topology.n_atoms)))[0])
 factory = RESTTopologyFactory(htf.hybrid_system, solute_region=list(set(rest_atoms + water_atoms)))
 
 # Get REST system
