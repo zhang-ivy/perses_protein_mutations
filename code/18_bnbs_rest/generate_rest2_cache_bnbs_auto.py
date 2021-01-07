@@ -14,6 +14,7 @@ import argparse
 import copy
 from perses.dispersed import feptasks
 import mdtraj as md
+import numpy as np
 
 # Read args
 parser = argparse.ArgumentParser(description='run t-repex')
