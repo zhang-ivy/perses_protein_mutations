@@ -20,7 +20,6 @@ parser.add_argument('phase', type=str, help='solvent or vacuum')
 parser.add_argument('sim_number', type=int, help='number in job name - 1')
 parser.add_argument('old_name', type=str, help='three letter code of old amino acid')
 parser.add_argument('new_name', type=str, help='three letter code of new amino acid')
-parser.add_argument('state', type=int, help='aka lambda, e.g. 0 or 1')
 parser.add_argument('length', type=int, help='in ns')
 args = parser.parse_args()
 
