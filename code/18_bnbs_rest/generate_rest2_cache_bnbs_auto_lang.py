@@ -94,7 +94,7 @@ for temperature in temperatures:
 # Set up sampler
 print(f"move steps: {int((args.move_length*1000)/4.0)}")
 move = mcmc.LangevinSplittingDynamicsMove(timestep=4.0*unit.femtoseconds, n_steps=int((args.move_length*1000)/4.0))
-simulation = multistate.ReplicaExchangeSampler(mcmc_moves=move, number_of_iterations=args.length*100)
+simulation = multistate.ReplicaExchangeSampler(mcmc_moves=move, number_of_iterations=args.length*1000)
 
 # Run t-repex
 reporter_file = os.path.join(args.dir, f"{i}_{args.phase}_{args.name.lower()}_{args.length}ns.nc")
