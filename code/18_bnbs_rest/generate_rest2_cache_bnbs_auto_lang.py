@@ -25,6 +25,7 @@ parser.add_argument('state', type=int, help='aka lambda, e.g. 0 or 1')
 parser.add_argument('length', type=int, help='in ns')
 parser.add_argument('T_max', type=int, help='in kelvin')
 parser.add_argument('direction', type=str, help='forward or backward', default='forward')
+parser.add_argument('move_length', type=float, help='length (in ps) of LangevinSplittingDynamicsMove')
 args = parser.parse_args()
 
 # Load rhtf
@@ -91,7 +92,7 @@ for temperature in temperatures:
     sampler_state_list.append(copy.deepcopy(sampler_state))
 
 # Set up sampler
-move = mcmc.LangevinSplittingDynamicsMove(timestep=4.0*unit.femtoseconds, n_steps=2500)
+move = mcmc.LangevinSplittingDynamicsMove(timestep=4.0*unit.femtoseconds, n_steps=args.move_length/4.0*1000)
 simulation = multistate.ReplicaExchangeSampler(mcmc_moves=move, number_of_iterations=args.length*100)
 
 # Run t-repex
