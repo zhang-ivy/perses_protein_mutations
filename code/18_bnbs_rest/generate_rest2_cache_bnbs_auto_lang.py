@@ -92,6 +92,7 @@ for temperature in temperatures:
     sampler_state_list.append(copy.deepcopy(sampler_state))
 
 # Set up sampler
+print(f"move steps: {args.move_length/4.0*1000}")
 move = mcmc.LangevinSplittingDynamicsMove(timestep=4.0*unit.femtoseconds, n_steps=args.move_length/4.0*1000)
 simulation = multistate.ReplicaExchangeSampler(mcmc_moves=move, number_of_iterations=args.length*100)
 
