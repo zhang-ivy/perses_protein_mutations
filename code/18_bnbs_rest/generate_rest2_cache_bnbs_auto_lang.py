@@ -25,6 +25,7 @@ parser.add_argument('state', type=int, help='aka lambda, e.g. 0 or 1')
 parser.add_argument('length', type=int, help='in ns')
 parser.add_argument('T_max', type=int, help='in kelvin')
 parser.add_argument('direction', type=str, help='forward or backward', default='forward')
+parser.add_argument('move_length', type=int, help='length (ps) of LangevinSplittingDynamicsMove')
 args = parser.parse_args()
 
 # Load rhtf
@@ -54,8 +55,8 @@ elif args.phase == 'complex' and args.direction == 'forward':
 
 traj = md.Trajectory(np.array(htf.hybrid_positions), htf.hybrid_topology)
 rest_atoms = list(md.compute_neighbors(traj, 0.5, query_indices)[0])
-water_atoms = list(md.compute_neighbors(traj, 0.8, query_indices, haystack_indices=list(range(1441, htf.hybrid_topology.n_atoms)))[0])
-factory = RESTTopologyFactory(htf.hybrid_system, solute_region=list(set(rest_atoms + water_atoms)))
+# water_atoms = list(md.compute_neighbors(traj, 0.8, query_indices, haystack_indices=list(range(1441, htf.hybrid_topology.n_atoms)))[0])
+factory = RESTTopologyFactory(htf.hybrid_system, solute_region=list(set(rest_atoms)))
 
 # Get REST system
 REST_system = factory.REST_system
@@ -91,7 +92,7 @@ for temperature in temperatures:
     sampler_state_list.append(copy.deepcopy(sampler_state))
 
 # Set up sampler
-move = mcmc.LangevinSplittingDynamicsMove(timestep=4.0*unit.femtoseconds, n_steps=250)
+move = mcmc.LangevinSplittingDynamicsMove(timestep=4.0*unit.femtoseconds, n_steps=args.move_length*1000/4)
 simulation = multistate.ReplicaExchangeSampler(mcmc_moves=move, number_of_iterations=args.length*1000)
 
 # Run t-repex
