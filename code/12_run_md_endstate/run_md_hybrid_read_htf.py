@@ -42,7 +42,6 @@ lambda_alchemical_state = RelativeAlchemicalState.from_system(system)
 lambda_protocol = LambdaProtocol(functions = 'default')
 lambda_alchemical_state.set_alchemical_parameters(args.endstate, lambda_protocol)
 thermodynamic_state = CompoundThermodynamicState(ThermodynamicState(system, temperature=temperature), composable_states=[lambda_alchemical_state])
-thermodynamic_state.set_alchemical_variable('lambda', endstate)
 
 # # Create CompoundThermodynamicState at the appropriate endstate -- r-htf
 # # atoms_to_alchemify = list(htf._atom_classes['unique_new_atoms']) + list(htf._atom_classes['unique_old_atoms'])
