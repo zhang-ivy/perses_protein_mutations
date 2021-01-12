@@ -95,9 +95,9 @@ for temperature in temperatures:
     sampler_state_list.append(copy.deepcopy(sampler_state))
 
 # Set up sampler
-print(f"move steps: {int((args.move_length*1000)/4.0)}")
+print(f"move steps: {int((args.move_length*1000)/args.timestep)}")
 print(f"timestep: {args.timestep}")
-move = mcmc.LangevinSplittingDynamicsMove(timestep=args.timestep*unit.femtoseconds, n_steps=int((args.move_length*1000)/4.0))
+move = mcmc.LangevinSplittingDynamicsMove(timestep=args.timestep*unit.femtoseconds, n_steps=int((args.move_length*1000)/args.timestep))
 simulation = multistate.ReplicaExchangeSampler(mcmc_moves=move, number_of_iterations=args.length*1000)
 
 # Run t-repex
