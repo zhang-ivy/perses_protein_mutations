@@ -89,9 +89,10 @@ openmm.LocalEnergyMinimizer.minimize(context)
 pos_old = []
 for step in tqdm(range(nsteps)):
     integrator.step(1)
-    pos = context.getState(getPositions=True, enforcePeriodicBox=False).getPositions(asNumpy=True)
-    old_pos = np.asarray(htf.old_positions(pos))
-    pos_old.append(old_pos)
+    if step % 25 == 0:
+	    pos = context.getState(getPositions=True, enforcePeriodicBox=False).getPositions(asNumpy=True)
+	    old_pos = np.asarray(htf.old_positions(pos))
+	    pos_old.append(old_pos)
 
 traj_old = md.Trajectory(pos_old, md.Topology.from_openmm(htf._topology_proposal.old_topology))
 traj_old.save(os.path.join(out_dir, f"state_11_md_old.dcd")) 
