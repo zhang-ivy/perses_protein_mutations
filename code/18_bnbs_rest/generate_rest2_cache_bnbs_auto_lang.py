@@ -96,7 +96,7 @@ for temperature in temperatures:
 
 # Set up sampler
 print(f"move steps: {int((args.move_length*1000)/4.0)}")
-print(f"timestep: {args.timesteps}")
+print(f"timestep: {args.timestep}")
 move = mcmc.LangevinSplittingDynamicsMove(timestep=args.timestep*unit.femtoseconds, n_steps=int((args.move_length*1000)/4.0))
 simulation = multistate.ReplicaExchangeSampler(mcmc_moves=move, number_of_iterations=args.length*1000)
 
