@@ -28,6 +28,7 @@ parser.add_argument('direction', type=str, help='forward or backward', default='
 parser.add_argument('move_length', type=float, help='length (in ps) of LangevinSplittingDynamicsMove')
 parser.add_argument('timestep', type=float, help='2 or 4 fs')
 parser.add_argument('radius', type=float, help='e.g. cutoff in nm for REST2 region')
+parser.add_argument('states', type=int, help='for repex')
 args = parser.parse_args()
 
 # Load rhtf
@@ -65,7 +66,7 @@ factory = RESTTopologyFactory(htf.hybrid_system, solute_region=rest_atoms)
 REST_system = factory.REST_system
 
 # Create states for each replica
-n_replicas = 12  # Number of temperature replicas.
+n_replicas = args.states  # Number of temperature replicas.
 T_min = 298.0 * unit.kelvin  # Minimum temperature.
 T_max = args.T_max * unit.kelvin  # Maximum temperature.
 temperatures = [T_min + (T_max - T_min) * (math.exp(float(i) / float(n_replicas-1)) - 1.0) / (math.e - 1.0)
