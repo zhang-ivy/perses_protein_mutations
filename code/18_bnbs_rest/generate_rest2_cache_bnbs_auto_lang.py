@@ -58,7 +58,8 @@ elif args.phase == 'complex' and args.direction == 'forward':
 
 print(f"radius:{args.radius}")
 traj = md.Trajectory(np.array(htf.hybrid_positions), htf.hybrid_topology)
-rest_atoms = list(md.compute_neighbors(traj, args.radius, query_indices)[0])
+solute_atoms = list(traj.topology.select("is_protein"))
+rest_atoms = list(md.compute_neighbors(traj, args.radius, query_indices, haystack_indices=solute_atoms)[0])
 # water_atoms = list(md.compute_neighbors(traj, 0.8, query_indices, haystack_indices=list(range(1441, htf.hybrid_topology.n_atoms)))[0])
 factory = RESTTopologyFactory(htf.hybrid_system, solute_region=rest_atoms)
 
