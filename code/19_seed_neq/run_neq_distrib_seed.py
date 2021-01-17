@@ -107,11 +107,8 @@ if args.direction == 'backward':
     system = htf.hybrid_system
     index = 0 if args.sim_number - 1 < 33 else (1 if args.sim_number -1 < 66 else 2) # 0-32, 33-65, 66-99
     positions = subset_pos[index]
-else:
-    # Set positions 
-    positions = htf.hybrid_positions
+    context.setPositions(positions)
 
-context.setPositions(positions)
 
 # Run eq reverse (1 -> 0)
 initial_time = time.time()
