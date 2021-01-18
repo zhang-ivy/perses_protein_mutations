@@ -52,7 +52,8 @@ if args.direction == 'forward':
         subset_pos = np.load(f)
 
     system = htf.hybrid_system
-    index = 0 if args.sim_number - 1 < 33 else (1 if args.sim_number -1 < 66 else 2) # 0-32, 33-65, 66-99
+    # index = 0 if args.sim_number - 1 < 33 else (1 if args.sim_number -1 < 66 else 2) # 0-32, 33-65, 66-99
+    index = 0 if args.sim_number -1 < 50 else 1
     positions = subset_pos[index]
 else:
     # Set system and positions 
@@ -76,10 +77,18 @@ context.setPositions(positions)
 openmm.LocalEnergyMinimizer.minimize(context)
 
 # Run eq forward (0 -> 1)
-initial_time = time.time()
-integrator.step(nsteps_eq)
-elapsed_time = (time.time() - initial_time) * unit.seconds
-_logger.info(f'Equilibrating at lambda = 0, took: {elapsed_time / unit.seconds} seconds')
+forward_eq_old, forward_eq_new = list(), list()
+for fwd_step in range(nsteps_eq):
+    initial_time = time.time()
+    integrator.step(1)
+    elapsed_time = (time.time() - initial_time) * unit.seconds
+    if fwd_step % 2500 == 0:
+        _logger.info(f'forward EQ step: {fwd_step}, took: {elapsed_time / unit.seconds} seconds')
+        pos = context.getState(getPositions=True, enforcePeriodicBox=False).getPositions(asNumpy=True)
+        old_pos = np.asarray(htf.old_positions(pos))
+        new_pos = np.asarray(htf.new_positions(pos))
+        forward_eq_old.append(old_pos)
+        forward_eq_new.append(new_pos)
 
 # Run neq forward (0 -> 1)
 forward_works_master = list()
@@ -105,16 +114,24 @@ if args.direction == 'backward':
         subset_pos = np.load(f)
 
     system = htf.hybrid_system
-    index = 0 if args.sim_number - 1 < 33 else (1 if args.sim_number -1 < 66 else 2) # 0-32, 33-65, 66-99
+    # index = 0 if args.sim_number - 1 < 33 else (1 if args.sim_number -1 < 66 else 2) # 0-32, 33-65, 66-99
+    index = 0 if args.sim_number -1 < 50 else 1
     positions = subset_pos[index]
     context.setPositions(positions)
 
-
 # Run eq reverse (1 -> 0)
-initial_time = time.time()
-integrator.step(nsteps_eq)
-elapsed_time = (time.time() - initial_time) * unit.seconds
-_logger.info(f'Equilibrating at lambda = 1, took: {elapsed_time / unit.seconds} seconds')
+reverse_eq_old, reverse_eq_new = list(), list()
+for rev_step in range(nsteps_eq):
+    initial_time = time.time()
+    integrator.step(1)
+    elapsed_time = (time.time() - initial_time) * unit.seconds
+    if rev_step % 2500 == 0:
+        _logger.info(f'reverse EQ step: {rev_step}, took: {elapsed_time / unit.seconds} seconds')
+        pos = context.getState(getPositions=True, enforcePeriodicBox=False).getPositions(asNumpy=True)
+        old_pos = np.asarray(htf.old_positions(pos))
+        new_pos = np.asarray(htf.new_positions(pos))
+        reverse_eq_old.append(old_pos)
+        reverse_eq_new.append(new_pos)
 
 # Run neq reverse (1 -> 0)
 reverse_works_master = list()
@@ -141,6 +158,15 @@ with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_reverse.np
     np.save(f, reverse_works_master)
 
 # Save trajs
+with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_forward_eq_old.npy"), 'wb') as f:
+    np.save(f, forward_eq_old)
+with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_forward_eq_new.npy"), 'wb') as f:
+    np.save(f, forward_eq_new)
+with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_reverse_eq_old.npy"), 'wb') as f:
+    np.save(f, reverse_eq_old)
+with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_reverse_eq_new.npy"), 'wb') as f:
+    np.save(f, reverse_eq_new)
+
 with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_forward_neq_old.npy"), 'wb') as f:
     np.save(f, forward_neq_old)
 with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_forward_neq_new.npy"), 'wb') as f:
