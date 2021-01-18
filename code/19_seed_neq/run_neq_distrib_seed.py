@@ -53,7 +53,10 @@ if args.direction == 'forward':
 
     system = htf.hybrid_system
     # index = 0 if args.sim_number - 1 < 33 else (1 if args.sim_number -1 < 66 else 2) # 0-32, 33-65, 66-99
-    index = 0 if args.sim_number -1 < 50 else 1
+    if args.phase == 'apo':
+        index = 0 if args.sim_number -1 < 50 else 1
+    elif args.phase == 'complex':
+        index = 0
     positions = subset_pos[index]
 else:
     # Set system and positions 
@@ -115,7 +118,10 @@ if args.direction == 'backward':
 
     system = htf.hybrid_system
     # index = 0 if args.sim_number - 1 < 33 else (1 if args.sim_number -1 < 66 else 2) # 0-32, 33-65, 66-99
-    index = 0 if args.sim_number -1 < 50 else 1
+    if args.phase == 'apo':
+        index = 0 if args.sim_number -1 < 50 else 1
+    elif args.phase == 'complex':
+        index = 0
     positions = subset_pos[index]
     context.setPositions(positions)
 
