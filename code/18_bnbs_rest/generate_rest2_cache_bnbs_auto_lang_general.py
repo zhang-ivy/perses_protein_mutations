@@ -25,23 +25,38 @@ _logger.setLevel(logging.INFO)
 # Read args
 parser = argparse.ArgumentParser(description='run t-repex')
 parser.add_argument('dir', type=str, help='path to input/output dir')
-parser.add_argument('phase', type=str, help='solvent or vacuum')
-parser.add_argument('name', type=str, help='amino acid three letter code, e.g. ALA')
-parser.add_argument('state', type=int, help='aka lambda, e.g. 0 or 1')
-parser.add_argument('length', type=int, help='in ns')
-parser.add_argument('T_max', type=int, help='in kelvin')
-parser.add_argument('direction', type=str, help='forward or backward', default='forward')
-parser.add_argument('move_length', type=float, help='length (in ps) of LangevinSplittingDynamicsMove')
-parser.add_argument('timestep', type=float, help='2 or 4 fs')
-parser.add_argument('radius', type=float, help='e.g. cutoff in nm for REST2 region')
-parser.add_argument('states', type=int, help='for repex')
 parser.add_argument('resid', type=str, help='resid of residue to be mutated')
+parser.add_argument('old_aa_name', type=str, help='amino acid three letter code, e.g. ALA')
 parser.add_argument('new_aa_name', type=str, help='amino acid three letter code, e.g. ALA')
+parser.add_argument('sim_number', type=int, help='index of job arrray, starts at 1')
 args = parser.parse_args()
+
+if args.sim_number == 1:
+    phase = 'apo'
+    name = args.old_aa_name
+    state = 0
+elif args.sim_num == 2:
+    phase = 'apo'
+    name = args.new_aa_name
+    state = 1
+elif args.sim_number == 3:
+    phase = 'complex'
+    name = args.old_aa_name
+    state = 0
+elif args.sim_number == 4:
+    phase = 'complex'
+    name = args.new_aa_name
+    state = 1
+
+
+length = 1
+move_length = 3
+timestep = 4
+radius = 0.2
 
 # Load rhtf or generate it if it doesn't exist
 i = os.path.basename(os.path.dirname(args.dir))
-path = os.path.join(args.dir, f"{i}_{args.phase}_{args.state}.pickle")
+path = os.path.join(args.dir, f"{i}_{phase}_{state}.pickle")
 if not os.path.exists(path):
     solvent_delivery = PointMutationExecutor("../../input/mmc2_barstar.pdb",
                         '1', # First chain is the barstar one
@@ -51,20 +66,20 @@ if not os.path.exists(path):
                         ionic_strength=0.05*unit.molar,
                         flatten_torsions=True,
                         flatten_exceptions=True,
-                        repartitioned_endstate=args.state
+                        repartitioned_endstate=state
                        )
-    pickle.dump(solvent_delivery.get_apo_htf(), open(os.path.join(args.dir, f"{i}_apo_{args.state}.pickle"), "wb" ))
-    pickle.dump(solvent_delivery.get_complex_htf(), open(os.path.join(args.dir, f"{i}_complex_{args.state}.pickle"), "wb" ))
+    pickle.dump(solvent_delivery.get_apo_htf(), open(os.path.join(args.dir, f"{i}_apo_{state}.pickle"), "wb" ))
+    pickle.dump(solvent_delivery.get_complex_htf(), open(os.path.join(args.dir, f"{i}_complex_{state}.pickle"), "wb" ))
 htf = pickle.load(open(path, "rb" ))
 
 # Build REST factory
 _logger.info("Generating REST factory")
 _logger.info(f"query indices {query_indices}")
-_logger.info(f"radius:{args.radius}")
+_logger.info(f"radius:{radius} nm")
 query_indices = [atom.index for atom in list(htf.hybrid_topology.residues)[int(args.resid)].atoms]
 traj = md.Trajectory(np.array(htf.hybrid_positions), htf.hybrid_topology)
 solute_atoms = list(traj.topology.select("is_protein"))
-rest_atoms = list(md.compute_neighbors(traj, args.radius, query_indices, haystack_indices=solute_atoms)[0])
+rest_atoms = list(md.compute_neighbors(traj, radius, query_indices, haystack_indices=solute_atoms)[0])
 factory = RESTTopologyFactory(htf.hybrid_system, solute_region=rest_atoms)
 
 _logger.info("Generating REST states")
@@ -72,9 +87,9 @@ _logger.info("Generating REST states")
 REST_system = factory.REST_system
 
 # Create states for each replica
-n_replicas = args.states  # Number of temperature replicas.
+n_replicas = 12  # Number of temperature replicas.
 T_min = 298.0 * unit.kelvin  # Minimum temperature.
-T_max = args.T_max * unit.kelvin  # Maximum temperature.
+T_max = 1200 * unit.kelvin  # Maximum temperature.
 temperatures = [T_min + (T_max - T_min) * (math.exp(float(i) / float(n_replicas-1)) - 1.0) / (math.e - 1.0)
                 for i in range(n_replicas)]
 
@@ -103,13 +118,13 @@ for temperature in temperatures:
 
 # Set up sampler
 _logger.info("About to start repex")
-print(f"move steps: {int((args.move_length*1000)/args.timestep)}")
-print(f"timestep: {args.timestep}")
-move = mcmc.LangevinSplittingDynamicsMove(timestep=args.timestep*unit.femtoseconds, n_steps=int((args.move_length*1000)/args.timestep))
-simulation = multistate.ReplicaExchangeSampler(mcmc_moves=move, number_of_iterations=args.length*1000)
+print(f"move steps: {int((move_length*1000)/timestep)}")
+print(f"timestep: {timestep} fs")
+move = mcmc.LangevinSplittingDynamicsMove(timestep=timestep*unit.femtoseconds, n_steps=int((move_length*1000)/timestep))
+simulation = multistate.ReplicaExchangeSampler(mcmc_moves=move, number_of_iterations=length*1000)
 
 # Run t-repex
-reporter_file = os.path.join(args.dir, f"{i}_{args.phase}_{args.name.lower()}_{args.length}ns.nc")
+reporter_file = os.path.join(args.dir, f"{i}_{phase}_{name.lower()}_{length}ns.nc")
 reporter = multistate.MultiStateReporter(reporter_file, checkpoint_interval=1)
 simulation.create(thermodynamic_states=thermodynamic_state_list,
                   sampler_states=sampler_state_list,
