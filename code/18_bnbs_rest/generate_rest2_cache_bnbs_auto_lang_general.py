@@ -74,9 +74,9 @@ htf = pickle.load(open(path, "rb" ))
 
 # Build REST factory
 _logger.info("Generating REST factory")
-_logger.info(f"query indices {query_indices}")
 _logger.info(f"radius:{radius} nm")
 query_indices = [atom.index for atom in list(htf.hybrid_topology.residues)[int(args.resid)].atoms]
+_logger.info(f"query indices {query_indices}")
 traj = md.Trajectory(np.array(htf.hybrid_positions), htf.hybrid_topology)
 solute_atoms = list(traj.topology.select("is_protein"))
 rest_atoms = list(md.compute_neighbors(traj, radius, query_indices, haystack_indices=solute_atoms)[0])
