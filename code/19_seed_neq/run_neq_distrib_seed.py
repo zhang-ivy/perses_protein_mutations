@@ -48,16 +48,17 @@ with open(os.path.join(args.dir, f"{i}_{args.phase}.pickle"), 'rb') as f:
 
 # Read in lambda = 0 cache, if necessary
 if args.direction == 'forward':
-    with open(os.path.join(args.dir, f"{i}_{args.phase}_{0}.npy"), 'rb') as f:
+    with open(os.path.join(args.dir, f"{i}_{args.phase}_thr_5ns_snapshots.npy"), 'rb') as f:
         subset_pos = np.load(f)
 
     system = htf.hybrid_system
     # index = 0 if args.sim_number - 1 < 33 else (1 if args.sim_number -1 < 66 else 2) # 0-32, 33-65, 66-99
-    if args.phase == 'apo':
-        index = 0 if args.sim_number -1 < 50 else 1
-    elif args.phase == 'complex':
-        index = 0
-    positions = subset_pos[index]
+    # if args.phase == 'apo':
+    #     index = 0 if args.sim_number -1 < 50 else 1
+    # elif args.phase == 'complex':
+    #     index = 0
+
+    positions = subset_pos[args.sim_number - 1]
 else:
     # Set system and positions 
     system = htf.hybrid_system
@@ -113,16 +114,16 @@ forward_works_master.append(forward_works)
 
 # Read in lambda = 1 cache, if necessary
 if args.direction == 'backward':
-    with open(os.path.join(args.dir, f"{i}_{args.phase}_{1}.npy"), 'rb') as f:
+    with open(os.path.join(args.dir, f"{i}_{args.phase}_thr_5ns_snapshots.npy"), 'rb') as f:
         subset_pos = np.load(f)
 
     system = htf.hybrid_system
     # index = 0 if args.sim_number - 1 < 33 else (1 if args.sim_number -1 < 66 else 2) # 0-32, 33-65, 66-99
-    if args.phase == 'apo':
-        index = 0 if args.sim_number -1 < 50 else 1
-    elif args.phase == 'complex':
-        index = 0
-    positions = subset_pos[index]
+    # if args.phase == 'apo':
+    #     index = 0 if args.sim_number -1 < 50 else 1
+    # elif args.phase == 'complex':
+    #     index = 0
+    positions = subset_pos[args.sim_number - 1]
     context.setPositions(positions)
 
 # Run eq reverse (1 -> 0)
