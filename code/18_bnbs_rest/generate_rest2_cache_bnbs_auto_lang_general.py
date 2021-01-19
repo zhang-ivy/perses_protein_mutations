@@ -28,14 +28,14 @@ parser.add_argument('dir', type=str, help='path to input/output dir')
 parser.add_argument('resid', type=str, help='resid of residue to be mutated')
 parser.add_argument('old_aa_name', type=str, help='amino acid three letter code, e.g. ALA')
 parser.add_argument('new_aa_name', type=str, help='amino acid three letter code, e.g. ALA')
-parser.add_argument('sim_number', type=int, help='index of job arrray, starts at 1')
+parser.add_argument('sim_number', type=int, help='index of job array, starts at 1')
 args = parser.parse_args()
 
 if args.sim_number == 1:
     phase = 'apo'
     name = args.old_aa_name
     state = 0
-elif args.sim_num == 2:
+elif args.sim_number == 2:
     phase = 'apo'
     name = args.new_aa_name
     state = 1
