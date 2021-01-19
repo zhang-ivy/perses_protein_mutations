@@ -58,15 +58,16 @@ if not os.path.exists(path):
 htf = pickle.load(open(path, "rb" ))
 
 # Build REST factory
+_logger.info("Generating REST factory")
+_logger.info(f"query indices {query_indices}")
+_logger.info(f"radius:{args.radius}")
 query_indices = [atom.index for atom in list(htf.hybrid_topology.residues)[int(args.resid)].atoms]
-print(f"query indices {query_indices}")
-
-print(f"radius:{args.radius}")
 traj = md.Trajectory(np.array(htf.hybrid_positions), htf.hybrid_topology)
 solute_atoms = list(traj.topology.select("is_protein"))
 rest_atoms = list(md.compute_neighbors(traj, args.radius, query_indices, haystack_indices=solute_atoms)[0])
 factory = RESTTopologyFactory(htf.hybrid_system, solute_region=rest_atoms)
 
+_logger.info("Generating REST states")
 # Get REST system
 REST_system = factory.REST_system
 
@@ -101,6 +102,7 @@ for temperature in temperatures:
     sampler_state_list.append(copy.deepcopy(sampler_state))
 
 # Set up sampler
+_logger.info("About to start repex")
 print(f"move steps: {int((args.move_length*1000)/args.timestep)}")
 print(f"timestep: {args.timestep}")
 move = mcmc.LangevinSplittingDynamicsMove(timestep=args.timestep*unit.femtoseconds, n_steps=int((args.move_length*1000)/args.timestep))
