@@ -117,6 +117,7 @@ for temperature in temperatures:
     sampler_state_list.append(copy.deepcopy(sampler_state))
 
 # Set up sampler
+_logger.setLevel(logging.DEBUG)
 _logger.info("About to start repex")
 print(f"move steps: {int((move_length*1000)/timestep)}")
 print(f"timestep: {timestep} fs")
