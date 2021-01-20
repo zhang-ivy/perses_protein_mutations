@@ -54,8 +54,8 @@ def get_dihedrals(i, name, length, out_dir, htf, dihedral_indices_new, dihedral_
     
     # From Hannah: https://github.com/hannahbrucemacdonald/endstate_pdbs/blob/master/scripts/input_for_pol_calc.py
     from perses.analysis.utils import open_netcdf
-    nc = open_netcdf(os.path.join(out_dir, f"{i}_{phase}_{name}_{length}ns.nc"))
-    nc_checkpoint = open_netcdf(os.path.join(out_dir, f"{i}_{phase}_{name}_{length}ns_checkpoint.nc"))
+    nc = open_netcdf(os.path.join(out_dir, f"{i}_{phase}_{name.lower()}_{length}ns.nc"))
+    nc_checkpoint = open_netcdf(os.path.join(out_dir, f"{i}_{phase}_{name.lower()}_{length}ns_checkpoint.nc"))
     checkpoint_interval = nc_checkpoint.CheckpointInterval
     all_positions = nc_checkpoint.variables['positions']
     n_iter, n_replicas, n_atoms, _ = np.shape(all_positions)
@@ -137,12 +137,12 @@ dihedrals, n_iter, all_pos_hybrid = get_dihedrals(i, name, length, out_dir, htf,
 # Plot 
 dihedrals_new = dihedrals[0]
 dihedrals_old = dihedrals[1]
-plot_dihedrals(dihedrals_old, os.path.join(out_dir, f"{i}_{phase}_{name}_{length}ns_{j}_{args.old_aa_name}_correlated.png"))
-uncorrelated_old = plot_time_series(dihedrals_old, n_iter, os.path.join(out_dir, f"{i}_{phase}_{name}_{length}ns_{j}_{args.old_aa_name}_timeseries.png"))
-plot_dihedrals_uncorrelated(dihedrals_old, uncorrelated_old, os.path.join(out_dir, f"{i}_{phase}_{name}_{length}ns_{j}_{args.old_aa_name}_decorrelated.png"))
-plot_dihedrals(dihedrals_new, os.path.join(out_dir, f"{i}_{phase}_{name}_{length}ns_{j}_{args.new_aa_name}_correlated.png"))
-uncorrelated_new = plot_time_series(dihedrals_new, n_iter, os.path.join(out_dir, f"{i}_{phase}_{name}_{length}ns_{j}_{args.new_aa_name}_timeseries.png"))
-plot_dihedrals_uncorrelated(dihedrals_new, uncorrelated_new, os.path.join(out_dir, f"{i}_{phase}_{name}_{length}ns_{j}_{args.new_aa_name}_decorrelated.png"))
+plot_dihedrals(dihedrals_old, os.path.join(out_dir, f"{i}_{phase}_{name.lower()}_{length}ns_{j}_{args.old_aa_name.lower()}_correlated.png"))
+uncorrelated_old = plot_time_series(dihedrals_old, n_iter, os.path.join(out_dir, f"{i}_{phase}_{name.lower()}_{length}ns_{j}_{args.old_aa_name.lower()}_timeseries.png"))
+plot_dihedrals_uncorrelated(dihedrals_old, uncorrelated_old, os.path.join(out_dir, f"{i}_{phase}_{name.lower()}_{length}ns_{j}_{args.old_aa_name.lower()}_decorrelated.png"))
+plot_dihedrals(dihedrals_new, os.path.join(out_dir, f"{i}_{phase}_{name.lower()}_{length}ns_{j}_{args.new_aa_name.lower()}_correlated.png"))
+uncorrelated_new = plot_time_series(dihedrals_new, n_iter, os.path.join(out_dir, f"{i}_{phase}_{name.lower()}_{length}ns_{j}_{args.new_aa_name.lower()}_timeseries.png"))
+plot_dihedrals_uncorrelated(dihedrals_new, uncorrelated_new, os.path.join(out_dir, f"{i}_{phase}_{name.lower()}_{length}ns_{j}_{args.new_aa_name.lower()}_decorrelated.png"))
 
 # Save 100 random uncorrelated hybrid pos snapshots
 if name == args.new_aa_name:
@@ -153,5 +153,5 @@ else:
     raise Exception("Your specified amino acid did not match the old or new aa names")
 subset_indices = random.choices(uncorrelated_indices, k=100) # Choose 100 random indices from uncorrelated indices
 subset_pos = all_pos_hybrid[0][subset_indices] # Make array of hybrid positions for 100 uncorrelated indices
-with open(os.path.join(out_dir, f"{i}_{phase}_{name}_{length}ns_snapshots.npy"), 'wb') as f:
+with open(os.path.join(out_dir, f"{i}_{phase}_{name.lower()}_{length}ns_snapshots.npy"), 'wb') as f:
     np.save(f, subset_pos)
