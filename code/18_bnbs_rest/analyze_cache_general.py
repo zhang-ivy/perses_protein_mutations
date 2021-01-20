@@ -64,7 +64,7 @@ def get_dihedrals(i, name, length, out_dir, htf, dihedral_indices_new, dihedral_
     all_pos_new = np.zeros(shape=(n_iter, new_top.n_atoms, 3))
     all_pos_old = np.zeros(shape=(n_iter, old_top.n_atoms, 3))
     all_pos_hybrid = np.zeros(shape=(n_iter, n_atoms, 3))
-    for iteration in tqdm(range(n_iter)):
+    for iteration in tqdm(range(0, 1)):
         replica_id = np.where(nc.variables['states'][iteration*checkpoint_interval] == 0)[0]
         pos = all_positions[iteration,replica_id,:,:][0] *unit.nanometers
         all_pos_new[iteration] = htf.new_positions(pos).value_in_unit_system(unit.md_unit_system) # Get new positions only
@@ -137,12 +137,12 @@ dihedrals, n_iter, all_pos_hybrid = get_dihedrals(i, name, length, out_dir, htf,
 # Plot 
 dihedrals_new = dihedrals[0]
 dihedrals_old = dihedrals[1]
-plot_dihedrals(dihedrals_old, os.path.join(out_dir, f"{i}_{phase}_{name.lower()}_{length}ns_{j}_{args.old_aa_name.lower()}_correlated.png"))
-uncorrelated_old = plot_time_series(dihedrals_old, n_iter, os.path.join(out_dir, f"{i}_{phase}_{name.lower()}_{length}ns_{j}_{args.old_aa_name.lower()}_timeseries.png"))
-plot_dihedrals_uncorrelated(dihedrals_old, uncorrelated_old, os.path.join(out_dir, f"{i}_{phase}_{name.lower()}_{length}ns_{j}_{args.old_aa_name.lower()}_decorrelated.png"))
-plot_dihedrals(dihedrals_new, os.path.join(out_dir, f"{i}_{phase}_{name.lower()}_{length}ns_{j}_{args.new_aa_name.lower()}_correlated.png"))
-uncorrelated_new = plot_time_series(dihedrals_new, n_iter, os.path.join(out_dir, f"{i}_{phase}_{name.lower()}_{length}ns_{j}_{args.new_aa_name.lower()}_timeseries.png"))
-plot_dihedrals_uncorrelated(dihedrals_new, uncorrelated_new, os.path.join(out_dir, f"{i}_{phase}_{name.lower()}_{length}ns_{j}_{args.new_aa_name.lower()}_decorrelated.png"))
+plot_dihedrals(dihedrals_old, os.path.join(out_dir, f"{i}_{phase}_{name.lower()}_{length}ns_{args.old_aa_name.lower()}_correlated.png"))
+uncorrelated_old = plot_time_series(dihedrals_old, n_iter, os.path.join(out_dir, f"{i}_{phase}_{name.lower()}_{length}ns_{args.old_aa_name.lower()}_timeseries.png"))
+plot_dihedrals_uncorrelated(dihedrals_old, uncorrelated_old, os.path.join(out_dir, f"{i}_{phase}_{name.lower()}_{length}ns_{args.old_aa_name.lower()}_decorrelated.png"))
+plot_dihedrals(dihedrals_new, os.path.join(out_dir, f"{i}_{phase}_{name.lower()}_{length}ns_{args.new_aa_name.lower()}_correlated.png"))
+uncorrelated_new = plot_time_series(dihedrals_new, n_iter, os.path.join(out_dir, f"{i}_{phase}_{name.lower()}_{length}ns_{args.new_aa_name.lower()}_timeseries.png"))
+plot_dihedrals_uncorrelated(dihedrals_new, uncorrelated_new, os.path.join(out_dir, f"{i}_{phase}_{name.lower()}_{length}ns_{args.new_aa_name.lower()}_decorrelated.png"))
 
 # Save 100 random uncorrelated hybrid pos snapshots
 if name == args.new_aa_name:
