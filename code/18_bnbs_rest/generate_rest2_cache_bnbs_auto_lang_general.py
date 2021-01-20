@@ -29,6 +29,7 @@ parser.add_argument('resid', type=str, help='resid of residue to be mutated')
 parser.add_argument('old_aa_name', type=str, help='amino acid three letter code, e.g. ALA')
 parser.add_argument('new_aa_name', type=str, help='amino acid three letter code, e.g. ALA')
 parser.add_argument('sim_number', type=int, help='index of job array, starts at 1')
+parser.add_argument('input_file', type=str, default="../../input/mmc2_barstar.pdb", help='name of input file ')
 args = parser.parse_args()
 
 if args.sim_number == 1:
@@ -48,7 +49,6 @@ elif args.sim_number == 4:
     name = args.new_aa_name
     state = 1
 
-
 length = 1
 move_length = 3
 timestep = 4
@@ -58,7 +58,7 @@ radius = 0.2
 i = os.path.basename(os.path.dirname(args.dir))
 path = os.path.join(args.dir, f"{i}_{phase}_{state}.pickle")
 if not os.path.exists(path):
-    solvent_delivery = PointMutationExecutor("../../input/mmc2_barstar.pdb",
+    solvent_delivery = PointMutationExecutor(args.input_file,
                         '1', # First chain is the barstar one
                         args.resid,
                         args.new_aa_name,
