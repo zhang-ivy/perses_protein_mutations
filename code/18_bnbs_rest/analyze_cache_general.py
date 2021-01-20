@@ -153,6 +153,6 @@ else:
     raise Exception("Your specified amino acid did not match the old or new aa names")
 subset_indices = random.choices(uncorrelated_indices, k=100) # Choose 100 random indices from uncorrelated indices
 _logger.info(f"randomly chosen indices: {subset_indices}")
-subset_pos = all_pos_hybrid[0][subset_indices] # Make array of hybrid positions for 100 uncorrelated indices
+subset_pos = all_pos_hybrid[subset_indices] # Make array of hybrid positions for 100 uncorrelated indices
 with open(os.path.join(out_dir, f"{i}_{phase}_{name.lower()}_{length}ns_snapshots.npy"), 'wb') as f:
     np.save(f, subset_pos)
