@@ -125,7 +125,7 @@ move = mcmc.LangevinSplittingDynamicsMove(timestep=timestep*unit.femtoseconds, n
 simulation = multistate.ReplicaExchangeSampler(mcmc_moves=move, number_of_iterations=length*1000)
 
 # Run t-repex
-reporter_file = os.path.join(args.dir, f"{i}_{phase}_{name.lower()}_{length}ns.nc")
+reporter_file = os.path.join(args.dir, f"{i}_{phase}_{name.lower()}_{length}ns_1ps.nc")
 reporter = multistate.MultiStateReporter(reporter_file, checkpoint_interval=1)
 simulation.create(thermodynamic_states=thermodynamic_state_list,
                   sampler_states=sampler_state_list,
