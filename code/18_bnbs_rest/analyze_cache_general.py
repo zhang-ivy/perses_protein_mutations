@@ -77,7 +77,7 @@ def get_dihedrals(i, name, length, out_dir, htf, dihedral_indices_new, dihedral_
         dihedrals = md.compute_dihedrals(traj, np.array([indices]))
         dihedrals_all.append(dihedrals)
     
-    return dihedrals_all, n_iter, all_pos_hybrid_master
+    return dihedrals_all, n_iter, all_pos_hybrid
     
 def plot_dihedrals(dihedrals, outfile):
     # Plot histogram with error bars : https://stackoverflow.com/questions/35390276/how-to-add-error-bars-to-histogram-diagram-in-python
