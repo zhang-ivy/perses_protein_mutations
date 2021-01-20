@@ -64,7 +64,7 @@ def get_dihedrals(i, name, length, out_dir, htf, dihedral_indices_new, dihedral_
     all_pos_new = np.zeros(shape=(n_iter, new_top.n_atoms, 3))
     all_pos_old = np.zeros(shape=(n_iter, old_top.n_atoms, 3))
     all_pos_hybrid = np.zeros(shape=(n_iter, n_atoms, 3))
-    for iteration in tqdm(range(0, 1)):
+    for iteration in tqdm(range(n_iter)):
         replica_id = np.where(nc.variables['states'][iteration*checkpoint_interval] == 0)[0]
         pos = all_positions[iteration,replica_id,:,:][0] *unit.nanometers
         all_pos_new[iteration] = htf.new_positions(pos).value_in_unit_system(unit.md_unit_system) # Get new positions only
@@ -152,6 +152,7 @@ elif name == args.old_aa_name:
 else:
     raise Exception("Your specified amino acid did not match the old or new aa names")
 subset_indices = random.choices(uncorrelated_indices, k=100) # Choose 100 random indices from uncorrelated indices
+_logger.info(f"randomly chosen indices: {subset_indices}")
 subset_pos = all_pos_hybrid[0][subset_indices] # Make array of hybrid positions for 100 uncorrelated indices
 with open(os.path.join(out_dir, f"{i}_{phase}_{name.lower()}_{length}ns_snapshots.npy"), 'wb') as f:
     np.save(f, subset_pos)
