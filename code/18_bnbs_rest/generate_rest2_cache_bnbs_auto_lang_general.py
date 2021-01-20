@@ -50,7 +50,7 @@ elif args.sim_number == 4:
     state = 1
 
 length = 1
-move_length = 3
+move_length = 1
 timestep = 4
 radius = 0.2
 
