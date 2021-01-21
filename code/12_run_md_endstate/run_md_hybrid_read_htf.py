@@ -37,21 +37,21 @@ htf = pickle.load(open(os.path.join(args.dir, f"{i}_{args.phase}_{args.endstate}
 system = htf.hybrid_system
 positions = htf.hybrid_positions
 
-# Create CompoundThermodynamicState at the appropriate endstate -- og-htf
-lambda_alchemical_state = RelativeAlchemicalState.from_system(system)
-lambda_protocol = LambdaProtocol(functions = 'default')
-lambda_alchemical_state.set_alchemical_parameters(args.endstate, lambda_protocol)
-thermodynamic_state = CompoundThermodynamicState(ThermodynamicState(system, temperature=temperature), composable_states=[lambda_alchemical_state])
+# # Create CompoundThermodynamicState at the appropriate endstate -- og-htf
+# lambda_alchemical_state = RelativeAlchemicalState.from_system(system)
+# lambda_protocol = LambdaProtocol(functions = 'default')
+# lambda_alchemical_state.set_alchemical_parameters(args.endstate, lambda_protocol)
+# thermodynamic_state = CompoundThermodynamicState(ThermodynamicState(system, temperature=temperature), composable_states=[lambda_alchemical_state])
 
 # # Create CompoundThermodynamicState at the appropriate endstate -- r-htf
-# # atoms_to_alchemify = list(htf._atom_classes['unique_new_atoms']) + list(htf._atom_classes['unique_old_atoms'])
-# atoms_to_alchemify = list(range(30))
-# alch_factory = AbsoluteAlchemicalFactory(consistent_exceptions=False)
-# alchemical_region = AlchemicalRegion(alchemical_atoms=list(atoms_to_alchemify), alchemical_torsions=True, annihilate_sterics=True, annihilate_electrostatics=True)
-# alchemical_system = alch_factory.create_alchemical_system(system, alchemical_region)
-# alchemical_state = AlchemicalState.from_system(alchemical_system)
-# thermodynamic_state = CompoundThermodynamicState(ThermodynamicState(alchemical_system, temperature=temperature), composable_states=[alchemical_state])
-# thermodynamic_state.set_alchemical_variable('lambda', 1.0) # this should be 1, not the same as the endstate lambda
+# atoms_to_alchemify = list(htf._atom_classes['unique_new_atoms']) + list(htf._atom_classes['unique_old_atoms'])
+atoms_to_alchemify = list(range(30))
+alch_factory = AbsoluteAlchemicalFactory(consistent_exceptions=False)
+alchemical_region = AlchemicalRegion(alchemical_atoms=list(atoms_to_alchemify), alchemical_torsions=True, annihilate_sterics=True, annihilate_electrostatics=True)
+alchemical_system = alch_factory.create_alchemical_system(system, alchemical_region)
+alchemical_state = AlchemicalState.from_system(alchemical_system)
+thermodynamic_state = CompoundThermodynamicState(ThermodynamicState(alchemical_system, temperature=temperature), composable_states=[alchemical_state])
+thermodynamic_state.set_alchemical_variable('lambda', 1.0) # this should be 1, not the same as the endstate lambda
 
 # Set up integrator
 integrator = LangevinIntegrator(temperature, collision_rate, timestep)
