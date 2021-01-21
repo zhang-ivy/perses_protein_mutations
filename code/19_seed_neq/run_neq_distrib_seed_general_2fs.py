@@ -113,7 +113,7 @@ for rev_step in range(nsteps_eq):
     initial_time = time.time()
     integrator.step(1)
     elapsed_time = (time.time() - initial_time) * unit.seconds
-    if rev_step % 2500 == 0:
+    if rev_step % 5000 == 0:
         _logger.info(f'reverse EQ step: {rev_step}, took: {elapsed_time / unit.seconds} seconds')
         pos = context.getState(getPositions=True, enforcePeriodicBox=False).getPositions(asNumpy=True)
         old_pos = np.asarray(htf.old_positions(pos))
@@ -130,7 +130,7 @@ for rev_step in range(nsteps_neq):
     integrator.step(1)
     elapsed_time = (time.time() - initial_time) * unit.seconds
     reverse_works.append(integrator.get_protocol_work(dimensionless=True))
-    if rev_step % 2500 == 0:
+    if rev_step % 5000 == 0:
         _logger.info(f'reverse NEQ step: {rev_step}, took: {elapsed_time / unit.seconds} seconds')
         pos = context.getState(getPositions=True, enforcePeriodicBox=False).getPositions(asNumpy=True)
         old_pos = np.asarray(htf.old_positions(pos))
