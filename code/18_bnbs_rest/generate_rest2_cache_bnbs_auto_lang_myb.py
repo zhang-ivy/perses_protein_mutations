@@ -29,7 +29,7 @@ parser.add_argument('resid', type=str, help='resid of residue to be mutated')
 parser.add_argument('old_aa_name', type=str, help='amino acid three letter code, e.g. ALA')
 parser.add_argument('new_aa_name', type=str, help='amino acid three letter code, e.g. ALA')
 parser.add_argument('sim_number', type=int, help='index of job array, starts at 1')
-parser.add_argument('input_file', type=str, default="/data/chodera/zhangi/perses_benchmark/myb/04_1sb0_receptor_fixed.pdb", help='name of input file ')
+parser.add_argument('input_file', type=str, default="/data/chodera/zhangi/perses_benchmark/myb/04_1sb0_ligand_fixed.pdb", help='name of input file ')
 args = parser.parse_args()
 
 if args.sim_number == 1:
@@ -62,8 +62,8 @@ if not os.path.exists(path):
                         '1', # First chain is the barstar one
                         args.resid,
                         args.new_aa_name,
-                        ligand_file="/data/chodera/zhangi/perses_benchmark/myb/04_1sb0_ligand_fixed.pdb",
-                        ionic_strength=0.05*unit.molar,
+                        ligand_file="/data/chodera/zhangi/perses_benchmark/myb/04_1sb0_receptor_fixed.pdb",
+                        ionic_strength=0.15*unit.molar,
                         flatten_torsions=True,
                         flatten_exceptions=True,
                         repartitioned_endstate=state
