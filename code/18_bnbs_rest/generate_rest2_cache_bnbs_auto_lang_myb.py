@@ -50,7 +50,7 @@ elif args.sim_number == 4:
     state = 1
 
 length = 1
-move_length = 3
+move_length = 1
 timestep = 4
 radius = 0.2
 
@@ -68,8 +68,10 @@ if not os.path.exists(path):
                         flatten_exceptions=True,
                         repartitioned_endstate=state
                        )
-    pickle.dump(solvent_delivery.get_apo_htf(), open(os.path.join(args.dir, f"{i}_apo_{state}.pickle"), "wb" ))
-    pickle.dump(solvent_delivery.get_complex_htf(), open(os.path.join(args.dir, f"{i}_complex_{state}.pickle"), "wb" ))
+    if args.sim_number in [1,2]:
+        pickle.dump(solvent_delivery.get_apo_htf(), open(os.path.join(args.dir, f"{i}_apo_{state}.pickle"), "wb" ))
+    if args.sim_number in [3,4]:
+        pickle.dump(solvent_delivery.get_complex_htf(), open(os.path.join(args.dir, f"{i}_complex_{state}.pickle"), "wb" ))
 htf = pickle.load(open(path, "rb" ))
 
 # Build REST factory
