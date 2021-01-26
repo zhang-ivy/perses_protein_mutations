@@ -2,6 +2,7 @@ import pickle
 import os
 from perses.app.relative_point_mutation_setup import PointMutationExecutor
 import argparse
+from simtk import openmm, unit
 
 # Set up logger
 import logging
