@@ -17,6 +17,7 @@ parser.add_argument('old_aa_name', type=str, help='amino acid three letter code,
 parser.add_argument('new_aa_name', type=str, help='amino acid three letter code, e.g. ALA')
 parser.add_argument('sim_number', type=int, help='index of job array, starts at 1')
 parser.add_argument('input_file', type=str, default="../../input/mmc2_barstar.pdb", help='name of input file ')
+parser.add_argument('ligand_file', type=str, default="../../input/mmc2_barnase.pdb", help='name of ligand file')
 args = parser.parse_args()
 
 if args.sim_number == 1:
@@ -44,7 +45,7 @@ if not os.path.exists(path):
                         '1', # First chain is the barstar one
                         args.resid,
                         args.new_aa_name,
-                        ligand_file="../../input/mmc2_barnase.pdb",
+                        ligand_file=args.ligand_file,
                         ionic_strength=0.05*unit.molar,
                         flatten_torsions=True,
                         flatten_exceptions=True,
