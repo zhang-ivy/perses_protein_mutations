@@ -115,13 +115,13 @@ with open(os.path.join(out_dir, f"{i}_{phase}_{state}.pickle"), 'rb') as f:
     htf = pickle.load(f)
 
 thr_dihedral = ['N', 'CA', 'CB', 'OG']
-ring_dihedral = ['N', 'CA', 'CB', 'CG']
+other_dihedral = ['N', 'CA', 'CB', 'CG']
 ala_dihedral = ['N', 'CA', 'CB', 'HB1']
 
 dihedral_atoms = []
 for aa_name in [args.old_aa_name, args.new_aa_name]:
-    if aa_name in ["PHE", "TYR", "TRP"]:
-        dihedral_atoms.append(ring_dihedral)
+    if aa_name in ["PHE", "TYR", "TRP", "ASP", "GLU", "LYS", "ARG", "GLN"]:
+        dihedral_atoms.append(other_dihedral)
     elif aa_name == "THR":
         dihedral_atoms.append(thr_dihedral)
     elif aa_name == "ALA":
