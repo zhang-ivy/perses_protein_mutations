@@ -36,7 +36,8 @@ DEFAULT_ALCHEMICAL_FUNCTIONS = {
                              'lambda_torsions': x}
 
 # Define simulation parameters
-nsteps_eq = 25000 # 100 ps 
+# nsteps_eq = 25000 # 100 ps 
+nsteps_eq = 1
 nsteps_neq = 250000 # 1 ns
 neq_splitting='V R H O R V'
 timestep = 4.0 * unit.femtosecond
@@ -75,13 +76,13 @@ for fwd_step in range(nsteps_eq):
     initial_time = time.time()
     integrator.step(1)
     elapsed_time = (time.time() - initial_time) * unit.seconds
-    if fwd_step % 2500 == 0:
-        _logger.info(f'forward EQ step: {fwd_step}, took: {elapsed_time / unit.seconds} seconds')
-        pos = context.getState(getPositions=True, enforcePeriodicBox=False).getPositions(asNumpy=True)
-        old_pos = np.asarray(htf.old_positions(pos))
-        new_pos = np.asarray(htf.new_positions(pos))
-        forward_eq_old.append(old_pos)
-        forward_eq_new.append(new_pos)
+    # if fwd_step % 2500 == 0:
+    #     _logger.info(f'forward EQ step: {fwd_step}, took: {elapsed_time / unit.seconds} seconds')
+    #     pos = context.getState(getPositions=True, enforcePeriodicBox=False).getPositions(asNumpy=True)
+    #     old_pos = np.asarray(htf.old_positions(pos))
+    #     new_pos = np.asarray(htf.new_positions(pos))
+    #     forward_eq_old.append(old_pos)
+    #     forward_eq_new.append(new_pos)
 
 # Run neq forward (0 -> 1)
 forward_works_master = list()
@@ -113,13 +114,13 @@ for rev_step in range(nsteps_eq):
     initial_time = time.time()
     integrator.step(1)
     elapsed_time = (time.time() - initial_time) * unit.seconds
-    if rev_step % 2500 == 0:
-        _logger.info(f'reverse EQ step: {rev_step}, took: {elapsed_time / unit.seconds} seconds')
-        pos = context.getState(getPositions=True, enforcePeriodicBox=False).getPositions(asNumpy=True)
-        old_pos = np.asarray(htf.old_positions(pos))
-        new_pos = np.asarray(htf.new_positions(pos))
-        reverse_eq_old.append(old_pos)
-        reverse_eq_new.append(new_pos)
+    # if rev_step % 2500 == 0:
+    #     _logger.info(f'reverse EQ step: {rev_step}, took: {elapsed_time / unit.seconds} seconds')
+    #     pos = context.getState(getPositions=True, enforcePeriodicBox=False).getPositions(asNumpy=True)
+    #     old_pos = np.asarray(htf.old_positions(pos))
+    #     new_pos = np.asarray(htf.new_positions(pos))
+    #     reverse_eq_old.append(old_pos)
+    #     reverse_eq_new.append(new_pos)
 
 # Run neq reverse (1 -> 0)
 reverse_works_master = list()
@@ -146,14 +147,14 @@ with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_reverse.np
     np.save(f, reverse_works_master)
 
 # Save trajs
-with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_forward_eq_old.npy"), 'wb') as f:
-    np.save(f, forward_eq_old)
-with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_forward_eq_new.npy"), 'wb') as f:
-    np.save(f, forward_eq_new)
-with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_reverse_eq_old.npy"), 'wb') as f:
-    np.save(f, reverse_eq_old)
-with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_reverse_eq_new.npy"), 'wb') as f:
-    np.save(f, reverse_eq_new)
+# with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_forward_eq_old.npy"), 'wb') as f:
+#     np.save(f, forward_eq_old)
+# with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_forward_eq_new.npy"), 'wb') as f:
+#     np.save(f, forward_eq_new)
+# with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_reverse_eq_old.npy"), 'wb') as f:
+#     np.save(f, reverse_eq_old)
+# with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_reverse_eq_new.npy"), 'wb') as f:
+#     np.save(f, reverse_eq_new)
 
 with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_forward_neq_old.npy"), 'wb') as f:
     np.save(f, forward_neq_old)
