@@ -51,5 +51,5 @@ if not os.path.exists(path):
                         flatten_exceptions=True,
                         conduct_endstate_validation=False
                        )
-    pickle.dump(solvent_delivery.get_apo_htf(), open(os.path.join(args.dir, f"{i}_apo_{state}.pickle"), "wb" ))
-    pickle.dump(solvent_delivery.get_complex_htf(), open(os.path.join(args.dir, f"{i}_complex_{state}.pickle"), "wb" ))
+    pickle.dump(solvent_delivery.get_apo_htf(), open(os.path.join(args.dir, f"{i}_apo.pickle"), "wb" ))
+    pickle.dump(solvent_delivery.get_complex_htf(), open(os.path.join(args.dir, f"{i}_complex.pickle"), "wb" ))
