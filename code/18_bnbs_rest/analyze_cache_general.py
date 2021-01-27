@@ -128,10 +128,10 @@ for aa_name in [args.old_aa_name, args.new_aa_name]:
         dihedral_atoms.append(ala_dihedral)
 
 for res in htf._topology_proposal.old_topology.residues():
-    if res.id == args.resid:
+    if res.id == args.resid and res.chain.index == 0:
         residue_old = res
 for res in htf._topology_proposal.new_topology.residues():
-    if res.id == args.resid:
+    if res.id == args.resid and res.chain.index == 0:
         residue_new = res
 # indices_old = [atom.index for atom in list(htf._topology_proposal.old_topology.residues())[int(args.resid)].atoms() if atom.name in dihedral_atoms[0]]
 # indices_new = [atom.index for atom in list(htf._topology_proposal.new_topology.residues())[int(args.resid)].atoms() if atom.name in dihedral_atoms[1]]
