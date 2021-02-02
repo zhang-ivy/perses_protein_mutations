@@ -77,7 +77,7 @@ _logger.info("Generating REST factory")
 _logger.info(f"radius:{radius} nm")
 # query_indices = [atom.index for atom in list(htf.hybrid_topology.residues)[int(args.resid)].atoms]
 for res in htf.hybrid_topology.residues:
-    if res.resSeq == int(args.resid):
+    if res.resSeq == int(args.resid) and res.chain.index == 0:
         mutated_res = res
 query_indices = [atom.index for atom in mutated_res.atoms]
 _logger.info(f"query indices {query_indices}")
