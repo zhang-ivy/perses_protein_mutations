@@ -20,7 +20,7 @@ parser.add_argument('phase', type=str, help='solvent or vacuum')
 parser.add_argument('sim_number', type=int, help='number in job name - 1')
 parser.add_argument('old_aa_name', type=str, help='amino acid three letter code, e.g. ALA')
 parser.add_argument('new_aa_name', type=str, help='amino acid three letter code, e.g. ALA')
-parser.add_argument('length', type=int, help='neq switching time in ns')
+parser.add_argument('length', type=float, help='neq switching time in ns')
 args = parser.parse_args()
 
 # Define lambda functions
