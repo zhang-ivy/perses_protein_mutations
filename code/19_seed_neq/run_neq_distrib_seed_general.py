@@ -20,6 +20,7 @@ parser.add_argument('phase', type=str, help='solvent or vacuum')
 parser.add_argument('sim_number', type=int, help='number in job name - 1')
 parser.add_argument('old_aa_name', type=str, help='amino acid three letter code, e.g. ALA')
 parser.add_argument('new_aa_name', type=str, help='amino acid three letter code, e.g. ALA')
+parser.add_argument('length', type=int, help='neq switching time in ns')
 args = parser.parse_args()
 
 # Define lambda functions
@@ -38,7 +39,7 @@ DEFAULT_ALCHEMICAL_FUNCTIONS = {
 # Define simulation parameters
 # nsteps_eq = 25000 # 100 ps 
 nsteps_eq = 1
-nsteps_neq = 250000 # 1 ns
+nsteps_neq = args.length*250000 # 1 ns
 neq_splitting='V R H O R V'
 timestep = 4.0 * unit.femtosecond
 platform_name = 'CUDA'
