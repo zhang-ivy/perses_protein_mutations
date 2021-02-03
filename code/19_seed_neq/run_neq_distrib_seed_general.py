@@ -104,7 +104,7 @@ forward_works_master.append(forward_works)
 
 # Read in lambda = 1 cache, if necessary
 with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.new_aa_name}_1ns_snapshots.npy"), 'rb') as f:
-        subset_pos = np.load(f)
+    subset_pos = np.load(f)
 positions = subset_pos[args.sim_number - 1]
 context.setPositions(positions)
 
