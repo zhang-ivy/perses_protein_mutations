@@ -18,7 +18,8 @@ parser = argparse.ArgumentParser(description='run perses protein mutation on cap
 parser.add_argument('dir', type=str, help='path to input/output dir')
 parser.add_argument('phase', type=str, help='solvent or vacuum')
 parser.add_argument('sim_number', type=int, help='number in job name - 1')
-parser.add_argument('direction', type=str, help="backward (A42T) or forward (T42A)")
+parser.add_argument('old_aa_name', type=str, help='amino acid three letter code, e.g. ALA')
+parser.add_argument('new_aa_name', type=str, help='amino acid three letter code, e.g. ALA')
 args = parser.parse_args()
 
 # Define lambda functions
@@ -47,6 +48,8 @@ with open(os.path.join(args.dir, f"{i}_{args.phase}.pickle"), 'rb') as f:
     htf = pickle.load(f)
 
 # Read in lambda = 0 cache
+with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.old_aa_name}_5ns_snapshots.npy"), 'rb') as f:
+    subset_pos = np.load(f)
 if args.direction == 'forward':
     with open(os.path.join(args.dir, f"{i}_{args.phase}_thr_5ns_snapshots.npy"), 'rb') as f:
         subset_pos = np.load(f)
@@ -117,7 +120,6 @@ if args.direction == 'backward':
     with open(os.path.join(args.dir, f"{i}_{args.phase}_thr_5ns_snapshots.npy"), 'rb') as f:
         subset_pos = np.load(f)
 
-    system = htf.hybrid_system
     # index = 0 if args.sim_number - 1 < 33 else (1 if args.sim_number -1 < 66 else 2) # 0-32, 33-65, 66-99
     # if args.phase == 'apo':
     #     index = 0 if args.sim_number -1 < 50 else 1
