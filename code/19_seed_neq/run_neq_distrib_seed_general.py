@@ -21,6 +21,7 @@ parser.add_argument('sim_number', type=int, help='number in job name - 1')
 parser.add_argument('old_aa_name', type=str, help='amino acid three letter code, e.g. ALA')
 parser.add_argument('new_aa_name', type=str, help='amino acid three letter code, e.g. ALA')
 parser.add_argument('length', type=float, help='neq switching time in ns')
+parser.add_argument('--cache', type=int, default=1, help='length of rest cache in ns')
 args = parser.parse_args()
 
 # Define lambda functions
@@ -43,6 +44,7 @@ nsteps_neq = args.length*250000 # 1 ns
 neq_splitting='V R H O R V'
 timestep = 4.0 * unit.femtosecond
 platform_name = 'CUDA'
+cache_length = args.cache if args.cache else 1 
 
 # Read in vanilla htf
 i = os.path.basename(os.path.dirname(args.dir))
@@ -50,7 +52,7 @@ with open(os.path.join(args.dir, f"{i}_{args.phase}.pickle"), 'rb') as f:
     htf = pickle.load(f)
 
 # Read in lambda = 0 cache
-with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.old_aa_name}_1ns_snapshots.npy"), 'rb') as f:
+with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.old_aa_name}_{cache_length}ns_snapshots.npy"), 'rb') as f:
     subset_pos = np.load(f)
 positions = subset_pos[args.sim_number - 1]
 system = htf.hybrid_system
@@ -104,7 +106,7 @@ for fwd_step in range(nsteps_neq):
 forward_works_master.append(forward_works)
 
 # Read in lambda = 1 cache, if necessary
-with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.new_aa_name}_1ns_snapshots.npy"), 'rb') as f:
+with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.new_aa_name}_{cache_length}ns_snapshots.npy"), 'rb') as f:
     subset_pos = np.load(f)
 positions = subset_pos[args.sim_number - 1]
 context.setPositions(positions)
