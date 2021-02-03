@@ -40,7 +40,7 @@ DEFAULT_ALCHEMICAL_FUNCTIONS = {
 # Define simulation parameters
 # nsteps_eq = 25000 # 100 ps 
 nsteps_eq = 1
-nsteps_neq = args.length*250000 # 1 ns
+nsteps_neq = int(args.length*250000) # 1 ns
 neq_splitting='V R H O R V'
 timestep = 4.0 * unit.femtosecond
 platform_name = 'CUDA'
