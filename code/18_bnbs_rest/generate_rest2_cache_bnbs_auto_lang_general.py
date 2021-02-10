@@ -52,7 +52,7 @@ elif args.sim_number == 4:
 length = 1
 move_length = 3
 timestep = 4
-radius = 0.2
+radius = 0.3
 
 # Load rhtf or generate it if it doesn't exist
 i = os.path.basename(os.path.dirname(args.dir))
@@ -84,6 +84,7 @@ _logger.info(f"query indices {query_indices}")
 traj = md.Trajectory(np.array(htf.hybrid_positions), htf.hybrid_topology)
 solute_atoms = list(traj.topology.select("is_protein"))
 rest_atoms = list(md.compute_neighbors(traj, radius, query_indices, haystack_indices=solute_atoms)[0])
+_logger.info(f"rest atoms {rest_atoms}")
 factory = RESTTopologyFactory(htf.hybrid_system, solute_region=rest_atoms)
 
 _logger.info("Generating REST states")
