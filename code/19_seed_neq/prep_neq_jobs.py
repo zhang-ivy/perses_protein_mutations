@@ -50,7 +50,6 @@ for k, v in dictionary.items():
 		        line = f"phase={phase}\n"
 		    elif "length=" in line:
 		        line = f"length={length}\n"
-		    print(line)
 		    lines_new.append(line)
 
 		# Make dir and save new bash file
