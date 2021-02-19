@@ -1,4 +1,5 @@
 import os
+import yaml
 
 # Load in mutation parameters
 stream = open("test.yaml", 'r')
