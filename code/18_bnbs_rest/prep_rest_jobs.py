@@ -16,7 +16,7 @@ script_version = 4
 
 for k, v in dictionary.items():
 	new = k
-	old, old_aa, new_aa, resid = value
+	old, old_aa, new_aa, resid = v
 
 # Edit template bash file
 with open(template_file, "r") as f:
