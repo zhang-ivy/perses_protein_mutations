@@ -21,6 +21,7 @@ _logger.setLevel(logging.INFO)
 # Read args
 parser = argparse.ArgumentParser(description='run vanilla md')
 parser.add_argument('file', type=str, help='path to input file')
+parser.add_argument('is_old', type=bool, help='old or new system')
 args = parser.parse_args()
 
 # Define simulation parameters
@@ -33,8 +34,14 @@ platform_name = 'CUDA'
 _logger.info("Reading in htf")
 htf = pickle.load(open(args.file, "rb" ))
 
-system = htf._topology_proposal.old_system
-positions = htf.old_positions(htf.hybrid_positions)
+if is_old:
+	system = htf._topology_proposal.old_system
+	positions = htf.old_positions(htf.hybrid_positions)
+	topology = htf._topology.old_topology
+else:
+	system = htf._topology_proposal.new_system
+	positions = htf.new_positions(htf.hybrid_positions)
+	topology = htf._topology.new_topology
 
 # Set up integrator
 _logger.info("Making integrator")
@@ -47,8 +54,8 @@ if platform_name in ['CUDA', 'OpenCL']:
     platform.setPropertyDefaultValue('Precision', 'mixed')
 if platform_name in ['CUDA']:
     platform.setPropertyDefaultValue('DeterministicForces', 'true')
-sim = app.Simulation(htf._topology_proposal.old_topology, system, integrator, platform)
 
+sim = app.Simulation(topology, system, integrator, platform)
 sim.context.setPeriodicBoxVectors(*system.getDefaultPeriodicBoxVectors())
 sim.context.setPositions(positions)
 sim.context.setVelocitiesToTemperature(temperature)
@@ -59,7 +66,7 @@ openmm.LocalEnergyMinimizer.minimize(sim.context)
 
 # Run equilibration
 _logger.info("Equilibrating")
-final_pos = np.empty(shape=(101, htf._topology_proposal.old_topology.getNumAtoms(), 3))
+final_pos = np.empty(shape=(101, topology.getNumAtoms(), 3))
 pos = sim.context.getState(getPositions=True, enforcePeriodicBox=False).getPositions(asNumpy=True)
 i = 0
 final_pos[i] = pos * unit.nanometers
@@ -73,6 +80,7 @@ for step in tqdm(range(nsteps)):
     _logger.info(f'Step: {step} took {elapsed_time} seconds')
 
 # Save traj
-with open(os.path.join(f"rbd_ace2_old_pos.npy"), 'wb') as f:
+name = 'old' if is_old else 'new'
+with open(os.path.join(f"rbd_ace2_{name}_pos.npy"), 'wb') as f:
     np.save(f, final_pos)
 
