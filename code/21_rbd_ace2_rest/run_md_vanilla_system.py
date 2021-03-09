@@ -37,11 +37,11 @@ htf = pickle.load(open(args.file, "rb" ))
 if args.is_old:
 	system = htf._topology_proposal.old_system
 	positions = htf.old_positions(htf.hybrid_positions)
-	topology = htf._topology.old_topology
+	topology = htf._topology_proposal.old_topology
 else:
 	system = htf._topology_proposal.new_system
 	positions = htf.new_positions(htf.hybrid_positions)
-	topology = htf._topology.new_topology
+	topology = htf._topology_proposal.new_topology
 
 # Set up integrator
 _logger.info("Making integrator")
