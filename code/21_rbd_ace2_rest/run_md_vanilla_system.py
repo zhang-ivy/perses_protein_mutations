@@ -34,7 +34,7 @@ platform_name = 'CUDA'
 _logger.info("Reading in htf")
 htf = pickle.load(open(args.file, "rb" ))
 
-if is_old:
+if args.is_old:
 	system = htf._topology_proposal.old_system
 	positions = htf.old_positions(htf.hybrid_positions)
 	topology = htf._topology.old_topology
@@ -80,7 +80,7 @@ for step in tqdm(range(nsteps)):
     _logger.info(f'Step: {step} took {elapsed_time} seconds')
 
 # Save traj
-name = 'old' if is_old else 'new'
+name = 'old' if args.is_old else 'new'
 with open(os.path.join(f"rbd_ace2_{name}_pos.npy"), 'wb') as f:
     np.save(f, final_pos)
 
