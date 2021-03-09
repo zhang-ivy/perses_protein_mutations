@@ -1,0 +1,78 @@
+import logging
+import pickle
+import numpy as np
+from openmmtools.integrators import LangevinIntegrator
+from openmmtools.states import ThermodynamicState, CompoundThermodynamicState
+from perses.annihilation.lambda_protocol import RelativeAlchemicalState, LambdaProtocol
+from openmmtools.alchemy import AbsoluteAlchemicalFactory, AlchemicalRegion, AlchemicalState
+from simtk import openmm, unit
+import argparse
+import os
+import time
+import mdtraj as md
+from tqdm import tqdm
+from perses.tests.test_topology_proposal import generate_atp, generate_dipeptide_top_pos_sys
+from simtk.openmm import app
+
+# Set up logger
+_logger = logging.getLogger()
+_logger.setLevel(logging.INFO)
+
+# Read args
+parser = argparse.ArgumentParser(description='run vanilla md')
+parser.add_argument('file', type=str, help='path to input file')
+args = parser.parse_args()
+
+# Define simulation parameters
+temperature = 300 * unit.kelvin
+collision_rate = 1.0 / unit.picoseconds
+nsteps = 100
+timestep = 4.0 * unit.femtosecond
+platform_name = 'CUDA'
+
+_logger.info("Reading in htf")
+htf = pickle.load(open(args.file, "rb" ))
+
+system = htf._topology_proposal.old_system
+positions = htf.old_positions(htf.hybrid_positions)
+
+# Set up integrator
+_logger.info("Making integrator")
+integrator = LangevinIntegrator(temperature, collision_rate, timestep)
+
+# Set up context
+_logger.info("Making context")
+platform = openmm.Platform.getPlatformByName(platform_name)
+if platform_name in ['CUDA', 'OpenCL']:
+    platform.setPropertyDefaultValue('Precision', 'mixed')
+if platform_name in ['CUDA']:
+    platform.setPropertyDefaultValue('DeterministicForces', 'true')
+sim = app.Simulation(htf._topology_proposal.old_topology, system, integrator, platform)
+
+sim.context.setPeriodicBoxVectors(*system.getDefaultPeriodicBoxVectors())
+sim.context.setPositions(positions)
+sim.context.setVelocitiesToTemperature(temperature)
+
+# Minimize
+_logger.info("Minimizing")
+openmm.LocalEnergyMinimizer.minimize(sim.context)
+
+# Run equilibration
+_logger.info("Equilibrating")
+final_pos = np.empty(shape=(101, htf._topology_proposal.old_topology.getNumAtoms(), 3))
+pos = sim.context.getState(getPositions=True, enforcePeriodicBox=False).getPositions(asNumpy=True)
+i = 0
+final_pos[i] = pos * unit.nanometers
+for step in tqdm(range(nsteps)):
+    i += 1
+    initial_time = time.time()
+    integrator.step(1)
+    pos = sim.context.getState(getPositions=True, enforcePeriodicBox=False).getPositions(asNumpy=True)
+    final_pos[i] = pos *unit.nanometers
+    elapsed_time = (time.time() - initial_time) * unit.seconds
+    _logger.info(f'Step: {step} took {elapsed_time} seconds')
+
+# Save traj
+with open(os.path.join(f"rbd_ace2_old_pos.npy"), 'wb') as f:
+    np.save(f, final_pos)
+
