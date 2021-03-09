@@ -12,7 +12,6 @@ import time
 import mdtraj as md
 from tqdm import tqdm
 from perses.tests.test_topology_proposal import generate_atp, generate_dipeptide_top_pos_sys
-from simtk.openmm import app
 
 # Set up logger
 _logger = logging.getLogger()
@@ -55,26 +54,26 @@ if platform_name in ['CUDA', 'OpenCL']:
 if platform_name in ['CUDA']:
     platform.setPropertyDefaultValue('DeterministicForces', 'true')
 
-sim = app.Simulation(topology, system, integrator, platform)
-sim.context.setPeriodicBoxVectors(*system.getDefaultPeriodicBoxVectors())
-sim.context.setPositions(positions)
-sim.context.setVelocitiesToTemperature(temperature)
+context = openmm.Context(system, integrator, platform)
+context.setPeriodicBoxVectors(*system.getDefaultPeriodicBoxVectors())
+context.setPositions(positions)
+context.setVelocitiesToTemperature(temperature)
 
 # Minimize
 _logger.info("Minimizing")
-openmm.LocalEnergyMinimizer.minimize(sim.context)
+openmm.LocalEnergyMinimizer.minimize(context)
 
 # Run equilibration
 _logger.info("Equilibrating")
 final_pos = np.empty(shape=(101, topology.getNumAtoms(), 3))
-pos = sim.context.getState(getPositions=True, enforcePeriodicBox=False).getPositions(asNumpy=True)
+pos = context.getState(getPositions=True, enforcePeriodicBox=False).getPositions(asNumpy=True)
 i = 0
 final_pos[i] = pos * unit.nanometers
 for step in tqdm(range(nsteps)):
     i += 1
     initial_time = time.time()
     integrator.step(1)
-    pos = sim.context.getState(getPositions=True, enforcePeriodicBox=False).getPositions(asNumpy=True)
+    pos = context.getState(getPositions=True, enforcePeriodicBox=False).getPositions(asNumpy=True)
     final_pos[i] = pos *unit.nanometers
     elapsed_time = (time.time() - initial_time) * unit.seconds
     _logger.info(f'Step: {step} took {elapsed_time} seconds')
