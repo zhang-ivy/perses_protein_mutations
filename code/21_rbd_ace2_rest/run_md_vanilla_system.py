@@ -34,10 +34,12 @@ _logger.info("Reading in htf")
 htf = pickle.load(open(args.file, "rb" ))
 
 if args.is_old:
+	_logger.info("Setting up old")
 	system = htf._topology_proposal.old_system
 	positions = htf.old_positions(htf.hybrid_positions)
 	topology = htf._topology_proposal.old_topology
 else:
+	_logger.info("Setting up new")
 	system = htf._topology_proposal.new_system
 	positions = htf.new_positions(htf.hybrid_positions)
 	topology = htf._topology_proposal.new_topology
@@ -80,6 +82,7 @@ for step in tqdm(range(nsteps)):
 
 # Save traj
 name = 'old' if args.is_old else 'new'
+_logger.info(f"Saving {name}")
 with open(os.path.join(f"rbd_ace2_{name}_pos.npy"), 'wb') as f:
     np.save(f, final_pos)
 
