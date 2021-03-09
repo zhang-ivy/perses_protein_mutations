@@ -20,7 +20,7 @@ _logger.setLevel(logging.INFO)
 # Read args
 parser = argparse.ArgumentParser(description='run vanilla md')
 parser.add_argument('file', type=str, help='path to input file')
-parser.add_argument('is_old', type=bool, help='old or new system')
+parser.add_argument('--is_old', action="store_true", help='indicates we are using the new system')
 args = parser.parse_args()
 
 # Define simulation parameters
