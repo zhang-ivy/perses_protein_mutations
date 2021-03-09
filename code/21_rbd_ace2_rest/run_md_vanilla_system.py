@@ -63,7 +63,7 @@ context.setVelocitiesToTemperature(temperature)
 
 # Minimize
 _logger.info("Minimizing")
-openmm.LocalEnergyMinimizer.minimize(context)
+openmm.LocalEnergyMinimizer.minimize(context, maxIterations=100)
 
 # Run equilibration
 _logger.info("Equilibrating")
