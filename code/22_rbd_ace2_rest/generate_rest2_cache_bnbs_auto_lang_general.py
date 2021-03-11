@@ -53,22 +53,9 @@ move_length = 3
 timestep = 4
 radius = 0.3
 
-# Load rhtf or generate it if it doesn't exist
+# Load rhtf 
 i = os.path.basename(os.path.dirname(args.dir))
 path = os.path.join(args.dir, f"{i}_{phase}_{state}.pickle")
-if not os.path.exists(path):
-    solvent_delivery = PointMutationExecutor(args.input_file,
-                        '1', # First chain is the barstar one
-                        args.resid,
-                        args.new_aa_name,
-                        ligand_file="../../input/mmc2_barnase.pdb",
-                        ionic_strength=0.05*unit.molar,
-                        flatten_torsions=True,
-                        flatten_exceptions=True,
-                        repartitioned_endstate=state
-                       )
-    pickle.dump(solvent_delivery.get_apo_htf(), open(os.path.join(args.dir, f"{i}_apo_{state}.pickle"), "wb" ))
-    pickle.dump(solvent_delivery.get_complex_htf(), open(os.path.join(args.dir, f"{i}_complex_{state}.pickle"), "wb" ))
 htf = pickle.load(open(path, "rb" ))
 
 # Build REST factory
