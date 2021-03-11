@@ -104,7 +104,7 @@ for temperature in temperatures:
 
     # now generating a sampler_state for each thermodynamic state, with relaxed positions
     # context, context_integrator = context_cache.get_context(compound_thermodynamic_state_copy)
-    feptasks.minimize(compound_thermodynamic_state_copy, sampler_state)
+    feptasks.minimize(compound_thermodynamic_state_copy, sampler_state, maxi_iterations=0)
     sampler_state_list.append(copy.deepcopy(sampler_state))
 
 # Set up sampler
