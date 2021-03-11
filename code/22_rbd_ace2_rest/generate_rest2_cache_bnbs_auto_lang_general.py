@@ -1,7 +1,7 @@
 import pickle
 import os
 from perses.annihilation.rest import RESTTopologyFactory
-from perses.annihilation.lambda_protocol import RESTStateV2
+from perses.annihilation.lambda_protocol import RESTState
 from openmmtools.states import SamplerState, ThermodynamicState, CompoundThermodynamicState
 from openmmtools import cache, utils
 from perses.dispersed.utils import configure_platform
@@ -85,7 +85,7 @@ temperatures = [T_min + (T_max - T_min) * (math.exp(float(i) / float(n_replicas-
                 for i in range(n_replicas)]
 
 # Create reference thermodynamic state
-lambda_zero_alchemical_state = RESTStateV2.from_system(REST_system)
+lambda_zero_alchemical_state = RESTState.from_system(REST_system)
 thermostate = ThermodynamicState(REST_system, temperature=T_min)
 compound_thermodynamic_state = CompoundThermodynamicState(thermostate, composable_states=[lambda_zero_alchemical_state])
 
