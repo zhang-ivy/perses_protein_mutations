@@ -49,6 +49,7 @@ save_freq_eq = nsteps_eq / 1000
 save_freq_neq = nsteps_neq / 1000
 
 # Read htf
+_logger.info("Reading htf")
 i = os.path.basename(os.path.dirname(args.dir))
 with open(os.path.join(args.dir, f"{i}_{args.phase}.pickle"), "rb") as f:
     htf = pickle.load(f)
@@ -57,9 +58,11 @@ system = htf.hybrid_system
 positions = htf.hybrid_positions
 
 # Set up integrator
+_logger.info("Setting up integrator")
 integrator = PeriodicNonequilibriumIntegrator(DEFAULT_ALCHEMICAL_FUNCTIONS, nsteps_eq, nsteps_neq, neq_splitting, timestep=timestep, temperature=temperature)
 
 # Set up context
+_logger.info("Setting up context")
 platform = openmm.Platform.getPlatformByName(platform_name)
 if platform_name in ['CUDA', 'OpenCL']:
     platform.setPropertyDefaultValue('Precision', 'mixed')
@@ -71,6 +74,7 @@ context.setPositions(positions)
 context.setVelocitiesToTemperature(temperature)
 
 # Minimize
+_logger.info("Minimizing")
 openmm.LocalEnergyMinimizer.minimize(context)
 
 # Run neq
