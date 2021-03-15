@@ -100,9 +100,15 @@ for fwd_step in range(nsteps_neq):
         _logger.info(f'forward NEQ step: {fwd_step}, took: {elapsed_time / unit.seconds} seconds')
         pos = context.getState(getPositions=True, enforcePeriodicBox=False).getPositions(asNumpy=True)
         old_pos = np.asarray(htf.old_positions(pos))
+        old_traj = md.Trajectory(old_pos, md.Topology.from_openmm(htf._topology_proposal.old_topology))
+        old_pos_solute = old_traj.atom_slice(old_traj.top.select("not water")).xyz[0]
+        
         new_pos = np.asarray(htf.new_positions(pos))
-        forward_neq_old.append(old_pos)
-        forward_neq_new.append(new_pos)
+        new_traj = md.Trajectory(new_pos, md.Topology.from_openmm(htf._topology_proposal.new_topology))
+        new_pos_solute = new_traj.atom_slice(new_traj.top.select("not water")).xyz[0]
+        
+        forward_neq_old.append(old_pos_solute)
+        forward_neq_new.append(new_pos_solute)
 forward_works_master.append(forward_works)
 
 # Read in lambda = 1 cache, if necessary
@@ -138,9 +144,15 @@ for rev_step in range(nsteps_neq):
         _logger.info(f'reverse NEQ step: {rev_step}, took: {elapsed_time / unit.seconds} seconds')
         pos = context.getState(getPositions=True, enforcePeriodicBox=False).getPositions(asNumpy=True)
         old_pos = np.asarray(htf.old_positions(pos))
+        old_traj = md.Trajectory(old_pos, md.Topology.from_openmm(htf._topology_proposal.old_topology))
+        old_pos_solute = old_traj.atom_slice(old_traj.top.select("not water")).xyz[0]
+        
         new_pos = np.asarray(htf.new_positions(pos))
-        reverse_neq_old.append(old_pos)
-        reverse_neq_new.append(new_pos)
+        new_traj = md.Trajectory(new_pos, md.Topology.from_openmm(htf._topology_proposal.new_topology))
+        new_pos_solute = new_traj.atom_slice(new_traj.top.select("not water")).xyz[0]
+
+        reverse_neq_old.append(old_pos_solute)
+        reverse_neq_new.append(new_pos_solute)
 reverse_works_master.append(reverse_works)
 
 # Save works
