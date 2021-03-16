@@ -12,8 +12,8 @@ parser.add_argument('residue', type=str, help='residue position')
 parser.add_argument('mutant', type=str, help='three letter code for amino acid to mutate to')
 args = parser.parse_args()
 
-rbd_file = resource_fliename('perses', 'data/rbd-ace2/0_rbd.pdb')
-ace2_file = resource_fliename('perses', 'data/rbd-ace2/0_ace2.pdb')
+rbd_file = resource_filename('perses', 'data/rbd-ace2/0_rbd.pdb')
+ace2_file = resource_filename('perses', 'data/rbd-ace2/0_ace2.pdb')
 
 solvent_delivery = PointMutationExecutorRBD(rbd_file,
                         'R',
