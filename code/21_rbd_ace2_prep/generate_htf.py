@@ -7,8 +7,8 @@ import argparse
 # Read args
 parser = argparse.ArgumentParser(description='generate htf')
 parser.add_argument('dir', type=str, help='path to input/output dir')
-parser.add_argument('residue', type=str, help='apo or complex')
-parser.add_argument('mutant', type=str, help='number in job name - 1')
+parser.add_argument('residue', type=str, help='residue position')
+parser.add_argument('mutant', type=str, help='three letter code for amino acid to mutate to')
 args = parser.parse_args()
 
 solvent_delivery = PointMutationExecutorRBD("0_rbd.pdb",
