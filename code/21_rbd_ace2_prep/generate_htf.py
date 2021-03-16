@@ -22,7 +22,8 @@ solvent_delivery = PointMutationExecutorRBD(rbd_file,
                         ligand_input=ace2_file,
                         ionic_strength=0.05*unit.molar,
                         flatten_torsions=True,
-                        flatten_exceptions=True
+                        flatten_exceptions=True, 
+                        debug_dir=os.path.join(args.dir, "debug/")
                        )
 
 outdir = args.dir
