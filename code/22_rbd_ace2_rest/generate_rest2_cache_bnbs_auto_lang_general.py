@@ -56,7 +56,7 @@ radius = 0.3
 # Load rhtf 
 i = os.path.basename(os.path.dirname(args.dir))
 path = os.path.join(args.dir, f"{i}_{phase}_{state}.pickle")
-print(f"path: {path}")
+_logger.info(f"path: {path}")
 htf = pickle.load(open(path, "rb" ))
 
 # Build REST factory
