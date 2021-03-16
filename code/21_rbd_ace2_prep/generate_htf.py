@@ -1,6 +1,7 @@
 import pickle
 import os
 from perses.app.relative_point_mutation_setup import PointMutationExecutorRBD
+from pkg_resources import resource_filename
 from simtk import unit
 import argparse
 
@@ -11,11 +12,14 @@ parser.add_argument('residue', type=str, help='residue position')
 parser.add_argument('mutant', type=str, help='three letter code for amino acid to mutate to')
 args = parser.parse_args()
 
-solvent_delivery = PointMutationExecutorRBD("0_rbd.pdb",
+rbd_file = resource_fliename('perses', 'data/rbd-ace2/0_rbd.pdb')
+ace2_file = resource_fliename('perses', 'data/rbd-ace2/0_ace2.pdb')
+
+solvent_delivery = PointMutationExecutorRBD(rbd_file,
                         'R',
                         args.residue,
                         args.mutant,
-                        ligand_input="0_ace2.pdb",
+                        ligand_input=ace2_file,
                         ionic_strength=0.05*unit.molar,
                         flatten_torsions=True,
                         flatten_exceptions=True
