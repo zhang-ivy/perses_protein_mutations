@@ -48,6 +48,16 @@ length = 1
 i = os.path.basename(os.path.dirname(args.dir))
 out_dir = args.dir
 
+def new_positions(htf, hybrid_positions):
+    n_atoms_new = htf._topology_proposal.n_atoms_new
+    hybrid_indices = [htf._new_to_hybrid_map[idx] for idx in range(n_atoms_new)]
+    return hybrid_positions[hybrid_indices, :]
+    
+def old_positions(htf, hybrid_positions):
+    n_atoms_old = htf._topology_proposal.n_atoms_old
+    hybrid_indices = [htf._old_to_hybrid_map[idx] for idx in range(n_atoms_old)]
+    return hybrid_positions[hybrid_indices, :]
+
 def get_dihedrals(i, name, length, out_dir, htf, dihedral_indices_new, dihedral_indices_old):
     new_top = md.Topology.from_openmm(htf._topology_proposal.new_topology)
     old_top = md.Topology.from_openmm(htf._topology_proposal.old_topology)
@@ -67,9 +77,9 @@ def get_dihedrals(i, name, length, out_dir, htf, dihedral_indices_new, dihedral_
     for iteration in tqdm(range(n_iter)):
         replica_id = np.where(nc.variables['states'][iteration*checkpoint_interval] == 0)[0]
         pos = all_positions[iteration,replica_id,:,:][0] *unit.nanometers
-        all_pos_new[iteration] = htf.new_positions(pos).value_in_unit_system(unit.md_unit_system) # Get new positions only
+        all_pos_new[iteration] = new_positions(htf, pos).value_in_unit_system(unit.md_unit_system) # Get new positions only
         all_pos_hybrid[iteration] = pos # Get hybrid positions
-        all_pos_old[iteration] = htf.old_positions(pos).value_in_unit_system(unit.md_unit_system)
+        all_pos_old[iteration] = old_positions(htf, pos).value_in_unit_system(unit.md_unit_system)
 
     dihedrals_all = []
     for pos, top, indices in zip([all_pos_new, all_pos_old], [new_top, old_top], [dihedral_indices_new, dihedral_indices_old]):
@@ -162,7 +172,7 @@ elif name == args.old_aa_name:
     uncorrelated_indices = uncorrelated_old
 else:
     raise Exception("Your specified amino acid did not match the old or new aa names")
-subset_indices = random.choices(uncorrelated_indices, k=100) # Choose 100 random indices from uncorrelated indices
+subset_indices = random.samples(uncorrelated_indices, k=100) # Choose 100 random indices (without replacement) from uncorrelated indices
 _logger.info(f"randomly chosen indices: {subset_indices}")
 subset_pos = all_pos_hybrid[subset_indices] # Make array of hybrid positions for 100 uncorrelated indices
 with open(os.path.join(out_dir, f"{i}_{phase}_{name.lower()}_{length}ns_snapshots.npy"), 'wb') as f:
