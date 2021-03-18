@@ -124,7 +124,7 @@ def plot_dihedrals_uncorrelated(dihedrals, uncorrelated_indices, outfile):
 with open(os.path.join(out_dir, f"{i}_{phase}_{state}.pickle"), 'rb') as f:
     htf = pickle.load(f)
 
-thr_dihedral = ['N', 'CA', 'CB', 'OG']
+thr_dihedral = ['N', 'CA', 'CB', 'OG1']
 other_dihedral = ['N', 'CA', 'CB', 'CG']
 ala_dihedral = ['N', 'CA', 'CB', 'HB1']
 asp_dihedral = ['CA', 'CB', 'CG', 'OD2']
@@ -175,7 +175,10 @@ elif name == args.old_aa_name:
     uncorrelated_indices = uncorrelated_old
 else:
     raise Exception("Your specified amino acid did not match the old or new aa names")
-subset_indices = random.sample(uncorrelated_indices, k=100) # Choose 100 random indices (without replacement) from uncorrelated indices
+if len(uncorrelated_indices) >= 100:
+    subset_indices = random.sample(uncorrelated_indices, k=100) # Choose 100 random indices (without replacement) from uncorrelated indices
+else:
+    subset_indices = random.choices(uncorrelated_indices, k=100) # Choose 100 random indices (without replacement) from uncorrelated indices
 _logger.info(f"randomly chosen indices: {subset_indices}")
 subset_pos = all_pos_hybrid[subset_indices] # Make array of hybrid positions for 100 uncorrelated indices
 with open(os.path.join(out_dir, f"{i}_{phase}_{name.lower()}_{length}ns_snapshots.npy"), 'wb') as f:
