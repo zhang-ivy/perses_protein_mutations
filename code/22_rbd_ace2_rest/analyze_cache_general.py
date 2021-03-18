@@ -128,10 +128,11 @@ thr_dihedral = ['N', 'CA', 'CB', 'OG']
 other_dihedral = ['N', 'CA', 'CB', 'CG']
 ala_dihedral = ['N', 'CA', 'CB', 'HB1']
 asp_dihedral = ['CA', 'CB', 'CG', 'OD2']
+ile_dihedral = ['N', 'CA', 'CB', 'CG2']
 
 dihedral_atoms = []
 for aa_name in [args.old_aa_name, args.new_aa_name]:
-    if aa_name in ["PHE", "TYR", "TRP", "GLU", "LYS", "ARG", "GLN", "ASN", "ILE"]:
+    if aa_name in ["PHE", "TYR", "TRP", "GLU", "LYS", "ARG", "GLN", "ASN"]:
         dihedral_atoms.append(other_dihedral)
     elif aa_name == "THR":
         dihedral_atoms.append(thr_dihedral)
@@ -139,6 +140,8 @@ for aa_name in [args.old_aa_name, args.new_aa_name]:
         dihedral_atoms.append(ala_dihedral)
     elif aa_name == 'ASP':
         dihedral_atoms.append(asp_dihedral)
+    elif aa_name == 'ILE':
+        dihedral_atoms.append(ile_dihedral)
 
 for res in htf._topology_proposal.old_topology.residues():
     if res.id == args.resid and res.chain.index == 0:
@@ -172,7 +175,7 @@ elif name == args.old_aa_name:
     uncorrelated_indices = uncorrelated_old
 else:
     raise Exception("Your specified amino acid did not match the old or new aa names")
-subset_indices = random.samples(uncorrelated_indices, k=100) # Choose 100 random indices (without replacement) from uncorrelated indices
+subset_indices = random.sample(uncorrelated_indices, k=100) # Choose 100 random indices (without replacement) from uncorrelated indices
 _logger.info(f"randomly chosen indices: {subset_indices}")
 subset_pos = all_pos_hybrid[subset_indices] # Make array of hybrid positions for 100 uncorrelated indices
 with open(os.path.join(out_dir, f"{i}_{phase}_{name.lower()}_{length}ns_snapshots.npy"), 'wb') as f:
