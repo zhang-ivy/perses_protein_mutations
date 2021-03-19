@@ -6,17 +6,17 @@ stream = open("test.yaml", 'r')
 dictionary = yaml.load(stream)
 
 # Define file paths
-template_file = "/home/zhangi/choderalab/perses_benchmark/perses_protein_mutations/code/18_bnbs_rest/run_rest2_template.sh"
-out_dir = "/data/chodera/zhangi/perses_benchmark/neq/12/"
+template_file = "/home/zhangi/choderalab/perses_benchmark/perses_protein_mutations/code/22_rbd_ace2_rest/run_rest2_template.sh"
+out_dir = "/data/chodera/zhangi/perses_benchmark/neq/14/"
 
 # Define job parameters
-wall_time = 12
-memory = 5
+wall_time = 30
+memory = 10
 script_version = 4
 
 for k, v in dictionary.items():
 	new = k
-	old, old_aa, new_aa, resid = v
+	old_aa, new_aa, resid, job = v
 
 	# Edit template bash file
 	with open(template_file, "r") as f:
@@ -31,11 +31,11 @@ for k, v in dictionary.items():
 	    elif "#BSUB -eo" in line:
 	        line = line[:13] + str(new) + ".%I.stderr\n"
 	    elif "#BSUB -n" in line:
-	        line = line[:26] + str(memory) + line[27:] 
+	        line = line[:26] + str(memory) + line[28:] 
 	    elif "#BSUB -J" in line:
 	        line = line[:13] + str(new) + '[1-4]"\n'
-	    elif "old=" in line:
-	        line = f"old={old}\n"
+	    elif "#BSUB -w" in line:
+            	line = line[:9] + f'"done({job})"\n'
 	    elif "new=" in line:
 	        line = f"new={new}\n"
 	    elif "old_aa=" in line:
@@ -44,8 +44,6 @@ for k, v in dictionary.items():
 	        line = f"new_aa={new_aa}\n"
 	    elif "resid=" in line:
 	        line = f"resid={resid}\n"
-	    elif "python generate_rest2_cache" in line:
-	        line = line[:51] + str(script_version) + line[52:]
 	    lines_new.append(line)
 
 	# Make dir and save new bash file
