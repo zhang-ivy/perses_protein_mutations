@@ -10,7 +10,7 @@ template_file = "/home/zhangi/choderalab/perses_benchmark/perses_protein_mutatio
 out_dir = "/data/chodera/zhangi/perses_benchmark/neq/14/"
 
 # Define job parameters
-phase =  ['complex', 'apo']
+phases =  ['complex', 'apo']
 wall_time = [30, 15]
 memory = [10, 5]
 script_version = 4
