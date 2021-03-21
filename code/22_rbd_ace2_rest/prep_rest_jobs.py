@@ -41,7 +41,7 @@ for k, v in dictionary.items():
 		        job_range = "1-2" if phase == 'apo' else "3-4"
 		        line = line[:13] + str(new) + f'[{job_range}]"\n'
 		    elif "#BSUB -w" in line:
-	            line = line[:9] + f'"done({job})"\n'
+				line = line[:9] + f'"done({job})"\n'
 		    elif "new=" in line:
 		        line = f"new={new}\n"
 		    elif "old=" in line:
