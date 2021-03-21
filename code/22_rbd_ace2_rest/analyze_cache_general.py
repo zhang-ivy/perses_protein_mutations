@@ -175,6 +175,7 @@ elif name == args.old_aa_name:
     uncorrelated_indices = uncorrelated_old
 else:
     raise Exception("Your specified amino acid did not match the old or new aa names")
+_logger.info(f"Number of uncorrelated_indices: {len(uncorrelated_indices)}")
 if len(uncorrelated_indices) >= 100:
     subset_indices = random.sample(uncorrelated_indices, k=100) # Choose 100 random indices (without replacement) from uncorrelated indices
 else:
