@@ -11,13 +11,15 @@ out_dir = "/data/chodera/zhangi/perses_benchmark/neq/14/"
 
 # Define job parameters
 phases =  ['complex', 'apo']
-wall_time = [30, 15]
+#wall_time = [30, 15]
+#memory = [10, 5]
+wall_time = [2, 2]
 memory = [10, 5]
 script_version = 4
 
 for k, v in dictionary.items():
 	new = k
-	old_aa, new_aa, resid, job = v
+	old, old_aa, new_aa, resid, job = v
 	
 	for i, phase in enumerate(phases):
 
@@ -42,6 +44,8 @@ for k, v in dictionary.items():
 	            	line = line[:9] + f'"done({job})"\n'
 		    elif "new=" in line:
 		        line = f"new={new}\n"
+		    elif "old=" in line:
+			line = f"old={old}\n"
 		    elif "old_aa=" in line:
 		        line = f"old_aa={old_aa}\n"
 		    elif "new_aa=" in line:
