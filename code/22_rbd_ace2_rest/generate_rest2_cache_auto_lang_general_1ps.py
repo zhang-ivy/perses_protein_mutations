@@ -108,13 +108,36 @@ for temperature in temperatures:
     feptasks.minimize(compound_thermodynamic_state_copy, sampler_state, max_iterations=0)
     sampler_state_list.append(copy.deepcopy(sampler_state))
 
+from openmmtools.multistate import ReplicaExchangeSampler
+import mpiplus
+class ReplicaExchangeSampler2(ReplicaExchangeSampler):
+    @mpiplus.on_single_node(rank=0, broadcast_result=False, sync_nodes=False)
+    @mpiplus.delayed_termination
+    def _report_iteration_items(self):
+        """
+        Sub-function of :func:`_report_iteration` which handles all the actual individual item reporting in a
+        sub-class friendly way. The final actions of writing timestamp, last-good-iteration, and syncing
+        should be left to the :func:`_report_iteration` and subclasses should extend this function instead
+        """
+        replica_id = np.where(self._replica_thermodynamic_states == 0)[0][0]
+        print("ITERATION: ", self._iteration)
+        print("REPLICA THERMOSTATES ", self._replica_thermodynamic_states, type(self._replica_thermodynamic_states))
+        print("REPLICA ID ", replica_id, type(replica_id))
+        self._reporter.write_sampler_states([self._sampler_states[replica_id]], self._iteration)
+        
+        self._reporter.write_replica_thermodynamic_states(self._replica_thermodynamic_states, self._iteration)
+        self._reporter.write_mcmc_moves(self._mcmc_moves)  # MCMCMoves can store internal statistics.
+        self._reporter.write_energies(self._energy_thermodynamic_states, self._neighborhoods, self._energy_unsampled_states,
+                                      self._iteration)
+        self._reporter.write_mixing_statistics(self._n_accepted_matrix, self._n_proposed_matrix, self._iteration)
+
 # Set up sampler
 _logger.setLevel(logging.DEBUG)
 _logger.info("About to start repex")
 print(f"move steps: {int((move_length*1000)/timestep)}")
 print(f"timestep: {timestep} fs")
 move = mcmc.LangevinSplittingDynamicsMove(timestep=timestep*unit.femtoseconds, n_steps=int((move_length*1000)/timestep))
-simulation = multistate.ReplicaExchangeSampler(mcmc_moves=move, number_of_iterations=length*1000)
+simulation = ReplicaExchangeSampler2(mcmc_moves=move, number_of_iterations=length*1000)
 
 # Run t-repex
 reporter_file = os.path.join(args.dir, f"{i}_{phase}_{name.lower()}_{length}ns.nc")

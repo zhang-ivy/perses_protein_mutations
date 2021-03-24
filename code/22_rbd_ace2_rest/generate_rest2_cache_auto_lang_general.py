@@ -137,7 +137,7 @@ _logger.info("About to start repex")
 print(f"move steps: {int((move_length*1000)/timestep)}")
 print(f"timestep: {timestep} fs")
 move = mcmc.LangevinSplittingDynamicsMove(timestep=timestep*unit.femtoseconds, n_steps=int((move_length*1000)/timestep))
-simulation = multistate.ReplicaExchangeSampler(mcmc_moves=move, number_of_iterations=length*1000)
+simulation = ReplicaExchangeSampler2(mcmc_moves=move, number_of_iterations=length*1000)
 
 # Run t-repex
 reporter_file = os.path.join(args.dir, f"{i}_{phase}_{name.lower()}_{length}ns.nc")
