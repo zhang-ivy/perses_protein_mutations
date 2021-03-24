@@ -1,6 +1,7 @@
 import pickle
 import os
 from perses.app.relative_point_mutation_setup import PointMutationExecutorRBD
+from perses.utils.smallmolecules import  render_protein_residue_atom_mapping
 from pkg_resources import resource_filename
 from simtk import unit
 import argparse
@@ -52,3 +53,7 @@ with open(os.path.join(outdir, f"{i}_apo_1.pickle"), "wb") as f:
 complex_rhtf_1 = solvent_delivery.get_complex_rhtf_1()
 with open(os.path.join(outdir, f"{i}_complex_1.pickle"), "wb") as f:
     pickle.dump(complex_rhtf_1, f)
+
+# Render atom map
+atom_map_filename = f'{outdir}/atom_map.png'
+render_protein_residue_atom_mapping(apo_htf._topology_proposal, atom_map_filename)
