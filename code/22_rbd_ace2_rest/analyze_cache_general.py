@@ -77,7 +77,7 @@ def get_dihedrals(i, name, length, out_dir, htf, dihedral_indices_new, dihedral_
     for iteration in tqdm(range(n_iter)):
         # replica_id = np.where(nc.variables['states'][iteration*checkpoint_interval] == 0)[0]
         replica_id = 0
-        pos = all_positions[iteration,replica_id,:,:][0] *unit.nanometers
+        pos = all_positions[iteration,replica_id,:,:] *unit.nanometers
         all_pos_new[iteration] = new_positions(htf, pos).value_in_unit_system(unit.md_unit_system) # Get new positions only
         all_pos_hybrid[iteration] = pos # Get hybrid positions
         all_pos_old[iteration] = old_positions(htf, pos).value_in_unit_system(unit.md_unit_system)
