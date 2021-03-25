@@ -143,7 +143,7 @@ for aa_name in [args.old_aa_name, args.new_aa_name]:
         dihedral_atoms.append(ala_dihedral)
     elif aa_name == 'ASP':
         dihedral_atoms.append(asp_dihedral)
-    elif aa_name == 'ILE' or aa_bame == 'VAL':
+    elif aa_name == 'ILE' or aa_name == 'VAL':
         dihedral_atoms.append(ile_dihedral)
     elif aa_name == 'GLY':
         dihedral_atoms.append(gly_dihedral)
