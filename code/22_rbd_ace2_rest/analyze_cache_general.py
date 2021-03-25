@@ -75,7 +75,8 @@ def get_dihedrals(i, name, length, out_dir, htf, dihedral_indices_new, dihedral_
     all_pos_old = np.zeros(shape=(n_iter, old_top.n_atoms, 3))
     all_pos_hybrid = np.zeros(shape=(n_iter, n_atoms, 3))
     for iteration in tqdm(range(n_iter)):
-        replica_id = np.where(nc.variables['states'][iteration*checkpoint_interval] == 0)[0]
+        # replica_id = np.where(nc.variables['states'][iteration*checkpoint_interval] == 0)[0]
+        replica_id = 0
         pos = all_positions[iteration,replica_id,:,:][0] *unit.nanometers
         all_pos_new[iteration] = new_positions(htf, pos).value_in_unit_system(unit.md_unit_system) # Get new positions only
         all_pos_hybrid[iteration] = pos # Get hybrid positions
@@ -129,6 +130,8 @@ other_dihedral = ['N', 'CA', 'CB', 'CG']
 ala_dihedral = ['N', 'CA', 'CB', 'HB1']
 asp_dihedral = ['CA', 'CB', 'CG', 'OD2']
 ile_dihedral = ['N', 'CA', 'CB', 'CG2']
+gly_dihedral = ['O', 'C', 'CA', 'HA2']
+ser_dihedral = ['N', 'CA', 'CB', 'OG']
 
 dihedral_atoms = []
 for aa_name in [args.old_aa_name, args.new_aa_name]:
@@ -140,8 +143,10 @@ for aa_name in [args.old_aa_name, args.new_aa_name]:
         dihedral_atoms.append(ala_dihedral)
     elif aa_name == 'ASP':
         dihedral_atoms.append(asp_dihedral)
-    elif aa_name == 'ILE':
+    elif aa_name == 'ILE' or aa_bame == 'VAL':
         dihedral_atoms.append(ile_dihedral)
+    elif aa_name == 'GLY':
+        dihedral_atoms.append(gly_dihedral)
 
 for res in htf._topology_proposal.old_topology.residues():
     if res.id == args.resid and res.chain.index == 0:
