@@ -48,7 +48,7 @@ elif args.sim_number == 4:
     name = args.new_aa_name
     state = 1
 
-length = 1
+length = 0.5
 move_length = 3
 timestep = 4
 radius = 0.3
