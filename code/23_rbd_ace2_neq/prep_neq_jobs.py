@@ -39,7 +39,7 @@ for k, v in dictionary.items():
 			elif "#BSUB -J" in line:
 				line = line[:13] + str(new) + f'.{phase}.[1-100]"\n'
 			elif "#BSUB -w" in line:
-                                job = job_apo if phase == 'apo' else job_complex
+				job = job_apo if phase == 'apo' else job_complex
 				line = line[:9] + f'"done({job})"\n'
 			elif "new=" in line:
 				line = f"new={new}\n"
