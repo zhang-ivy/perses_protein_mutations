@@ -40,7 +40,8 @@ i = os.path.basename(os.path.dirname(args.dir))
 apo_htf = pickle.load(open(os.path.join(args.dir, f"{i}_{args.phase}.pickle"), "rb" ))
 
 # Build the hybrid repex samplers
-suffix = 'run'; selection = 'not water'; checkpoint_interval = 10; n_states = 11; n_cycles = 5000 lambda_protocol = LambdaProtocol(functions='default')
+suffix = 'run'; selection = 'not water'; checkpoint_interval = 10; n_states = 11; n_cycles = 5000 
+lambda_protocol = LambdaProtocol(functions='default')
 reporter_file = os.path.join(args.dir, f"{i}_{args.phase}.nc")
 reporter = MultiStateReporter(reporter_file, analysis_particle_indices = apo_htf.hybrid_topology.select(selection), checkpoint_interval = checkpoint_interval)
 hss = HybridRepexSampler(mcmc_moves=mcmc.LangevinSplittingDynamicsMove(timestep= 4.0 * unit.femtoseconds,
