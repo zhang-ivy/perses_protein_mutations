@@ -38,10 +38,10 @@ for k, v in dictionary.items():
 		    elif "#BSUB -n" in line:
 		        line = line[:26] + str(memory[i]) + line[28:] 
 		    elif "#BSUB -J" in line:
-                job_range = "1-2" if phase == 'apo' else "3-4"
+		        job_range = "1-2" if phase == 'apo' else "3-4"
 		        line = line[:13] + str(new) + f'[{job_range}]"\n'
 		    elif "#BSUB -w" in line:
-                job = job_apo if phase == 'apo' else job_complex
+		        job = job_apo if phase == 'apo' else job_complex
 		        line = line[:9] + f'"ended({job})"\n'
 		    elif "new=" in line:
 		        line = f"new={new}\n"
