@@ -41,7 +41,7 @@ for k, v in dictionary.items():
 				configfile = f"configfile_{phase}"
 				line = f"mpiexec.hydra -f {hostfile} -configfile {configfile}"
 			elif "build_mpirun_configfile" in line:
-				line = f'build_mpirun_configfile "python /home/zhangi/choderalab/perses_benchmark/perses_protein_mutations/code/24_rbd_ace2_repex/run_h_repex.py /data/chodera/zhangi/perses_benchmark/repex/31/{new}/0/ complex"\n'
+				line = f'build_mpirun_configfile "python /home/zhangi/choderalab/perses_benchmark/perses_protein_mutations/code/24_rbd_ace2_repex/run_h_repex.py /data/chodera/zhangi/perses_benchmark/repex/31/{new}/0/ {phase}"\n'
 			lines_new.append(line)
 
 		# Make dir and save new bash file
