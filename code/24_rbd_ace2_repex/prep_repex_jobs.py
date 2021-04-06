@@ -36,6 +36,10 @@ for k, v in dictionary.items():
 				line = line[:21] + str(memory[i]) + line[23:] 
 			elif "#BSUB -J" in line:
 				line = line[:10] + str(new) + f'.{phase}"\n'
+			elif "mpiexec.hydra" in line:
+				hostfile = f"hostfile_{phase}"
+				configfile = f"configfile_{phase}"
+				line = f"mpiexec.hydra -f {hostfile} -configfile {configfile}"
 			lines_new.append(line)
 
 		# Make dir and save new bash file
