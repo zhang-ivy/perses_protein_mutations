@@ -33,7 +33,7 @@ for k, v in dictionary.items():
 			elif "#BSUB -eo" in line:
 				line = line[:9] + f" {phase}.stderr\n"
 			elif "#BSUB -n 1 -R" in line:
-				line = line[:26] + str(memory[i]) + line[26:] 
+				line = line[:25] + str(memory[i]) + line[25:] 
 			elif "#BSUB -J" in line:
 				line = line[:10] + str(new) + f'.{phase}"\n'
 			elif "python " in line:
