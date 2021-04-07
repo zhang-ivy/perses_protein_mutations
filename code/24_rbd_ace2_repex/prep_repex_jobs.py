@@ -32,10 +32,12 @@ for k, v in dictionary.items():
 				line = line[:9] + f" {phase}.out\n"
 			elif "#BSUB -eo" in line:
 				line = line[:9] + f" {phase}.stderr\n"
-			elif "#BSUB -R" in line:
-				line = line[:21] + str(memory[i]) + line[23:] 
+			elif "#BSUB -n 1 -R" in line:
+				line = line[:26] + str(memory[i]) + line[26:] 
 			elif "#BSUB -J" in line:
 				line = line[:10] + str(new) + f'.{phase}"\n'
+			elif "python " in line:
+				line = f"python run_h_repex.py /data/chodera/zhangi/perses_benchmark/repex/31/{new}/0/ {phase}"
 			lines_new.append(line)
 
 		# Make dir and save new bash file
