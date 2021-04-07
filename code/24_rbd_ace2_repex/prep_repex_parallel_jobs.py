@@ -6,12 +6,12 @@ stream = open("test.yaml", 'r')
 dictionary = yaml.load(stream)
 
 # Define file paths
-template_file = "/home/zhangi/choderalab/perses_benchmark/perses_protein_mutations/code/24_rbd_ace2_repex/run_repex.sh"
+template_file = "/home/zhangi/choderalab/perses_benchmark/perses_protein_mutations/code/24_rbd_ace2_repex/run_repex_parallel.sh"
 out_dir = "/data/chodera/zhangi/perses_benchmark/repex/31/"
 
 # Define job parameters
-wall_time = [72, 30] # hours
-memory = [7, 4] # GB
+wall_time = [24, 12] # hours
+memory = [2, 1] # GB
 phases = ['complex', 'apo']
 
 for k, v in dictionary.items():
@@ -36,10 +36,16 @@ for k, v in dictionary.items():
 				line = line[:21] + str(memory[i]) + line[23:] 
 			elif "#BSUB -J" in line:
 				line = line[:10] + str(new) + f'.{phase}"\n'
+			elif "mpiexec.hydra" in line:
+				hostfile = f"hostfile_{phase}"
+				configfile = f"configfile_{phase}"
+				line = f"mpiexec.hydra -f {hostfile} -configfile {configfile}"
+			elif "build_mpirun_configfile" in line:
+				line = f'build_mpirun_configfile --configfilepath configfile_{phase} --hostfilepath hostfile_{phase} "python /home/zhangi/choderalab/perses_benchmark/perses_protein_mutations/code/24_rbd_ace2_repex/run_h_repex.py /data/chodera/zhangi/perses_benchmark/repex/31/{new}/0/ {phase}"\n'
 			lines_new.append(line)
 
 		# Make dir and save new bash file
 		os.system(f"mkdir {os.path.join(out_dir, str(new))}")
 
-		with open(os.path.join(out_dir, str(new), "0" ,f"run_repex_{phase}.sh"), "w") as f:
+		with open(os.path.join(out_dir, str(new), "0" ,f"run_repex_parallel_{phase}.sh"), "w") as f:
 			f.writelines(lines_new)
