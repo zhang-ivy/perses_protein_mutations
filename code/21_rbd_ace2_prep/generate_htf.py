@@ -11,9 +11,10 @@ parser = argparse.ArgumentParser(description='generate htf')
 parser.add_argument('dir', type=str, help='path to input/output dir')
 parser.add_argument('residue', type=str, help='residue position')
 parser.add_argument('mutant', type=str, help='three letter code for amino acid to mutate to')
+parser.add_argument('--rbd_file', type=str, help='rbd file')
 args = parser.parse_args()
 
-rbd_file = resource_filename('perses', 'data/rbd-ace2/0_rbd.pdb')
+rbd_file = resource_filename('perses', 'data/rbd-ace2/0_rbd.pdb') if not args.rbd_file else args.rbd_file
 ace2_file = resource_filename('perses', 'data/rbd-ace2/0_ace2.pdb')
 
 solvent_delivery = PointMutationExecutorRBD(rbd_file,
