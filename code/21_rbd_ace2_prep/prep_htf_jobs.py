@@ -26,15 +26,15 @@ for k, v in dictionary.items():
 		elif "#BSUB -eo" in line:
 			line = line[:13] + f"{new}.stderr\n"
 		elif "#BSUB -J" in line:
-			line = line[:13] + str(new) + '"'
-		elif "old= " in line:
-			line = f"old={old}"
-		elif "new= " in line:
-			line = f"new={new}"
+			line = line[:13] + str(new) + '"\n'
+		elif "old=" in line:
+			line = f"old={old}\n"
+		elif "new=" in line:
+			line = f"new={new}\n"
 		elif "resid=" in line:
-			line = f"resid={resid}"
+			line = f"resid={resid}\n"
 		elif "new_aa=" in line:
-			line = f"new_aa={new_aa}"
+			line = f"new_aa={new_aa}\n"
 
 		lines_new.append(line)
 
