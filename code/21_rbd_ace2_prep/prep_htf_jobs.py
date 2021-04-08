@@ -14,14 +14,14 @@ for k, v in dictionary.items():
 	print(f"prepping dir {k}")
 	new = k
 	old, resid, new_aa = v
-	
+
 	# Edit template bash file
 	with open(template_file, "r") as f:
 		lines_out = f.readlines()
 
 	lines_new = []
 	for line in lines_out:
-		elif "#BSUB -o" in line:
+		if "#BSUB -o" in line:
 			line = line[:12] + f"{new}.out\n"
 		elif "#BSUB -eo" in line:
 			line = line[:13] + f"{new}.stderr\n"
