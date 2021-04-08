@@ -14,7 +14,7 @@ for k, v in dictionary.items():
 	print(f"prepping dir {k}")
 	new = k
 	old, resid, new_aa = v
-
+	
 	# Edit template bash file
 	with open(template_file, "r") as f:
 		lines_out = f.readlines()
