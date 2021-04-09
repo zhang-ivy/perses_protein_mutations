@@ -45,6 +45,7 @@ neq_splitting='V R H O R V'
 timestep = 4.0 * unit.femtosecond
 platform_name = 'CUDA'
 cache_length = args.cache if args.cache else 1 
+temperature = 298.0 * unit.kelvin
 
 # Read in vanilla htf
 i = os.path.basename(os.path.dirname(args.dir))
@@ -58,7 +59,7 @@ positions = subset_pos[args.sim_number - 1]
 system = htf.hybrid_system
 
 # Set up integrator
-integrator = PeriodicNonequilibriumIntegrator(DEFAULT_ALCHEMICAL_FUNCTIONS, nsteps_eq, nsteps_neq, neq_splitting, timestep=timestep)
+integrator = PeriodicNonequilibriumIntegrator(DEFAULT_ALCHEMICAL_FUNCTIONS, nsteps_eq, nsteps_neq, neq_splitting, timestep=timestep, temperature=temperature)
 
 # Set up context
 platform = openmm.Platform.getPlatformByName(platform_name)
@@ -69,6 +70,7 @@ if platform_name in ['CUDA']:
 context = openmm.Context(system, integrator, platform)
 context.setPeriodicBoxVectors(*system.getDefaultPeriodicBoxVectors())
 context.setPositions(positions)
+context.setVelocitiesToTemperature(temperature)
 
 # Minimize
 openmm.LocalEnergyMinimizer.minimize(context)
