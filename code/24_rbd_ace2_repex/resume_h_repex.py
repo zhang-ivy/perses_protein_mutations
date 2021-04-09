@@ -2,6 +2,7 @@ import argparse
 from perses.samplers.multistate import HybridRepexSampler
 from openmmtools.multistate import MultiStateReporter
 import logging
+import os
 
 # Read args
 parser = argparse.ArgumentParser(description='run perses protein mutation')
