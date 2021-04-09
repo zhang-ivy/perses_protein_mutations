@@ -118,6 +118,7 @@ with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.new_aa_name}_{cache_le
     subset_pos = np.load(f)
 positions = subset_pos[args.sim_number]
 context.setPositions(positions)
+context.setVelocitiesToTemperature(temperature)
 
 # Run eq reverse (1 -> 0)
 reverse_eq_old, reverse_eq_new = list(), list()
