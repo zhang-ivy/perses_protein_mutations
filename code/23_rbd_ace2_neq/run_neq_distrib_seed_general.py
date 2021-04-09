@@ -55,7 +55,7 @@ with open(os.path.join(args.dir, f"{i}_{args.phase}.pickle"), 'rb') as f:
 # Read in lambda = 0 cache
 with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.old_aa_name}_{cache_length}ns_snapshots.npy"), 'rb') as f:
     subset_pos = np.load(f)
-positions = subset_pos[args.sim_number - 1]
+positions = subset_pos[args.sim_number]
 system = htf.hybrid_system
 
 # Set up integrator
@@ -116,7 +116,7 @@ forward_works_master.append(forward_works)
 # Read in lambda = 1 cache, if necessary
 with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.new_aa_name}_{cache_length}ns_snapshots.npy"), 'rb') as f:
     subset_pos = np.load(f)
-positions = subset_pos[args.sim_number - 1]
+positions = subset_pos[args.sim_number]
 context.setPositions(positions)
 
 # Run eq reverse (1 -> 0)
