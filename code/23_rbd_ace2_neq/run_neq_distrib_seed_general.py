@@ -73,7 +73,7 @@ context.setPositions(positions)
 context.setVelocitiesToTemperature(temperature)
 
 # Minimize
-# openmm.LocalEnergyMinimizer.minimize(context)
+openmm.LocalEnergyMinimizer.minimize(context)
 
 # Run eq forward (0 -> 1)
 forward_eq_old, forward_eq_new = list(), list()
