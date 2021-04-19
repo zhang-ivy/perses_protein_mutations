@@ -16,12 +16,12 @@ thermodynamic_states = [states.ThermodynamicState(system=testsystem.system, temp
 move = mcmc.LangevinSplittingDynamicsMove(timestep=4.0*unit.femtoseconds, n_steps=250, collision_rate=5.0 / unit.picosecond, reassign_velocities=False, n_restart_attempts=20, constraint_tolerance=1e-06)
 simulation = ReplicaExchangeSampler(mcmc_moves=move, number_of_iterations=5000, replica_mixing_scheme='swap-neighbors', online_analysis_interval=10)
 
-_logger = logging.getLogger()
-_logger.setLevel(logging.DEBUG)
-
 storage_path = '/data/chodera/zhangi/perses_benchmark/repex/31/0/3/alanine_dipeptide.nc'
 reporter = multistate.MultiStateReporter(storage_path, checkpoint_interval=10)
 simulation.create(thermodynamic_states=thermodynamic_states, sampler_states=states.SamplerState(testsystem.positions, box_vectors=testsystem.system.getDefaultPeriodicBoxVectors()), storage=reporter)
+
+_logger = logging.getLogger()
+_logger.setLevel(logging.DEBUG)
 
 simulation.run()
 
