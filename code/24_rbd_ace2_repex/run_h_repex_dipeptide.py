@@ -1,6 +1,7 @@
 import math
 from simtk import unit
 from openmmtools import testsystems, states, mcmc
+from openmmtools.multistate import ReplicaExchangeSampler
 testsystem = testsystems.AlanineDipeptideExplicit()
 import os
 import tempfile
