@@ -17,7 +17,7 @@ simulation = ReplicaExchangeSampler(mcmc_moves=move, number_of_iterations=5000, 
 
 storage_path = 'alanine_dipeptide.nc'
 reporter = multistate.MultiStateReporter(storage_path, checkpoint_interval=10)
-simulation.create(thermodynamic_states=thermodynamic_states, sampler_states=states.SamplerState(testsystem.positions, box_vectors=testsystem.getDefaultPeriodicBoxVectors()), storage=reporter)
+simulation.create(thermodynamic_states=thermodynamic_states, sampler_states=states.SamplerState(testsystem.positions, box_vectors=testsystem.system.getDefaultPeriodicBoxVectors()), storage=reporter)
 
 simulation.run()
 
