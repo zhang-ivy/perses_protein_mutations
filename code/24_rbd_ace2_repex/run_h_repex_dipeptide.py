@@ -6,6 +6,7 @@
 
 # Set up logger
 import logging
+import sys
 logging.basicConfig(stream=sys.stderr, level=logging.DEBUG)
 _logger = logging.getLogger()
 
