@@ -1,4 +1,4 @@
-import mat
+import math
 import os
 from openmmtools.states import SamplerState, ThermodynamicState
 from openmmtools import testsystems, states, mcmc, multistate
