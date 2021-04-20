@@ -2,14 +2,14 @@ import math
 from simtk import unit
 from openmmtools import testsystems, states, mcmc, multistate
 from openmmtools.multistate import ReplicaExchangeSampler
-testsystem = testsystems.AlanineDipeptideExplicit()
 import os
-import tempfile
 import logging
 
 # Set up logger
 _logger = logging.getLogger()
 _logger.setLevel(logging.INFO)
+
+testsystem = testsystems.AlanineDipeptideExplicit()
 
 _logger.info("Generating states")
 n_replicas = 11  # Number of temperature replicas.
