@@ -9,6 +9,7 @@ import logging
 _logger = logging.getLogger()
 _logger.setLevel(logging.INFO)
 
+_logger.info("Generating system")
 testsystem = testsystems.AlanineDipeptideExplicit()
 
 _logger.info("Generating states")
@@ -24,14 +25,14 @@ move = mcmc.LangevinSplittingDynamicsMove(timestep=4.0*unit.femtoseconds, n_step
 _logger.info("Generating sampler")
 simulation = ReplicaExchangeSampler(mcmc_moves=move, number_of_iterations=5000, replica_mixing_scheme='swap-neighbors', online_analysis_interval=10)
 
-_logger.info("Generating reporter")
-storage_path = '/data/chodera/zhangi/perses_benchmark/repex/31/0/3/alanine_dipeptide.nc'
-reporter = multistate.MultiStateReporter(storage_path, checkpoint_interval=10)
+# _logger.info("Generating reporter")
+# storage_path = '/data/chodera/zhangi/perses_benchmark/repex/31/0/3/alanine_dipeptide.nc'
+# reporter = multistate.MultiStateReporter(storage_path, checkpoint_interval=10)
 
-_logger.info("Generating simulation")
-simulation.create(thermodynamic_states=thermodynamic_states, sampler_states=states.SamplerState(testsystem.positions, box_vectors=testsystem.system.getDefaultPeriodicBoxVectors()), storage=reporter)
+# _logger.info("Generating simulation")
+# simulation.create(thermodynamic_states=thermodynamic_states, sampler_states=states.SamplerState(testsystem.positions, box_vectors=testsystem.system.getDefaultPeriodicBoxVectors()), storage=reporter)
 
-_logger.setLevel(logging.DEBUG)
-_logger.info("Running simulation")
-simulation.run()
+# _logger.setLevel(logging.DEBUG)
+# _logger.info("Running simulation")
+# simulation.run()
 
