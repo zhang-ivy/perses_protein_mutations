@@ -6,8 +6,8 @@
 
 # Set up logger
 import logging
-_logger = logging.getLogger("run")
-_logger.setLevel(logging.INFO)
+logging.basicConfig(stream=sys.stderr, level=logging.DEBUG)
+_logger = logging.getLogger()
 
 print("after logger")
 
