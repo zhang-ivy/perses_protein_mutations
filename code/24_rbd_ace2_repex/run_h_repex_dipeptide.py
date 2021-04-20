@@ -5,9 +5,13 @@ from openmmtools.multistate import ReplicaExchangeSampler
 import os
 import logging
 
+print("before logger")
+
 # Set up logger
 _logger = logging.getLogger("run")
 _logger.setLevel(logging.INFO)
+
+print("after logger")
 
 _logger.info("Generating system")
 testsystem = testsystems.AlanineDipeptideExplicit()
