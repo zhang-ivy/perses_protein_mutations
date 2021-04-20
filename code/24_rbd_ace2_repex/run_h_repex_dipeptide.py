@@ -6,7 +6,7 @@ import os
 import logging
 
 # Set up logger
-_logger = logging.getLogger()
+_logger = logging.getLogger("run")
 _logger.setLevel(logging.INFO)
 
 _logger.info("Generating system")
