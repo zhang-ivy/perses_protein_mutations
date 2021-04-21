@@ -39,7 +39,7 @@ DEFAULT_ALCHEMICAL_FUNCTIONS = {
 
 # Define simulation parameters
 # nsteps_eq = 25000 # 100 ps 
-nsteps_eq = 1
+nsteps_eq = 10
 nsteps_neq = int(args.length*250000) # 1 ns
 neq_splitting='V R H O R V'
 timestep = 4.0 * unit.femtosecond
@@ -119,6 +119,9 @@ with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.new_aa_name}_{cache_le
 positions = subset_pos[args.sim_number]
 context.setPositions(positions)
 context.setVelocitiesToTemperature(temperature)
+
+# Minimize
+openmm.LocalEnergyMinimizer.minimize(context)
 
 # Run eq reverse (1 -> 0)
 reverse_eq_old, reverse_eq_new = list(), list()
