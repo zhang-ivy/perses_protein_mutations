@@ -19,6 +19,7 @@ import openmmtools
 import time
 from simtk.openmm import CustomBondForce
 import argparse
+import os
 
 # Read args
 parser = argparse.ArgumentParser(description='run perses protein mutation on capped amino acid')
