@@ -22,7 +22,7 @@ import argparse
 
 # Read args
 parser = argparse.ArgumentParser(description='run perses protein mutation on capped amino acid')
-parser.add_argument('prefix', type=int, help='prefix to tleap')
+parser.add_argument('prefix', type=str, help='prefix to tleap')
 args = parser.parse_args()
 
 # Set parameters
