@@ -22,7 +22,7 @@ import argparse
 
 # Read args
 parser = argparse.ArgumentParser(description='run perses protein mutation on capped amino acid')
-parser.add_argument('sim_number', type=int, help='number in job name - 1')
+parser.add_argument('prefix', type=int, help='prefix to tleap')
 args = parser.parse_args()
 
 # Set parameters
@@ -43,11 +43,11 @@ chk_freq = 500
 traj_freq = 4000  # 1250 frames
 
 # Set input file names
-amber_prmtop_file = "../run_tleap/RBD_ACE2_complex_N501Y.prmtop"
-amber_inpcrd_file = "../run_tleap/RBD_ACE2_complex_N501Y.inpcrd"
+amber_prmtop_file = f"{args.prefix}_tleap.prmtop"
+amber_inpcrd_file = f"{args.prefix}_tleap.inpcrd"
 
 # Set file names
-output_prefix = f'/data/chodera/zhangi/vir/coronavirus/N501Y_SA/output/{args.sim_number}/'
+output_prefix = f'/data/chodera/zhangi/perses_benchmark/neq/15/74/equil/{os.path.basename(args.prefix)}/'
 integrator_xml_filename = "integrator.xml"
 state_xml_filename = "state.xml"
 state_pdb_filename = "equilibrated.pdb"
@@ -70,9 +70,9 @@ system = prmtop.createSystem(
     hydrogenMass=hydrogen_mass,
 )
 
-# Add virtual bond between chain R of RBD (CA of VAL174 ) and ACE2 (CA of GLN521)
+# Add virtual bond between chain R of RBD (CA of VAL172 ) and ACE2 (CA of GLN518)
 force = CustomBondForce('0')
-force.addBond(2669,8209, [])
+force.addBond(2636,8184, [])
 system.addForce(force)
 
 # Add a barostat to the system
