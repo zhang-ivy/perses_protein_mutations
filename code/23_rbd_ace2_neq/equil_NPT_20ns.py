@@ -71,6 +71,19 @@ system = prmtop.createSystem(
     hydrogenMass=hydrogen_mass,
 )
 
+# Fix naked charges in old and new systems
+force_dict = {i.__class__.__name__: i for i in system.getForces()}
+if 'NonbondedForce' in [i for i in force_dict.keys()]:
+    nb_force = force_dict['NonbondedForce']
+    for i in range(nb_force.getNumParticles()):
+        charge, sigma, epsilon = nb_force.getParticleParameters(i)
+        if sigma == 0*unit.nanometer:
+            sigma = 0.6*unit.nanometer
+            nb_force.setParticleParameters(i, charge, sigma, epsilon)
+        if epsilon == 0*unit.kilojoule_per_mole:
+            epsilon = 0.01*unit.kilojoule_per_mole
+            nb_force.setParticleParameters(i, charge, sigma, epsilon)
+
 # Add virtual bond between chain R of RBD (CA of VAL172 ) and ACE2 (CA of GLN518)
 force = CustomBondForce('0')
 force.addBond(2636,8184, [])
