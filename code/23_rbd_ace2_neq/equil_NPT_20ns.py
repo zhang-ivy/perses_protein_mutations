@@ -48,7 +48,7 @@ amber_prmtop_file = f"{args.prefix}_tleap.prmtop"
 amber_inpcrd_file = f"{args.prefix}_tleap.inpcrd"
 
 # Set file names
-output_prefix = f'/data/chodera/zhangi/perses_benchmark/neq/15/74/equil/{os.path.basename(args.prefix)}/'
+output_prefix = f'/data/chodera/zhangi/perses_benchmark/neq/15/75/equil/{os.path.basename(args.prefix)}/'
 integrator_xml_filename = "integrator.xml"
 state_xml_filename = "state.xml"
 state_pdb_filename = "equilibrated.pdb"
