@@ -69,7 +69,8 @@ def get_dihedrals(i, name, length, out_dir, htf, dihedral_indices_new, dihedral_
     checkpoint_interval = nc_checkpoint.CheckpointInterval
     all_positions = nc_checkpoint.variables['positions']
     n_iter, n_replicas, n_atoms, _ = np.shape(all_positions)
-    
+    box_vectors = np.array(nc_checkpoint['box_vectors'])
+
     from tqdm import tqdm
     all_pos_new = np.zeros(shape=(n_iter, new_top.n_atoms, 3))
     all_pos_old = np.zeros(shape=(n_iter, old_top.n_atoms, 3))
@@ -88,7 +89,7 @@ def get_dihedrals(i, name, length, out_dir, htf, dihedral_indices_new, dihedral_
         dihedrals = md.compute_dihedrals(traj, np.array([indices]))
         dihedrals_all.append(dihedrals)
     
-    return dihedrals_all, n_iter, all_pos_hybrid
+    return dihedrals_all, n_iter, all_pos_hybrid, box_vectors
     
 def plot_dihedrals(dihedrals, outfile):
     # Plot histogram with error bars : https://stackoverflow.com/questions/35390276/how-to-add-error-bars-to-histogram-diagram-in-python
@@ -147,13 +148,19 @@ indices_new = [atom.index for atom in residue_new.atoms() if atom.name in dihedr
 _logger.info(f"old indices: {indices_old}")
 _logger.info(f"new indices: {indices_new}")
 
-dihedrals, n_iter, all_pos_hybrid = get_dihedrals(i, name, length, out_dir, htf, indices_new, indices_old)
+dihedrals, n_iter, all_pos_hybrid, box_vectors = get_dihedrals(i, name, length, out_dir, htf, indices_new, indices_old)
 
 # Save every 10th snapshot
 subset_pos = all_pos_hybrid[1::10] # Make array of hybrid positions for 100 uncorrelated indices
 _logger.info(f"subset_pos shape: {subset_pos.shape}")
 with open(os.path.join(out_dir, f"{i}_{phase}_{name.lower()}_{length}ns_snapshots.npy"), 'wb') as f:
     np.save(f, subset_pos)
+
+#  Save box vectors corresponding to each snapshot
+subset_box_vectors = box_vectors[1::10]
+_logger.info(f"subset_box_vectors shape: {subset_box_vectors.shape}")
+with open(os.path.join(outdir, "box_vectors.npy"), "wb") as f:
+    np.save(f, subset_box_vectors)
 
 # Plot 
 dihedrals_new = dihedrals[0]
