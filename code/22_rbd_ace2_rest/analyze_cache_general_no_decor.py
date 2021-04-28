@@ -159,7 +159,7 @@ with open(os.path.join(out_dir, f"{i}_{phase}_{name.lower()}_{length}ns_snapshot
 #  Save box vectors corresponding to each snapshot
 subset_box_vectors = box_vectors[1::10]
 _logger.info(f"subset_box_vectors shape: {subset_box_vectors.shape}")
-with open(os.path.join(outdir, "box_vectors.npy"), "wb") as f:
+with open(os.path.join(out_dir, "box_vectors.npy"), "wb") as f:
     np.save(f, subset_box_vectors)
 
 # Plot 
