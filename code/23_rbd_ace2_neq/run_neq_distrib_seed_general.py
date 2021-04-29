@@ -41,7 +41,7 @@ inflection1, inflection2, inflection3, inflection4 = 0.2, 0.4, 0.6, 0.8
 DEFAULT_ALCHEMICAL_FUNCTIONS = {
                              'lambda_sterics_core': x,
                              'lambda_electrostatics_core': x,
-                             'lambda_sterics_insert': f"select(step({x} - {inflection3}), select(step({x}-{inflection4}), 1, (1/{inflection1})*({x}-{inflection3}), 0.0)",
+                             'lambda_sterics_insert': f"select(step({x} - {inflection3}), select(step({x}-{inflection4}), 1, (1/{inflection1})*({x}-{inflection3})), 0.0)",
                              'lambda_sterics_delete': f"select(step({x} - {inflection1}), select(step({x} - {inflection2}), 1, (1/{inflection1})*({x}-{inflection1})), 0.0)",
                              'lambda_electrostatics_insert': f"select(step({x} - {inflection4}), (1/{inflection1}) * ({x} - {inflection4}), 0.0)",
                              'lambda_electrostatics_delete': f"select(step({x} - {inflection1}), 1.0, (1/{inflection1})*{x})",
