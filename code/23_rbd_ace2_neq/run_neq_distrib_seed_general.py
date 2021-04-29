@@ -95,7 +95,7 @@ integrator.step(nsteps_eq)
 forward_works_master = list()
 forward_neq_old, forward_neq_new = list(), list()
 forward_works = [integrator.get_protocol_work(dimensionless=True)]
-for fwd_step in range(nsteps_neq / 2500):
+for fwd_step in range(int(nsteps_neq / 2500)):
     integrator.step(2500)
     _logger.info(f"Forward neq: {fwd_step*2500} completed")
 
@@ -135,7 +135,7 @@ integrator.step(nsteps_eq)
 reverse_works_master = list()
 reverse_neq_old, reverse_neq_new = list(), list()
 reverse_works = [integrator.get_protocol_work(dimensionless=True)]
-for rev_step in range(nsteps_neq / 2500):
+for rev_step in range(int(nsteps_neq / 2500)):
     integrator.step(2500)
     _logger.info(f"Reverse neq: {rev_step*2500} completed")
     
