@@ -21,7 +21,31 @@ htf = pickle.load(open(os.path.join(args.dir, f"{i}_{args.phase}.pickle"), "rb" 
 _logger = logging.getLogger()
 _logger.setLevel(logging.DEBUG)
 selection = 'not water'; checkpoint_interval = 10; n_states = 11; n_cycles = 5000 
-lambda_protocol = LambdaProtocol(functions='default')
+# lambda_protocol = LambdaProtocol(functions='default')
+
+# Define multiphase protocol
+inflection1, inflection2, inflection3, inflection4 = 0.2, 0.4, 0.6, 0.8
+multiphase = {'lambda_sterics_core':
+                         lambda x: x,
+                         'lambda_electrostatics_core':
+                         lambda x: x,
+                         'lambda_sterics_insert':
+                         lambda x: 0.0 if x < inflection3 else ((1.0/inflection1)*(x-inflection3) if x < inflection4 else 1.0),
+                         'lambda_sterics_delete':
+                         lambda x: 0.0 if x < inflection1 else ((1.0/inflection1)*(x-inflection1) if x < inflection2 else 1.0),
+                         'lambda_electrostatics_insert':
+                         lambda x: 0.0 if x < inflection4 else (1.0/inflection1)*(round(x-inflection4, 2)),
+                         'lambda_electrostatics_delete':
+                         lambda x: (1.0/inflection1)*x if x < inflection1 else 1.0,
+                         'lambda_bonds':
+                         lambda x: x,
+                         'lambda_angles':
+                         lambda x: x,
+                         'lambda_torsions':
+                         lambda x: x
+                         }
+lambda_protocol = LambdaProtocol(functions=multiphase)
+
 reporter_file = os.path.join(args.dir, f"{i}_{args.phase}.nc")
 reporter = MultiStateReporter(reporter_file, analysis_particle_indices = htf.hybrid_topology.select(selection), checkpoint_interval = checkpoint_interval)
 hss = HybridRepexSampler(mcmc_moves=mcmc.LangevinSplittingDynamicsMove(timestep= 4.0 * unit.femtoseconds,
