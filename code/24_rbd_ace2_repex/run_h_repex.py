@@ -20,7 +20,7 @@ htf = pickle.load(open(os.path.join(args.dir, f"{i}_{args.phase}.pickle"), "rb" 
 # Build the hybrid repex samplers
 _logger = logging.getLogger()
 _logger.setLevel(logging.DEBUG)
-selection = 'not water'; checkpoint_interval = 10; n_states = 11; n_cycles = 5000 
+selection = 'not water'; checkpoint_interval = 10; n_states = 24; n_cycles = 5000 
 # lambda_protocol = LambdaProtocol(functions='default')
 
 # Define multiphase protocol
