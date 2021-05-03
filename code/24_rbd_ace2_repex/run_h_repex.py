@@ -21,7 +21,7 @@ htf = pickle.load(open(os.path.join(args.dir, f"{i}_{args.phase}.pickle"), "rb" 
 # Build the hybrid repex samplers
 _logger = logging.getLogger()
 _logger.setLevel(logging.DEBUG)
-selection = 'not water'; checkpoint_interval = 10; n_states = 32; n_cycles = 5000 
+selection = 'not water'; checkpoint_interval = 10; n_states = 34; n_cycles = 5000 
 # lambda_protocol = LambdaProtocol(functions='default')
 
 # Define multiphase protocol
@@ -46,7 +46,7 @@ multiphase = {'lambda_sterics_core':
                          lambda x: x
                          }
 lambda_protocol = LambdaProtocol(functions=multiphase)
-lambda_schedule = list(np.linspace(0.0,0.4, 14)) +  [0.5] + list(np.linspace(0.6,0.7, 4)) + list(np.linspace(0.71, 0.8, 6)) + list(np.linspace(0.81, 1.0, 7))
+lambda_schedule = list(np.linspace(0.0,0.4, 14)) +  [0.5] + list(np.linspace(0.6,0.7, 6)) + list(np.linspace(0.71, 0.8, 6)) + list(np.linspace(0.81, 1.0, 7))
 
 reporter_file = os.path.join(args.dir, f"{i}_{args.phase}.nc")
 reporter = MultiStateReporter(reporter_file, analysis_particle_indices = htf.hybrid_topology.select(selection), checkpoint_interval = checkpoint_interval)
