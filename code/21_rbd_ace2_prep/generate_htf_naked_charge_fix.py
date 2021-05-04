@@ -18,6 +18,10 @@ args = parser.parse_args()
 rbd_file = resource_filename('perses', 'data/rbd-ace2/0_rbd.pdb') if not args.rbd_file else args.rbd_file
 ace2_file = resource_filename('perses', 'data/rbd-ace2/0_ace2.pdb') if not args.ace2_file else args.ace2_file
 
+import logging
+_logger = logging.getLogger()
+_logger.setLevel(logging.INFO)
+
 from perses.utils.openeye import createOEMolFromSDF, extractPositionsFromOEMol, oechem
 from perses.annihilation.relative import HybridTopologyFactory, RepartitionedHybridTopologyFactory
 from perses.rjmc.topology_proposal import PointMutationEngine, PointMutationEngineRBD
