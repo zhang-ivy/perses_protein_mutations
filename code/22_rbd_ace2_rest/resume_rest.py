@@ -55,7 +55,7 @@ class ReplicaExchangeSampler2(ReplicaExchangeSampler):
 
 # Load repex simulation
 _logger = logging.getLogger()
-_logger.setLevel(logging.DEBUG)
+_logger.setLevel(logging.INFO)
 i = os.path.basename(os.path.dirname(args.dir))
 reporter_file = os.path.join(args.dir, f"{i}_{phase}_{name.lower()}_{length}ns.nc")
 reporter = MultiStateReporter(reporter_file, checkpoint_interval=10)
