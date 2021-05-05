@@ -44,6 +44,7 @@ class ReplicaExchangeSampler2(ReplicaExchangeSampler):
         print("ITERATION: ", self._iteration)
         print("REPLICA THERMOSTATES ", self._replica_thermodynamic_states, type(self._replica_thermodynamic_states))
         print("REPLICA ID ", replica_id, type(replica_id))
+        prinit("REPLICA SAMPLER STATES ", self._sampler_states)
         self._reporter.write_sampler_states([self._sampler_states[replica_id]], self._iteration)
         
         self._reporter.write_replica_thermodynamic_states(self._replica_thermodynamic_states, self._iteration)
