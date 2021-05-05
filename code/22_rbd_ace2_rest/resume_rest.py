@@ -2,6 +2,7 @@ import argparse
 from openmmtools.multistate import MultiStateReporter
 import logging
 import os
+import numpy as np
 
 # Read args
 parser = argparse.ArgumentParser(description='resume rest')
