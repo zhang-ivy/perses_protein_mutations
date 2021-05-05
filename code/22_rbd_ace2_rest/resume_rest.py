@@ -55,7 +55,7 @@ class ReplicaExchangeSampler2(ReplicaExchangeSampler):
 _logger = logging.getLogger()
 _logger.setLevel(logging.DEBUG)
 i = os.path.basename(os.path.dirname(args.dir))
-reporter_file = os.path.join(args.dir, f"{i}_{phase}_{name}_{length}ns.nc")
+reporter_file = os.path.join(args.dir, f"{i}_{phase}_{name.lower()}_{length}ns.nc")
 reporter = MultiStateReporter(reporter_file, checkpoint_interval=10)
 simulation = ReplicaExchangeSampler2.from_storage(reporter)
 
