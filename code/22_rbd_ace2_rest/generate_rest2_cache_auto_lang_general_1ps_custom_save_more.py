@@ -125,7 +125,7 @@ class ReplicaExchangeSampler2(ReplicaExchangeSampler):
         replica_id_23 = np.where(self._replica_thermodynamic_states == 23)[0][0]
         print("ITERATION: ", self._iteration)
         print("REPLICA THERMOSTATES ", self._replica_thermodynamic_states, type(self._replica_thermodynamic_states))
-        print("REPLICA ID ", replica_id, type(replica_id_23))
+        print("REPLICA ID ", replica_id_23, type(replica_id_23))
         self._reporter.write_sampler_states([self._sampler_states[replica_id_0], self._sampler_states[replica_id_23]], self._iteration)
         
         self._reporter.write_replica_thermodynamic_states(self._replica_thermodynamic_states, self._iteration)
