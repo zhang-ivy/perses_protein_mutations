@@ -62,12 +62,12 @@ temperature = 298.0 * unit.kelvin
 i = os.path.basename(os.path.dirname(args.dir))
 with open(os.path.join(args.dir, f"{i}_{args.phase}.pickle"), 'rb') as f:
     htf = pickle.load(f)
+system = htf.hybrid_system
 
 # # Read in lambda = 0 cache
 # with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.old_aa_name}_{cache_length}ns_snapshots.npy"), 'rb') as f:
 #     subset_pos = np.load(f)
 # positions = subset_pos[args.sim_number]
-# system = htf.hybrid_system
 
 # # Read in lambda = 0 cache box vectors
 # with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.old_aa_name}_{cache_length}ns_box_vectors.npy"), 'rb') as f:
