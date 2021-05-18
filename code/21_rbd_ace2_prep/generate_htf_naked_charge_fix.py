@@ -228,7 +228,7 @@ class PointMutationExecutorRBD2(PointMutationExecutorRBD):
                             sigma = 0.6*unit.nanometer
                             nb_force.setParticleParameters(i, charge, sigma, epsilon)
                         if epsilon == 0*unit.kilojoule_per_mole:
-                            epsilon = 0.01*unit.kilojoule_per_mole
+                            epsilon = 0.0001*unit.kilojoule_per_mole
                             nb_force.setParticleParameters(i, charge, sigma, epsilon)
             
             # Check for charge change...
