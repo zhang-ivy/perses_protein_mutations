@@ -27,16 +27,16 @@ for k, v in dictionary.items():
 			line = line[:13] + f"{new}.stderr\n"
 		elif "#BSUB -J" in line:
 			line = line[:13] + str(new) + '"\n'
-                elif "dir=" in line:
-                        line = f"dir={outdir}\n"
+		elif "dir=" in line:
+			line = f"dir={outdir}\n"
 		elif "resid=" in line:
 			line = f"resid={resid}\n"
 		elif "new_aa=" in line:
 			line = f"new_aa={new_aa}\n"
-                #elif "protein_path=" in line:
-                #        line = f"protein_path={protein_path}"
-                #elif "ligand_path=" in line:
-                #        line = f"ligand_path={ligand_path}"
+		#elif "protein_path=" in line:
+		#	line = f"protein_path={protein_path}"
+        #elif "ligand_path=" in line:
+        #	line = f"ligand_path={ligand_path}"
 
 		lines_new.append(line)
 
