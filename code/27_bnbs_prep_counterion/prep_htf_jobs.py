@@ -46,9 +46,9 @@ for k, v in dictionary.items():
 		elif "new_aa=" in line:
 			line = f"new_aa={new_aa}\n"
 		elif "protein_path=" in line:
-			line = f"protein_path={protein_path}"
+			line = f"protein_path={protein_path}\n"
 		elif "ligand_path=" in line:
-			line = f"ligand_path={ligand_path}"
+			line = f"ligand_path={ligand_path}\n"
 
 		lines_new.append(line)
 
