@@ -17,15 +17,15 @@ for k, v in dictionary.items():
 	print(f"prepping dir {k}")
 	new = k
 	resid, new_aa, protein = v
-        
-        if protein == "barnase":
-            protein_path = barnase_path
-            ligand_path = barstar_path
-        elif protein == "barstar":
-            protein_path = barstar_path
-            ligand_path = barnase_path
-        else:
-            raise Exception(f"Invalid protein name in yaml. You specified {protein} but valid options are: 'barnase' or 'barstar'")
+
+	if protein == "barnase":
+		protein_path = barnase_path
+		ligand_path = barstar_path
+	elif protein == "barstar":
+		protein_path = barstar_path
+		ligand_path = barnase_path
+	else:
+		raise Exception(f"Invalid protein name in yaml. You specified {protein} but valid options are: 'barnase' or 'barstar'")
 
 	# Edit template bash file
 	with open(template_file, "r") as f:
@@ -47,8 +47,8 @@ for k, v in dictionary.items():
 			line = f"new_aa={new_aa}\n"
 		elif "protein_path=" in line:
 			line = f"protein_path={protein_path}"
-        #elif "ligand_path=" in line:
-        #	line = f"ligand_path={ligand_path}"
+		elif "ligand_path=" in line:
+			line = f"ligand_path={ligand_path}"
 
 		lines_new.append(line)
 
