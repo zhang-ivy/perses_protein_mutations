@@ -31,6 +31,8 @@ parser.add_argument('new_aa_name', type=str, help='amino acid three letter code,
 parser.add_argument('sim_number', type=int, help='index of job array, starts at 1')
 parser.add_argument('t_max', type=int, help='max temp for rest')
 parser.add_argument('radius', type=float, help='radius in nm for rest region')
+parser.add_argument('replicas', type=float, help='radius in nm for rest region')
+
 args = parser.parse_args()
 
 if args.sim_number == 1:
@@ -81,7 +83,7 @@ _logger.info("Generating REST states")
 REST_system = factory.REST_system
 
 # Create states for each replica
-n_replicas = 12  # Number of temperature replicas.
+n_replicas = args.replicas  # Number of temperature replicas.
 T_min = 298.0 * unit.kelvin  # Minimum temperature.
 T_max = args.t_max * unit.kelvin  # Maximum temperature.
 temperatures = [T_min + (T_max - T_min) * (math.exp(float(i) / float(n_replicas-1)) - 1.0) / (math.e - 1.0)
