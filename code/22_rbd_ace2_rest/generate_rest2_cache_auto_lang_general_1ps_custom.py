@@ -31,7 +31,7 @@ parser.add_argument('new_aa_name', type=str, help='amino acid three letter code,
 parser.add_argument('sim_number', type=int, help='index of job array, starts at 1')
 parser.add_argument('t_max', type=int, help='max temp for rest')
 parser.add_argument('radius', type=float, help='radius in nm for rest region')
-parser.add_argument('replicas', type=float, help='radius in nm for rest region')
+parser.add_argument('replicas', type=int, help='radius in nm for rest region')
 
 args = parser.parse_args()
 
