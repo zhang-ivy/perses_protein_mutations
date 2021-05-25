@@ -225,7 +225,7 @@ class PointMutationExecutorRBD2(PointMutationExecutorRBD):
                     for i in range(nb_force.getNumParticles()):
                         charge, sigma, epsilon = nb_force.getParticleParameters(i)
                         if sigma == 0*unit.nanometer:
-                            sigma = 0.6*unit.nanometer
+                            sigma = 0.06*unit.nanometer
                             nb_force.setParticleParameters(i, charge, sigma, epsilon)
                         if epsilon == 0*unit.kilojoule_per_mole:
                             epsilon = 0.0001*unit.kilojoule_per_mole
