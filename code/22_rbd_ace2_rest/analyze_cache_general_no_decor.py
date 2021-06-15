@@ -17,6 +17,8 @@ from simtk.openmm import app
 from tqdm import tqdm
 import argparse
 import random
+from openeye import oechem
+
 
 # Read args
 parser = argparse.ArgumentParser(description='run t-repex')
