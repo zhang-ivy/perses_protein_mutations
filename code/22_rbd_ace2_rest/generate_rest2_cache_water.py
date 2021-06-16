@@ -77,7 +77,7 @@ traj = md.Trajectory(np.array(htf.hybrid_positions), htf.hybrid_topology)
 solute_atoms = list(traj.topology.select("is_protein"))
 rest_atoms = list(md.compute_neighbors(traj, radius, query_indices, haystack_indices=solute_atoms)[0])
 _logger.info(f"rest atoms {rest_atoms}")
-factory = RESTTopologyFactoryV2(htf.hybrid_system, htf.hybrid_topology, rest_region=rest_atoms)
+factory = RESTTopologyFactoryV2(htf.hybrid_system, htf.hybrid_topology, rest_region=rest_atoms, use_dispersion_correction=True)
 
 _logger.info("Generating REST states")
 # Get REST system
