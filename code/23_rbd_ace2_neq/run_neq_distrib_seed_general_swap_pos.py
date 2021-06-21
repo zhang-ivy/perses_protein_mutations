@@ -96,7 +96,7 @@ def choose_water_atoms(charge_diff, old_indices, hybrid_positions, hybrid_topolo
             break
         
     return np.ndarray.flatten(choice_indices)
-og_indices = [150813, 150814, 150815] if args.phase == 'complex' else [37525, 37526, 37527]
+og_indices = [150811, 150812, 150813] if args.phase == 'complex' else [37523, 37524, 37525]
 swap_indices = choose_water_atoms(-1, og_indices, htf.hybrid_positions, htf.hybrid_topology)
 _logger.info(f"Swap indices: {swap_indices}")
 for og, swap in zip(og_indices, swap_indices):
