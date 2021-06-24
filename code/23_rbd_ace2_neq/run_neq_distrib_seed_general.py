@@ -66,14 +66,14 @@ with open(os.path.join(args.dir, f"{i}_{args.phase}.pickle"), 'rb') as f:
 
 # Read in lambda = 0 cache
 with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.old_aa_name}_{cache_length}ns_snapshots.npy"), 'rb') as f:
-    subset_pos = np.load(f)
-positions = subset_pos[args.sim_number]
+    lambda_0_pos = np.load(f)
+positions = lambda_0_pos[args.sim_number]
 system = htf.hybrid_system
 
 # Read in lambda = 0 cache box vectors
 with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.old_aa_name}_{cache_length}ns_box_vectors.npy"), 'rb') as f:
-    subset_box_vectors = np.load(f)
-box_vectors = subset_box_vectors[args.sim_number][0]
+    lambda_0_box_vectors = np.load(f)
+box_vectors = lambda_0_box_vectors[args.sim_number][0]
 
 # Set up integrator
 integrator = PeriodicNonequilibriumIntegrator(DEFAULT_ALCHEMICAL_FUNCTIONS, nsteps_eq, nsteps_neq, neq_splitting, timestep=timestep, temperature=temperature)
@@ -117,13 +117,13 @@ forward_works_master.append(forward_works)
 
 # Read in lambda = 1 cache, if necessary
 with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.new_aa_name}_{cache_length}ns_snapshots.npy"), 'rb') as f:
-    subset_pos = np.load(f)
-positions = subset_pos[args.sim_number]
+    lambda_1_pos = np.load(f)
+positions = lambda_1_pos[args.sim_number]
 
 # Read in lambda = 1 cache box vectors
 with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.new_aa_name}_{cache_length}ns_box_vectors.npy"), 'rb') as f:
-    subset_box_vectors = np.load(f)
-box_vectors = subset_box_vectors[args.sim_number][0]
+    lambda_1_box_vectors = np.load(f)
+box_vectors = lambda_1_box_vectors[args.sim_number][0]
 
 context.setPeriodicBoxVectors(*box_vectors)
 context.setPositions(positions)
