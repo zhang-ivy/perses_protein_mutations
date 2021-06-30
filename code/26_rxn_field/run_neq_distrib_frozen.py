@@ -77,7 +77,6 @@ nsteps_neq = int(args.length*250000) # 1 ns
 neq_splitting='V R H O R V'
 timestep = 4.0 * unit.femtosecond
 platform_name = 'CUDA'
-cache_length = args.cache if args.cache else 1 
 temperature = 300.0 * unit.kelvin
 
 # Read in vanilla htf
