@@ -56,19 +56,19 @@ if not args.is_rxn_field:
 else:
     _logger.info(f"Using rxn field protocol")
     ALCHEMICAL_FUNCTIONS = {
-                                 'lambda_0_bonds_old ': 1 - x,
+                                 'lambda_0_bonds_old ': f'1 - {x}',
                                  'lambda_0_bonds_new': x,
-                                 'lambda_0_angles_old': 1 - x,
+                                 'lambda_0_angles_old': f'1 - {x}',
                                  'lambda_0_angles_new': x,
-                                 'lambda_0_torsions_old': 1 - x,
+                                 'lambda_0_torsions_old': f'1 - {x}',
                                  'lambda_0_torsions_new': x,
-                                 'lambda_0_electrostatics_old': 1 - x,
+                                 'lambda_0_electrostatics_old': f'1 - {x}',
                                  'lambda_0_electrostatics_new': x,
-                                 'lambda_0_electrostatics_exceptions_old': 1 - x, 
+                                 'lambda_0_electrostatics_exceptions_old': f'1 - {x}', 
                                  'lambda_0_electrostatics_exceptions_new': x,
-                                 'lambda_0_sterics_old': 1 - x,
+                                 'lambda_0_sterics_old': f'1 - {x}',
                                  'lambda_0_sterics_new': x,
-                                 'lambda_0_sterics_exceptions_old': 1 - x,
+                                 'lambda_0_sterics_exceptions_old': f'1 - {x}',
                                  'lambda_0_sterics_exceptions_new': x}
 
 # Define simulation parameters
