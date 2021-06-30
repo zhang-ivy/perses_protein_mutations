@@ -106,6 +106,9 @@ context.setPeriodicBoxVectors(*box_vectors)
 context.setPositions(positions)
 context.setVelocitiesToTemperature(temperature)
 
+# Minimize
+openmm.LocalEnergyMinimizer.minimize(context)
+
 # Run eq forward (0 -> 1)
 integrator.step(nsteps_eq)
 
