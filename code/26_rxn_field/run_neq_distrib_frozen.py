@@ -26,7 +26,7 @@ parser.add_argument('is_rxn_field', type=bool, help='whether to use rxn field pr
 args = parser.parse_args()
 
 # Define lambda functions
-
+_logger.info(f"Defining lambda fn")
 x = 'lambda'
 if not args.is_rxn_field:
     _logger.info(f"Using default PME protocol")
