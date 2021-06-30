@@ -72,7 +72,7 @@ else:
                                  'lambda_0_sterics_exceptions_new': x}
 
 # Define simulation parameters
-nsteps_eq = 10
+nsteps_eq = 25000 # 100 ps
 nsteps_neq = int(args.length*250000) # 1 ns
 neq_splitting='V R H O R V'
 timestep = 4.0 * unit.femtosecond
