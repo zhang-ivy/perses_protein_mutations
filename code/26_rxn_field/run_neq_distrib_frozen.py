@@ -56,7 +56,7 @@ if not args.is_rxn_field:
 else:
     _logger.info(f"Using rxn field protocol")
     ALCHEMICAL_FUNCTIONS = {
-                                 'lambda_0_bonds_old ': f'1 - {x}',
+                                 'lambda_0_bonds_old': f'1 - {x}',
                                  'lambda_0_bonds_new': x,
                                  'lambda_0_angles_old': f'1 - {x}',
                                  'lambda_0_angles_new': x,
