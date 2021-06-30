@@ -85,6 +85,7 @@ with open(os.path.join(args.dir, f"{i}_{args.phase}.pickle"), 'rb') as f:
     htf = pickle.load(f)
     positions = htf.hybrid_positions
     system = htf.hybrid_system
+    box_vectors = htf.hybrid_system.getDefaultPeriodicBoxVectors()
 
 # Set all heavy atom masses to be 0
 for atom in htf.hybrid_topology.atoms:
