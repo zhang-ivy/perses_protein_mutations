@@ -60,30 +60,36 @@ cache_length = args.cache if args.cache else 1
 temperature = 298.0 * unit.kelvin
 
 # Read in vanilla htf
+_logger.info(f"Reading htf")
 i = os.path.basename(os.path.dirname(args.dir))
 with open(os.path.join(args.dir, f"{i}_{args.phase}.pickle"), 'rb') as f:
     htf = pickle.load(f)
 system = htf.hybrid_system
 
 # Set all heavy atom masses to be 0
+_logger.info(f"Freezing heavy atoms")
 for atom in htf.hybrid_topology.atoms:
     if atom.element.name != 'hydrogen:':
         system.setParticleMass(atom.index, 0.0)
 
 # Read in lambda = 0 cache
+_logger.info(f"Loading cache at lambda = 0")
 with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.old_aa_name}_{cache_length}ns_snapshots.npy"), 'rb') as f:
     subset_pos = np.load(f)
 positions = subset_pos[0]
 
 # Read in lambda = 0 cache box vectors
+_logger.info(f"Loading box vecs at lambda = 0")
 with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.old_aa_name}_{cache_length}ns_box_vectors.npy"), 'rb') as f:
     subset_box_vectors = np.load(f)
 box_vectors = subset_box_vectors[0][0]
 
 # Set up integrator
+_logger.info(f"Creating integrator")
 integrator = PeriodicNonequilibriumIntegrator(DEFAULT_ALCHEMICAL_FUNCTIONS, nsteps_eq, nsteps_neq, neq_splitting, timestep=timestep, temperature=temperature)
 
 # Set up context
+_logger.info(f"Setting up context")
 platform = openmm.Platform.getPlatformByName(platform_name)
 if platform_name in ['CUDA', 'OpenCL']:
     platform.setPropertyDefaultValue('Precision', 'mixed')
@@ -95,9 +101,11 @@ context.setPositions(positions)
 context.setVelocitiesToTemperature(temperature)
 
 # Run eq forward (0 -> 1)
+_logger.info(f"Running equil")
 integrator.step(nsteps_eq)
 
 # Run neq forward (0 -> 1)
+_logger.info(f"Starting forward switching")
 forward_works_master = list()
 forward_neq_old, forward_neq_new = list(), list()
 forward_works = [integrator.get_protocol_work(dimensionless=True)]
