@@ -65,24 +65,26 @@ i = os.path.basename(os.path.dirname(args.dir))
 with open(os.path.join(args.dir, f"{i}_{args.phase}.pickle"), 'rb') as f:
     htf = pickle.load(f)
 system = htf.hybrid_system
+positions = htf.hybrid_positions
+box_vectors = system.getDefaultPeriodicBoxVectors()
 
 # Set all heavy atom masses to be 0
 _logger.info(f"Freezing heavy atoms")
 for atom in htf.hybrid_topology.atoms:
-    if atom.element.name != 'hydrogen:':
+    if atom.element.name != 'hydrogen' and atom.residue.name != 'HOH':
         system.setParticleMass(atom.index, 0.0)
 
-# Read in lambda = 0 cache
-_logger.info(f"Loading cache at lambda = 0")
-with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.old_aa_name}_{cache_length}ns_snapshots.npy"), 'rb') as f:
-    subset_pos = np.load(f)
-positions = subset_pos[0]
+# # Read in lambda = 0 cache
+# _logger.info(f"Loading cache at lambda = 0")
+# with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.old_aa_name}_{cache_length}ns_snapshots.npy"), 'rb') as f:
+#     subset_pos = np.load(f)
+# positions = subset_pos[0]
 
-# Read in lambda = 0 cache box vectors
-_logger.info(f"Loading box vecs at lambda = 0")
-with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.old_aa_name}_{cache_length}ns_box_vectors.npy"), 'rb') as f:
-    subset_box_vectors = np.load(f)
-box_vectors = subset_box_vectors[0][0]
+# # Read in lambda = 0 cache box vectors
+# _logger.info(f"Loading box vecs at lambda = 0")
+# with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.old_aa_name}_{cache_length}ns_box_vectors.npy"), 'rb') as f:
+#     subset_box_vectors = np.load(f)
+# box_vectors = subset_box_vectors[0][0]
 
 # Set up integrator
 _logger.info(f"Creating integrator")
@@ -99,6 +101,9 @@ context = openmm.Context(system, integrator, platform)
 context.setPeriodicBoxVectors(*box_vectors)
 context.setPositions(positions)
 context.setVelocitiesToTemperature(temperature)
+
+# Minimize
+openmm.LocalEnergyMinimizer.minimize(context)
 
 # Run eq forward (0 -> 1)
 _logger.info(f"Running equil")
@@ -128,19 +133,19 @@ for fwd_step in range(int(nsteps_neq / 2500)):
     forward_neq_new.append(new_pos_solute)
 forward_works_master.append(forward_works)
 
-# Read in lambda = 1 cache, if necessary
-with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.new_aa_name}_{cache_length}ns_snapshots.npy"), 'rb') as f:
-    subset_pos = np.load(f)
-positions = subset_pos[0]
+# # Read in lambda = 1 cache, if necessary
+# with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.new_aa_name}_{cache_length}ns_snapshots.npy"), 'rb') as f:
+#     subset_pos = np.load(f)
+# positions = subset_pos[0]
 
-# Read in lambda = 1 cache box vectors
-with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.new_aa_name}_{cache_length}ns_box_vectors.npy"), 'rb') as f:
-    subset_box_vectors = np.load(f)
-box_vectors = subset_box_vectors[0][0]
+# # Read in lambda = 1 cache box vectors
+# with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.new_aa_name}_{cache_length}ns_box_vectors.npy"), 'rb') as f:
+#     subset_box_vectors = np.load(f)
+# box_vectors = subset_box_vectors[0][0]
 
-context.setPeriodicBoxVectors(*box_vectors)
-context.setPositions(positions)
-context.setVelocitiesToTemperature(temperature)
+# context.setPeriodicBoxVectors(*box_vectors)
+# context.setPositions(positions)
+# context.setVelocitiesToTemperature(temperature)
 
 # Run eq reverse (1 -> 0)
 integrator.step(nsteps_eq)
