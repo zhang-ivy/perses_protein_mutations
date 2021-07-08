@@ -8,6 +8,7 @@ import os
 import time
 import mdtraj as md
 from tqdm import tqdm
+from openeye import oechem
 
 # Set up logger
 _logger = logging.getLogger()
