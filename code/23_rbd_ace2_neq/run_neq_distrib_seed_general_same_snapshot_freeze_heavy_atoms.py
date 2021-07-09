@@ -76,7 +76,7 @@ for atom in htf.hybrid_topology.atoms:
         system.setParticleMass(atom.index, 0.0)
         heavy_atoms.append(atom.index)
 
- for i in range(system.getNumConstraints()):
+for i in range(system.getNumConstraints()):
     p1, p2, distance = system.getConstraintParameters(i)
     if p1 in heavy_atoms or p2 in heavy_atoms:
         system.removeConstraint(i)
