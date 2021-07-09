@@ -86,17 +86,17 @@ with open(os.path.join(args.dir, f"{i}_{args.phase}.pickle"), 'rb') as f:
     system = htf.hybrid_system
     box_vectors = htf.hybrid_system.getDefaultPeriodicBoxVectors()
 
-# Set all heavy atom masses to be 0
-heavy_atoms = []
-for atom in htf.hybrid_topology.atoms:
-    if atom.element.name != 'hydrogen' and atom.residue.name not in ['HOH', 'Na+', 'Cl-']:
-        system.setParticleMass(atom.index, 0.0)
-        heavy_atoms.append(atom.index)
+# # Set all heavy atom masses to be 0
+# heavy_atoms = []
+# for atom in htf.hybrid_topology.atoms:
+#     if atom.element.name != 'hydrogen' and atom.residue.name not in ['HOH', 'Na+', 'Cl-']:
+#         system.setParticleMass(atom.index, 0.0)
+#         heavy_atoms.append(atom.index)
 
-for i in range(system.getNumConstraints() - 1, -1, -1):
-    p1, p2, distance = system.getConstraintParameters(i)
-    if p1 in heavy_atoms or p2 in heavy_atoms:
-        system.removeConstraint(i)
+# for i in range(system.getNumConstraints() - 1, -1, -1):
+#     p1, p2, distance = system.getConstraintParameters(i)
+#     if p1 in heavy_atoms or p2 in heavy_atoms:
+#         system.removeConstraint(i)
 
 # Set up integrator
 integrator = PeriodicNonequilibriumIntegrator(ALCHEMICAL_FUNCTIONS, nsteps_eq, nsteps_neq, neq_splitting, timestep=timestep, temperature=temperature)
@@ -112,8 +112,8 @@ context.setPeriodicBoxVectors(*box_vectors)
 context.setPositions(positions)
 context.setVelocitiesToTemperature(temperature)
 
-# Minimize
-# openmm.LocalEnergyMinimizer.minimize(context)
+#Minimize
+openmm.LocalEnergyMinimizer.minimize(context)
 
 # Run eq forward (0 -> 1)
 integrator.step(nsteps_eq)
