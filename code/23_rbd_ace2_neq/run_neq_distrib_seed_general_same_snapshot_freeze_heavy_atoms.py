@@ -69,11 +69,17 @@ positions = htf.hybrid_positions
 box_vectors = system.getDefaultPeriodicBoxVectors()
 
 # Set all heavy atom masses to be 0
+heavy_atoms = []
 _logger.info(f"Freezing heavy atoms")
 for atom in htf.hybrid_topology.atoms:
     if atom.element.name != 'hydrogen' and atom.residue.name != 'HOH':
         system.setParticleMass(atom.index, 0.0)
-        system.removeConstraint(atom.index)
+        heavy_atoms.append(atom.index)
+
+ for i in range(system.getNumConstraints()):
+    p1, p2, distance = system.getConstraintParameters(i)
+    if p1 in heavy_atoms or p2 in heavy_atoms:
+        system.removeConstraint(i)
 
 # # Read in lambda = 0 cache
 # _logger.info(f"Loading cache at lambda = 0")
