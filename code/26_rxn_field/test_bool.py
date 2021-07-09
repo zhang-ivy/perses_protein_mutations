@@ -20,12 +20,13 @@ parser.add_argument('--is_rxn_field', dest='is_rxn_field', action='store_true', 
 parser.add_argument('--not_rxn_field', dest='is_rxn_field', action='store_false', help='whether to use rxn field protocol')
 args = parser.parse_args()
 
+
 # Define lambda functions
 _logger.info(f"Defining lambda fn")
 
-print(is_rxn_field)
+print(args.is_rxn_field)
 x = 'lambda'
-if not is_rxn_field:
+if not args.is_rxn_field:
     print("pme")
 
 else:
