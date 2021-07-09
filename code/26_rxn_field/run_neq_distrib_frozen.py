@@ -22,7 +22,8 @@ parser.add_argument('sim_number', type=int, help='number in job name - 1')
 parser.add_argument('old_aa_name', type=str, help='amino acid three letter code, e.g. ALA')
 parser.add_argument('new_aa_name', type=str, help='amino acid three letter code, e.g. ALA')
 parser.add_argument('length', type=float, help='neq switching time in ns')
-parser.add_argument('is_rxn_field', type=bool, help='whether to use rxn field protocol')
+parser.add_argument('--is_rxn_field', dest='is_rxn_field', action='store_true', help='whether to use rxn field protocol')
+parser.add_argument('--not_rxn_field', dest='is_rxn_field', action='store_false', help='whether to use rxn field protocol')
 args = parser.parse_args()
 
 # Define lambda functions
