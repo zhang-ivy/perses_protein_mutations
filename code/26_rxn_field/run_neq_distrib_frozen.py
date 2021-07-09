@@ -55,21 +55,20 @@ if not args.is_rxn_field:
     #                              'lambda_torsions': x}
 else:
     _logger.info(f"Using rxn field protocol")
-    ALCHEMICAL_FUNCTIONS = {
-     'lambda_0_bonds_old': f'1 - {x}',
-     'lambda_0_bonds_new': x,
-     'lambda_0_angles_old': f'1 - {x}',
-     'lambda_0_angles_new': x,
-     'lambda_0_torsions_old': f'1 - {x}',
-     'lambda_0_torsions_new': x,
-     'lambda_0_electrostatics_old': f'1 - {x}',
-     'lambda_0_electrostatics_new': x,
-     'lambda_0_electrostatics_exceptions_old': f'1 - {x}', 
-     'lambda_0_electrostatics_exceptions_new': x,
-     'lambda_0_sterics_old': f'1 - {x}',
-     'lambda_0_sterics_new': x,
-     'lambda_0_sterics_exceptions_old': f'1 - {x}',
-     'lambda_0_sterics_exceptions_new': x}
+    ALCHEMICAL_FUNCTIONS = {'lambda_0_bonds_old': f'abs(1 - {x})',
+                             'lambda_0_bonds_new': f'abs({x})',
+                             'lambda_0_angles_old': f'abs(1 - {x})',
+                             'lambda_0_angles_new': f'abs({x})',
+                             'lambda_0_torsions_old': f'abs(1 - {x})',
+                             'lambda_0_torsions_new': f'abs({x})',
+                             'lambda_0_electrostatics_old':f'abs(1 - {x})',
+                             'lambda_0_electrostatics_new': f'abs({x})',
+                             'lambda_0_electrostatics_exceptions_old': f'abs(1 - {x})',
+                             'lambda_0_electrostatics_exceptions_new': f'abs({x})',
+                             'lambda_0_sterics_old': f'abs(1 - {x})',
+                             'lambda_0_sterics_new': f'abs({x})',
+                             'lambda_0_sterics_exceptions_old': f'abs(1 - {x})',
+                             'lambda_0_sterics_exceptions_new': f'abs({x})'}
 
 # Define simulation parameters
 nsteps_eq = 25000 # 100 ps
@@ -88,9 +87,16 @@ with open(os.path.join(args.dir, f"{i}_{args.phase}.pickle"), 'rb') as f:
     box_vectors = htf.hybrid_system.getDefaultPeriodicBoxVectors()
 
 # Set all heavy atom masses to be 0
+heavy_atoms = []
 for atom in htf.hybrid_topology.atoms:
-    if atom.element.name != 'hydrogen:' and atom.residue.name != 'HOH':
+    if atom.element.name != 'hydrogen' and atom.residue.name not in ['HOH', 'Na+', 'Cl-']:
         system.setParticleMass(atom.index, 0.0)
+        heavy_atoms.append(atom.index)
+
+for i in range(system.getNumConstraints() - 1, -1, -1):
+    p1, p2, distance = system.getConstraintParameters(i)
+    if p1 in heavy_atoms or p2 in heavy_atoms:
+        system.removeConstraint(i)
 
 # Set up integrator
 integrator = PeriodicNonequilibriumIntegrator(ALCHEMICAL_FUNCTIONS, nsteps_eq, nsteps_neq, neq_splitting, timestep=timestep, temperature=temperature)
