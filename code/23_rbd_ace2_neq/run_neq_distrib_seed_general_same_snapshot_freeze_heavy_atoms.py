@@ -73,6 +73,7 @@ _logger.info(f"Freezing heavy atoms")
 for atom in htf.hybrid_topology.atoms:
     if atom.element.name != 'hydrogen' and atom.residue.name != 'HOH':
         system.setParticleMass(atom.index, 0.0)
+        system.removeConstraint(atom.index)
 
 # # Read in lambda = 0 cache
 # _logger.info(f"Loading cache at lambda = 0")
