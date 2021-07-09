@@ -21,6 +21,8 @@ args = parser.parse_args()
 
 # Define lambda functions
 _logger.info(f"Defining lambda fn")
+
+print(args.is_rxn_field)
 x = 'lambda'
 if not args.is_rxn_field:
     print("pme")
