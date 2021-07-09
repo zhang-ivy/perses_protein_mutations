@@ -4,6 +4,7 @@ from perses.app.relative_point_mutation_setup import PointMutationExecutor
 import argparse
 from simtk import openmm, unit
 from perses.utils.smallmolecules import  render_protein_residue_atom_mapping
+from simtk.openmm import app
 
 # Set up logger
 import logging
