@@ -72,11 +72,11 @@ box_vectors = system.getDefaultPeriodicBoxVectors()
 heavy_atoms = []
 _logger.info(f"Freezing heavy atoms")
 for atom in htf.hybrid_topology.atoms:
-    if atom.element.name != 'hydrogen' and atom.residue.name != 'HOH':
+    if atom.element.name != 'hydrogen' and atom.residue.name not in ['HOH', 'Na+', 'Cl-']:
         system.setParticleMass(atom.index, 0.0)
         heavy_atoms.append(atom.index)
 
-for i in range(system.getNumConstraints()):
+for i in range(system.getNumConstraints() - 1, -1, -1):
     p1, p2, distance = system.getConstraintParameters(i)
     if p1 in heavy_atoms or p2 in heavy_atoms:
         system.removeConstraint(i)
