@@ -32,8 +32,8 @@ solvent_delivery = PointMutationExecutor(args.input_file,
                         nonperiodic_forcefield_kwargs={'nonbondedMethod': app.NoCutoff},
                         flatten_torsions=True,
                         flatten_exceptions=True,
-                        vanilla=True,
-                        repartitioned=True,
+                        generate_unmodified_hybrid_topology_factory=True,
+                        generate_rest_capable_hybrid_topology_factory=True,
                         conduct_endstate_validation=False
                         )
 
