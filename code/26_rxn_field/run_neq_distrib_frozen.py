@@ -104,12 +104,12 @@ context.setVelocitiesToTemperature(temperature)
 # Minimize
 openmm.LocalEnergyMinimizer.minimize(context)
 
-# Set all heavy atom masses to be 0
-heavy_atoms = []
-for atom in htf.hybrid_topology.atoms:
-    if atom.element.name != 'hydrogen' and atom.residue.name not in ['HOH', 'NA', 'CL']:
-        system.setParticleMass(atom.index, 0.0)
-        heavy_atoms.append(atom.index)
+# # Set all heavy atom masses to be 0
+# heavy_atoms = []
+# for atom in htf.hybrid_topology.atoms:
+#     if atom.element.name != 'hydrogen' and atom.residue.name not in ['HOH', 'NA', 'CL']:
+#         system.setParticleMass(atom.index, 0.0)
+#         heavy_atoms.append(atom.index)
 
 # for i in range(system.getNumConstraints() - 1, -1, -1):
 #     p1, p2, distance = system.getConstraintParameters(i)
@@ -118,6 +118,15 @@ for atom in htf.hybrid_topology.atoms:
 
 # Set positions to be minimized positions
 positions = context.getState(getPositions=True).getPositions()
+
+# Add RMSD force
+from simtk.openmm import RMSDForce
+heavy_atoms = []
+for atom in apo_htf.hybrid_topology.atoms:
+    if atom.element.name != 'hydrogen':
+        heavy_atoms.append(atom.index)
+rmsd_force = RMSDForce(positions, heavy_atoms)
+apo_htf.hybrid_system.addForce(rmsd_force)
 
 # Set up new integrator
 integrator = PeriodicNonequilibriumIntegrator(ALCHEMICAL_FUNCTIONS, nsteps_eq, nsteps_neq, neq_splitting, timestep=timestep, temperature=temperature)
