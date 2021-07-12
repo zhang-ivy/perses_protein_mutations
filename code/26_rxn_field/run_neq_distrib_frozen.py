@@ -107,7 +107,7 @@ openmm.LocalEnergyMinimizer.minimize(context)
 # Set all heavy atom masses to be 0
 heavy_atoms = []
 for atom in htf.hybrid_topology.atoms:
-    if atom.element.name != 'hydrogen' and atom.residue.name not in ['HOH', 'Na+', 'Cl-']:
+    if atom.element.name != 'hydrogen' and atom.residue.name not in ['HOH', 'NA', 'CL']:
         system.setParticleMass(atom.index, 0.0)
         heavy_atoms.append(atom.index)
 
