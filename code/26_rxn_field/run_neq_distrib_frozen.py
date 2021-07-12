@@ -122,11 +122,11 @@ positions = context.getState(getPositions=True).getPositions()
 # Add RMSD force
 from simtk.openmm import RMSDForce
 heavy_atoms = []
-for atom in apo_htf.hybrid_topology.atoms:
+for atom in htf.hybrid_topology.atoms:
     if atom.element.name != 'hydrogen':
         heavy_atoms.append(atom.index)
 rmsd_force = RMSDForce(positions, heavy_atoms)
-apo_htf.hybrid_system.addForce(rmsd_force)
+htf.hybrid_system.addForce(rmsd_force)
 
 # Set up new integrator
 integrator = PeriodicNonequilibriumIntegrator(ALCHEMICAL_FUNCTIONS, nsteps_eq, nsteps_neq, neq_splitting, timestep=timestep, temperature=temperature)
