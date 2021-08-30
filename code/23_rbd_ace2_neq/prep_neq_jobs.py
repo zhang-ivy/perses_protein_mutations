@@ -11,7 +11,7 @@ out_dir = "/data/chodera/zhangi/perses_benchmark/neq/15/"
 
 # Define job parameters
 wall_time = [5, 2] # hours
-memory = [5, 3] # GB
+memory = [7, 3] # GB
 length = 1 # ns
 phases = ['complex', 'apo']
 
@@ -55,8 +55,6 @@ for k, v in dictionary.items():
 				line = f"resid={resid}\n"
 			lines_new.append(line)
 
-		# Make dir and save new bash file
-		os.system(f"mkdir {os.path.join(out_dir, str(new))}")
 
 		with open(os.path.join(out_dir, str(new), f"run_all_neq_distrib_wait_{phase}.sh"), "w") as f:
 			f.writelines(lines_new)

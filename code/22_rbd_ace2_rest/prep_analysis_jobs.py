@@ -32,14 +32,14 @@ for k, v in dictionary.items():
 		    if "#BSUB -W" in line:
 		        line = line[:9] + str(wall_time[i]) + line[11:]
 		    elif "#BSUB -o" in line:
-		        line = line[:12] + str(new) + ".%I.out\n"
+		        line = line[:12] + str(new) + ".%I.analysis.out\n"
 		    elif "#BSUB -eo" in line:
-		        line = line[:13] + str(new) + ".%I.stderr\n"
+		        line = line[:13] + str(new) + ".%I.analysis.stderr\n"
 		    elif "#BSUB -n" in line:
 		        line = line[:26] + str(memory[i]) + line[28:] 
 		    elif "#BSUB -J" in line:
 		        job_range = "1-2" if phase == 'apo' else "3-4"
-		        line = line[:13] + str(new) + f'[{job_range}]"\n'
+		        line = line[:13] + str(new) + f'a[{job_range}]"\n'
 		    elif "#BSUB -w" in line:
 		        job = job_apo if phase == 'apo' else job_complex
 		        line = line[:9] + f'"ended({job})"\n'
@@ -54,9 +54,6 @@ for k, v in dictionary.items():
 		    elif "resid=" in line:
 		        line = f"resid={resid}\n"
 		    lines_new.append(line)
-
-		# Make dir and save new bash file
-		os.system(f"mkdir {os.path.join(out_dir, str(new))}")
 
 		with open(os.path.join(out_dir, str(new), f"analyze_rest2_{phase}.sh"), "w") as f:
 		     f.writelines(lines_new)

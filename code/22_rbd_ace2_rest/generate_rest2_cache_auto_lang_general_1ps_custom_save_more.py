@@ -81,7 +81,7 @@ _logger.info("Generating REST states")
 REST_system = factory.REST_system
 
 # Create states for each replica
-n_replicas = 24  # Number of temperature replicas.
+n_replicas = 36  # Number of temperature replicas.
 T_min = 298.0 * unit.kelvin  # Minimum temperature.
 T_max = args.t_max * unit.kelvin  # Maximum temperature.
 temperatures = [T_min + (T_max - T_min) * (math.exp(float(i) / float(n_replicas-1)) - 1.0) / (math.e - 1.0)

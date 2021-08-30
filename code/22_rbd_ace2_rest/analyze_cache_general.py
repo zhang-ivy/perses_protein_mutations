@@ -147,6 +147,8 @@ for aa_name in [args.old_aa_name, args.new_aa_name]:
         dihedral_atoms.append(ile_dihedral)
     elif aa_name == 'GLY':
         dihedral_atoms.append(gly_dihedral)
+    elif aa_name == 'SER':
+        dihedral_atoms.append(ser_dihedral)
 
 for res in htf._topology_proposal.old_topology.residues():
     if res.id == args.resid and res.chain.index == 0:

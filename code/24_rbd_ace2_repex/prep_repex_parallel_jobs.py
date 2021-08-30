@@ -10,8 +10,8 @@ template_file = "/home/zhangi/choderalab/perses_benchmark/perses_protein_mutatio
 out_dir = "/data/chodera/zhangi/perses_benchmark/repex/31/"
 
 # Define job parameters
-wall_time = [24, 12] # hours
-memory = [2, 1] # GB
+wall_time = [40, 7] # hours
+memory = [7, 2] # GB
 phases = ['complex', 'apo']
 
 for k, v in dictionary.items():

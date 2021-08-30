@@ -7,6 +7,7 @@ import mdtraj as md
 import numpy as np
 from simtk.unit.quantity import Quantity
 import logging 
+from openeye import oechem
 
 # Set up logger
 _logger = logging.getLogger()

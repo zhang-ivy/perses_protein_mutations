@@ -35,6 +35,14 @@ elif args.sim_number == 2:
     phase = 'apo'
     name = args.new_aa_name
     state = 1
+elif args.sim_number == 3:
+    phase = 'complex'
+    name = args.old_aa_name
+    state = 0
+elif args.sim_number == 4:
+    phase = 'complex'
+    name = args.new_aa_name
+    state = 1
 
 length = 1
 i = os.path.basename(os.path.dirname(args.dir))
@@ -121,6 +129,7 @@ other_dihedral = ['N', 'CA', 'CB', 'CG']
 ala_dihedral = ['N', 'CA', 'CB', 'HB1']
 #asp_dihedral = ['CA', 'CB', 'CG', 'OD2']
 ile_dihedral = ['N', 'CA', 'CB', 'CG2']
+ser_dihedral = ['N', 'CA', 'CB', 'OG']
 
 dihedral_atoms = []
 for aa_name in [args.old_aa_name, args.new_aa_name]:
@@ -134,6 +143,8 @@ for aa_name in [args.old_aa_name, args.new_aa_name]:
     #    dihedral_atoms.append(asp_dihedral)
     elif aa_name == 'ILE':
         dihedral_atoms.append(ile_dihedral)
+    elif aa_name == 'SER':
+        dihedral_atoms.append(ser_dihedral)
 
 for res in htf._topology_proposal.old_topology.residues():
     if res.id == args.resid and res.chain.index == 0:

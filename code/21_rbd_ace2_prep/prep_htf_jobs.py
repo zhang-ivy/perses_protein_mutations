@@ -7,13 +7,13 @@ dictionary = yaml.load(stream)
 
 # Define file paths
 template_file = "/home/zhangi/choderalab/perses_benchmark/perses_protein_mutations/code/21_rbd_ace2_prep/generate_htf.sh"
-out_dir = "/data/chodera/zhangi/perses_benchmark/repex/31/"
+out_dir = "/data/chodera/zhangi/perses_benchmark/neq/14/"
 
 # Define job parameters
 for k, v in dictionary.items():
 	print(f"prepping dir {k}")
 	new = k
-	old, resid, new_aa = v
+	resid, new_aa = v
 
 	# Edit template bash file
 	with open(template_file, "r") as f:
@@ -39,5 +39,5 @@ for k, v in dictionary.items():
 		lines_new.append(line)
 
 	# Save bash file
-	with open(os.path.join(out_dir, str(new), "0" ,f"generate_htf.sh"), "w") as f:
+	with open(os.path.join(out_dir, str(new), f"generate_htf.sh"), "w") as f:
 		f.writelines(lines_new)
