@@ -8,6 +8,7 @@ import os
 import time
 import mdtraj as md
 from tqdm import tqdm
+from openeye import oechem
 
 # Set up logger
 _logger = logging.getLogger()
@@ -50,7 +51,7 @@ DEFAULT_ALCHEMICAL_FUNCTIONS = {
 #                             'lambda_torsions': x}
 
 # Define simulation parameters
-nsteps_eq = 10 
+nsteps_eq = 10
 nsteps_neq = int(args.length*250000) # 1 ns
 neq_splitting='V R H O R V'
 timestep = 4.0 * unit.femtosecond
@@ -62,12 +63,12 @@ temperature = 300.0 * unit.kelvin
 i = os.path.basename(os.path.dirname(args.dir))
 with open(os.path.join(args.dir, f"{i}_{args.phase}.pickle"), 'rb') as f:
     htf = pickle.load(f)
-system = htf.hybrid_system
 
 # Read in lambda = 0 cache
 with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.old_aa_name}_{cache_length}ns_snapshots.npy"), 'rb') as f:
     subset_pos = np.load(f)
 positions = subset_pos[args.sim_number]
+system = htf.hybrid_system
 
 # Read in lambda = 0 cache box vectors
 with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.old_aa_name}_{cache_length}ns_box_vectors.npy"), 'rb') as f:
@@ -94,7 +95,7 @@ integrator.step(nsteps_eq)
 # Run neq forward (0 -> 1)
 forward_works_master = list()
 forward_neq_old, forward_neq_new = list(), list()
-forward_neq_old_water = list()
+forward_neq_old_waters, forward_neq_new_waters = list(), list()
 forward_works = [integrator.get_protocol_work(dimensionless=True)]
 for fwd_step in range(int(nsteps_neq / 2500)):
     integrator.step(2500)
@@ -113,18 +114,20 @@ for fwd_step in range(int(nsteps_neq / 2500)):
     
     forward_neq_old.append(old_pos_solute)
     forward_neq_new.append(new_pos_solute)
-    forward_neq_new.append(new_pos_solute)
+
     if fwd_step == int(nsteps_neq / 2500) - 1:
-        forward_neq_old_water.append(old_pos)
+        forward_neq_old_waters.append(old_pos)
+        forward_neq_new_waters.append(new_pos)
+
 forward_works_master.append(forward_works)
 
-# Read in lambda = 0 cache
-with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.old_aa_name}_{cache_length}ns_snapshots.npy"), 'rb') as f:
+# Read in lambda = 1 cache, if necessary
+with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.new_aa_name}_{cache_length}ns_snapshots.npy"), 'rb') as f:
     subset_pos = np.load(f)
 positions = subset_pos[args.sim_number]
 
-# Read in lambda = 0 cache box vectors
-with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.old_aa_name}_{cache_length}ns_box_vectors.npy"), 'rb') as f:
+# Read in lambda = 1 cache box vectors
+with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.new_aa_name}_{cache_length}ns_box_vectors.npy"), 'rb') as f:
     subset_box_vectors = np.load(f)
 box_vectors = subset_box_vectors[args.sim_number][0]
 
@@ -138,7 +141,7 @@ integrator.step(nsteps_eq)
 # Run neq reverse (1 -> 0)
 reverse_works_master = list()
 reverse_neq_old, reverse_neq_new = list(), list()
-reverse_neq_old_water = list()
+reverse_neq_old_waters, reverse_neq_new_waters = list(), list()
 reverse_works = [integrator.get_protocol_work(dimensionless=True)]
 for rev_step in range(int(nsteps_neq / 2500)):
     integrator.step(2500)
@@ -157,8 +160,10 @@ for rev_step in range(int(nsteps_neq / 2500)):
 
     reverse_neq_old.append(old_pos_solute)
     reverse_neq_new.append(new_pos_solute)
+
     if rev_step == int(nsteps_neq / 2500) - 1:
-        reverse_neq_old_water.append(old_pos)
+        reverse_neq_old_waters.append(old_pos)
+        reverse_neq_new_waters.append(new_pos)
 reverse_works_master.append(reverse_works)
 
 # Save works
@@ -176,7 +181,11 @@ with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_reverse_ne
 with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_reverse_neq_new.npy"), 'wb') as f:
     np.save(f, reverse_neq_new)
 
-with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_forward_neq_old_water.npy"), 'wb') as f:
-    np.save(f, forward_neq_old_water)
-with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_reverse_neq_old_water.npy"), 'wb') as f:
-    np.save(f, reverse_neq_old_water)
+with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_forward_neq_old_waters.npy"), 'wb') as f:
+    np.save(f, forward_neq_old_waters)
+with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_forward_neq_new_waters.npy"), 'wb') as f:
+    np.save(f, forward_neq_new_waters)
+with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_reverse_neq_old_waters.npy"), 'wb') as f:
+    np.save(f, reverse_neq_old_waters)
+with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_reverse_neq_new_waters.npy"), 'wb') as f:
+    np.save(f, reverse_neq_new_waters)

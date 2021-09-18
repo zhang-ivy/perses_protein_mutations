@@ -84,7 +84,7 @@ REST_system = factory.REST_system
 
 # Create states for each replica
 n_replicas = args.replicas  # Number of temperature replicas.
-T_min = 298.0 * unit.kelvin  # Minimum temperature.
+T_min = 300.0 * unit.kelvin  # Minimum temperature.
 T_max = args.t_max * unit.kelvin  # Maximum temperature.
 temperatures = [T_min + (T_max - T_min) * (math.exp(float(i) / float(n_replicas-1)) - 1.0) / (math.e - 1.0)
                 for i in range(n_replicas)]

@@ -57,7 +57,7 @@ neq_splitting='V R H O R V'
 timestep = 4.0 * unit.femtosecond
 platform_name = 'CUDA'
 cache_length = args.cache if args.cache else 1 
-temperature = 298.0 * unit.kelvin
+temperature = 300.0 * unit.kelvin
 
 # Read in vanilla htf
 i = os.path.basename(os.path.dirname(args.dir))
