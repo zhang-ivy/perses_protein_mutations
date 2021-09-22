@@ -1,0 +1,70 @@
+0:
+    - "LYS"
+    - "ALA"
+    - "27"
+    - True
+1:
+    - "ARG"
+    - "ALA"
+    - "59"
+    - True
+2:
+    - "ARG"
+    - "GLN"
+    - "83"
+    - True
+3:
+    - "ARG"
+    - "ALA"
+    - "87"
+    - True
+4:
+    - "HIS"
+    - "ALA"
+    - "102"
+    - True
+5:
+    - "TYR"
+    - "PHE"
+    - "29"
+    - False
+6:
+    - "TYR"
+    - "ALA"
+    - "29"
+    - False
+7:
+    - "ASP"
+    - "ALA"
+    - "35"
+    - False
+8:
+    - "TRP"
+    - "PHE"
+    - "38"
+    - False
+9:
+    - "ASP"
+    - "ALA"
+    - "39"
+    - False
+10:
+    - "THR"
+    - "ALA"
+    - "42"
+    - False
+11:
+    - "TRP"
+    - "PHE"
+    - "44"
+    - False
+12:
+    - "GLU"
+    - "ALA"
+    - "76"
+    - False
+13:
+    - "GLU"
+    - "ALA"
+    - "80"
+    - False

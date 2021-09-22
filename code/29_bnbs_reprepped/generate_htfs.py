@@ -15,9 +15,12 @@ parser = argparse.ArgumentParser(description='run t-repex')
 parser.add_argument('dir', type=str, help='path to input/output dir')
 parser.add_argument('resid', type=str, help='resid of residue to be mutated')
 parser.add_argument('new_aa_name', type=str, help='amino acid three letter code, e.g. ALA')
-parser.add_argument('--input_file', type=str, default="../../input/mmc2_barstar.pdb", help='name of input file ')
-parser.add_argument('--ligand_file', type=str, default="../../input/mmc2_barnase.pdb", help='name of ligand file')
+parser.add_argument('--input_file', type=str, default="/home/zhangi/choderalab/perses_benchmark/perses_protein_mutations/input/1brs_barnase_renumbered.pdb", help='name of input file ')
+parser.add_argument('--ligand_file', type=str, default="/home/zhangi/choderalab/perses_benchmark/perses_protein_mutations/input/1brs_barstar_renumbered.pdb", help='name of ligand file')
 args = parser.parse_args()
+
+_logger.info(f"input file: {args.input_file}")
+_logger.info(f"ligand file: {args.ligand_file}")
 
 # Load rhtf or generate it if it doesn't exist
 solvent_delivery = PointMutationExecutor(args.input_file,

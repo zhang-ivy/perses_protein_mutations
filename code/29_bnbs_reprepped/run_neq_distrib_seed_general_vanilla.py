@@ -23,7 +23,6 @@ parser.add_argument('old_aa_name', type=str, help='amino acid three letter code,
 parser.add_argument('new_aa_name', type=str, help='amino acid three letter code, e.g. ALA')
 parser.add_argument('eq_length', type=float, help='eq time in ns')
 parser.add_argument('neq_length', type=float, help='neq switching time in ns')
-parser.add_argument('--cache', type=int, default=1, help='length of rest cache in ns')
 args = parser.parse_args()
 
 # Define lambda functions
@@ -57,24 +56,15 @@ nsteps_neq = int(args.neq_length*250000) # 1 ns
 neq_splitting='V R H O R V'
 timestep = 4.0 * unit.femtosecond
 platform_name = 'CUDA'
-cache_length = args.cache if args.cache else 1 
 temperature = 300.0 * unit.kelvin
 
 # Read in vanilla htf
 i = os.path.basename(os.path.dirname(args.dir))
 with open(os.path.join(args.dir, f"{i}_{args.phase}.pickle"), 'rb') as f:
     htf = pickle.load(f)
-
-# Read in lambda = 0 cache
-with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.old_aa_name}_{cache_length}ns_snapshots.npy"), 'rb') as f:
-    subset_pos = np.load(f)
-positions = subset_pos[args.sim_number]
-system = htf.hybrid_system
-
-# Read in lambda = 0 cache box vectors
-with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.old_aa_name}_{cache_length}ns_box_vectors.npy"), 'rb') as f:
-    subset_box_vectors = np.load(f)
-box_vectors = subset_box_vectors[args.sim_number][0]
+    system = htf.hybrid_system
+    positions = htf.hybrid_positions
+    box_vectors = system.getDefaultPeriodicBoxVectors()
 
 # Set up integrator
 integrator = PeriodicNonequilibriumIntegrator(DEFAULT_ALCHEMICAL_FUNCTIONS, nsteps_eq, nsteps_neq, neq_splitting, timestep=timestep, temperature=temperature)
@@ -91,6 +81,7 @@ context.setPositions(positions)
 context.setVelocitiesToTemperature(temperature)
 
 # Run eq forward (0 -> 1)
+_logger.info("Running forward eq")
 integrator.step(nsteps_eq)
 
 # Run neq forward (0 -> 1)
@@ -116,21 +107,8 @@ for fwd_step in range(int(nsteps_neq / 2500)):
     forward_neq_new.append(new_pos_solute)
 forward_works_master.append(forward_works)
 
-# Read in lambda = 1 cache, if necessary
-with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.new_aa_name}_{cache_length}ns_snapshots.npy"), 'rb') as f:
-    subset_pos = np.load(f)
-positions = subset_pos[args.sim_number]
-
-# Read in lambda = 1 cache box vectors
-with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.new_aa_name}_{cache_length}ns_box_vectors.npy"), 'rb') as f:
-    subset_box_vectors = np.load(f)
-box_vectors = subset_box_vectors[args.sim_number][0]
-
-context.setPeriodicBoxVectors(*box_vectors)
-context.setPositions(positions)
-context.setVelocitiesToTemperature(temperature)
-
 # Run eq reverse (1 -> 0)
+_logger.info("Running reverse eq")
 integrator.step(nsteps_eq)
 
 # Run neq reverse (1 -> 0)

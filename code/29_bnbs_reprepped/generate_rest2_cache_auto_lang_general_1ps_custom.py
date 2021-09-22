@@ -6,6 +6,7 @@ from openmmtools.states import SamplerState, ThermodynamicState, CompoundThermod
 from openmmtools import cache, utils
 from perses.dispersed.utils import configure_platform
 cache.global_context_cache.platform = configure_platform(utils.get_fastest_platform().getName())
+context_cache = cache.ContextCache(capacity=None, time_to_live=None)
 from simtk import openmm, unit
 import math
 from openmmtools.constants import kB
@@ -94,8 +95,6 @@ lambda_zero_alchemical_state = RESTState.from_system(REST_system)
 thermostate = ThermodynamicState(REST_system, temperature=T_min)
 compound_thermodynamic_state = CompoundThermodynamicState(thermostate, composable_states=[lambda_zero_alchemical_state])
 
-context_cache = cache.ContextCache()
-
 # Create thermodynamics states
 sampler_state =  SamplerState(htf.hybrid_positions, box_vectors=htf.hybrid_system.getDefaultPeriodicBoxVectors())
 beta_0 = 1/(kB*T_min)
@@ -140,7 +139,7 @@ _logger.setLevel(logging.DEBUG)
 _logger.info("About to start repex")
 print(f"move steps: {int((move_length*1000)/timestep)}")
 print(f"timestep: {timestep} fs")
-move = mcmc.LangevinSplittingDynamicsMove(timestep=timestep*unit.femtoseconds, n_steps=int((move_length*1000)/timestep))
+move = mcmc.LangevinSplittingDynamicsMove(timestep=timestep*unit.femtoseconds, n_steps=int((move_length*1000)/timestep), context_cache=context_cache)
 simulation = ReplicaExchangeSampler2(mcmc_moves=move, number_of_iterations=length*1000)
 
 # Run t-repex
