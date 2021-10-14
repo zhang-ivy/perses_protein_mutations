@@ -2,7 +2,7 @@ import os
 import yaml
 
 # Load in mutation parameters
-stream = open("pilot_2.yaml", 'r')
+stream = open("pilot_1.yaml", 'r')
 dictionary = yaml.load(stream)
 
 # Define file paths

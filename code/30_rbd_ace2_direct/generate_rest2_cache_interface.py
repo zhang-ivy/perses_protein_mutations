@@ -21,7 +21,8 @@ from openmmtools.integrators import LangevinIntegrator
 from simtk.openmm import unit, app
 
 # Set up context cache
-context_cache = cache.ContextCache(capacity=None, time_to_live=None)
+#context_cache = cache.ContextCache(capacity=None, time_to_live=None)
+context_cache = cache.DummyContextCache()
 
 # Set up logger
 import logging
@@ -69,7 +70,7 @@ _logger.info(f"Loading factories from path: {path}")
 htf = pickle.load(open(path, "rb" ))
 positions = htf.hybrid_positions
 
-## Build REST factory
+# Build REST factory
 #_logger.info("Generating REST factory")
 #_logger.info(f"radius:{radius} nm")
 #traj = md.Trajectory(np.array(positions), htf.hybrid_topology)
