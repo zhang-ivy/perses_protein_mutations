@@ -5,7 +5,7 @@ import tempfile
 import pickle
 import mdtraj as md
 import numpy as np
-from simtk.unit.quantity import Quantity
+from simtk.unit import Quantity
 import logging 
 from openeye import oechem
 
@@ -45,7 +45,7 @@ elif args.sim_number == 4:
     name = args.new_aa_name
     state = 1
 
-length = 1
+length = 2
 i = os.path.basename(os.path.dirname(args.dir))
 out_dir = args.dir
 
@@ -151,14 +151,14 @@ _logger.info(f"new indices: {indices_new}")
 
 dihedrals, n_iter, all_pos_hybrid, box_vectors = get_dihedrals(i, name, length, out_dir, htf, indices_new, indices_old)
 
-# Save every 10th snapshot
-subset_pos = all_pos_hybrid[1::10] # Make array of hybrid positions for 100 uncorrelated indices
+# Save every 10th snapshot, discarding first 0.5 ns
+subset_pos = all_pos_hybrid[501::15] # Make array of hybrid positions for 100 uncorrelated indices
 _logger.info(f"subset_pos shape: {subset_pos.shape}")
 with open(os.path.join(out_dir, f"{i}_{phase}_{name.lower()}_{length}ns_snapshots.npy"), 'wb') as f:
     np.save(f, subset_pos)
 
 #  Save box vectors corresponding to each snapshot
-subset_box_vectors = box_vectors[1::10]
+subset_box_vectors = box_vectors[501::15]
 _logger.info(f"subset_box_vectors shape: {subset_box_vectors.shape}")
 with open(os.path.join(out_dir, f"{i}_{phase}_{name.lower()}_{length}ns_box_vectors.npy"), "wb") as f:
     np.save(f, subset_box_vectors)
