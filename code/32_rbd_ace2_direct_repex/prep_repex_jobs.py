@@ -35,14 +35,14 @@ for i in range(n_chunks):
                 line = line[:26] + str(memory[i]) + line[27:] 
             elif "#BSUB -J" in line:
                 line = line[:13] + name + f'.{i}"\n'
-                    elif "new=" in line:
-                            line = f"new={i}\n"
+            elif "new=" in line:
+                    line = f"new={i}\n"
             elif "phase=" in line:
                 line = f"phase={phase}\n"
             elif "lambda_start=" in line:
                             line = f"lambda_start={lambda_start}\n"
-                    elif "lambda_end=" in line:
-                            line = f"lambda_end={lambda_end}\n"
+            elif "lambda_end=" in line:
+                    line = f"lambda_end={lambda_end}\n"
             lines_new.append(line)
 
 
