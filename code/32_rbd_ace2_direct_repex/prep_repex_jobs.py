@@ -46,5 +46,5 @@ for i in range(n_chunks):
             lines_new.append(line)
 
 
-        with open(os.path.join(out_dir, i, f"run_repex_parallel_{phase}_scatter.sh"), "w") as f:
+        with open(os.path.join(out_dir, str(i), f"run_repex_parallel_{phase}_scatter.sh"), "w") as f:
             f.writelines(lines_new)
