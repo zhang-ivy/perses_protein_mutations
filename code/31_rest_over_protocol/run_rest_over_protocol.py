@@ -150,7 +150,7 @@ class HybridRepexSampler(HybridCompatibilityMixin, replicaexchange.ReplicaExchan
 
 # Instantiate sampler 
 reporter_file = os.path.join(os.path.join(args.dir, f"{i}_{args.phase}.nc"))
-reporter = MultiStateReporter(reporter_file, checkpoint_interval=checkpoint_interval)
+reporter = MultiStateReporter(reporter_file, checkpoint_interval=10)
 hss = HybridRepexSampler(mcmc_moves=mcmc.LangevinSplittingDynamicsMove(timestep= 4.0 * unit.femtoseconds,
                                                                       collision_rate=1.0 / unit.picosecond,
                                                                       n_steps=250,
