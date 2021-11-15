@@ -72,7 +72,7 @@ class HybridCompatibilityMixin(object):
 
         # Create thermodynamic state
         lambda_zero_alchemical_state = RESTCapableRelativeAlchemicalState.from_system(hybrid_system)
-        thermostate = ThermodynamicState(hybrid_system, temperature=T_min)
+        thermostate = ThermodynamicState(hybrid_system, temperature=temperature)
         compound_thermodynamic_state = CompoundThermodynamicState(thermostate,
                                                                   composable_states=[lambda_zero_alchemical_state])
 
