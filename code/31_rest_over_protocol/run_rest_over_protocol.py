@@ -33,8 +33,7 @@ box_vectors = hybrid_system.getDefaultPeriodicBoxVectors()
 
 # Subclass the HybridCompatilityMixin and HybridRepexSampler classes
 
-from perses.annihilation.lambda_protocol import RelativeAlchemicalState, LambdaProtocol
-
+#from perses.annihilation.lambda_protocol import RelativeAlchemicalState, LambdaProtocol
 from openmmtools.multistate import sams, replicaexchange
 from openmmtools import cache, utils
 from perses.dispersed.utils import configure_platform
@@ -149,6 +148,8 @@ class HybridRepexSampler(HybridCompatibilityMixin, replicaexchange.ReplicaExchan
         self._factory = hybrid_factory
 
 # Instantiate sampler 
+_logger = logging.getLogger()
+_logger.setLevel(logging.DEBUG)
 reporter_file = os.path.join(os.path.join(args.dir, f"{i}_{args.phase}.nc"))
 reporter = MultiStateReporter(reporter_file, checkpoint_interval=10)
 hss = HybridRepexSampler(mcmc_moves=mcmc.LangevinSplittingDynamicsMove(timestep= 4.0 * unit.femtoseconds,
