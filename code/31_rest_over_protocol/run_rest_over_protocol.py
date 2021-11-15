@@ -163,7 +163,7 @@ hss = HybridRepexSampler(mcmc_moves=mcmc.LangevinSplittingDynamicsMove(timestep=
                                                                       replica_mixing_scheme='swap-all',
                                                                       hybrid_factory=htf, 
                                                                       online_analysis_interval=10)
-hss.setup(n_states=args.n_states, temperature=300*unit.kelvin, T_max=args.T_max * unit.kelvin, storage_file=reporter)
+hss.setup(n_states=args.n_states, temperature=300*unit.kelvin, T_max=args.T_max * unit.kelvin, storage_file=reporter, endstates=False)
 
 # Run simulation
 hss.extend(args.n_cycles)
