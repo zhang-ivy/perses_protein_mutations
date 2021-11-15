@@ -2,6 +2,7 @@ import pickle
 import numpy as np
 import argparse
 import os
+import logging
 
 from simtk import openmm
 from simtk.openmm import unit
