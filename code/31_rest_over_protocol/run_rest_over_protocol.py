@@ -63,10 +63,9 @@ class HybridCompatibilityMixin(object):
         from perses.dispersed import feptasks
 
         hybrid_system = self._factory.hybrid_system
+        positions = self._factory.hybrid_positions
 
-        # positions = self._factory.hybrid_positions
         # lambda_zero_alchemical_state = RelativeAlchemicalState.from_system(hybrid_system)
-
         # thermostate = ThermodynamicState(hybrid_system, temperature=temperature)
         # compound_thermodynamic_state = CompoundThermodynamicState(thermostate, composable_states=[lambda_zero_alchemical_state])
 
