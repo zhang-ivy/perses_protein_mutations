@@ -67,17 +67,17 @@ class HybridCompatibilityMixin(object):
         # thermostate = ThermodynamicState(hybrid_system, temperature=temperature)
         # compound_thermodynamic_state = CompoundThermodynamicState(thermostate, composable_states=[lambda_zero_alchemical_state])
 
-		# Create thermodynamic state
-		lambda_zero_alchemical_state = RESTCapableRelativeAlchemicalState.from_system(hybrid_system)
-		thermostate = ThermodynamicState(hybrid_system, temperature=T_min)
-		compound_thermodynamic_state = CompoundThermodynamicState(thermostate,
-		                                                          composable_states=[lambda_zero_alchemical_state])
+        # Create thermodynamic state
+        lambda_zero_alchemical_state = RESTCapableRelativeAlchemicalState.from_system(hybrid_system)
+        thermostate = ThermodynamicState(hybrid_system, temperature=T_min)
+        compound_thermodynamic_state = CompoundThermodynamicState(thermostate,
+                                                                  composable_states=[lambda_zero_alchemical_state])
 
-		# Set alchemical parameters
-		beta_0 = 1 / (kB * temperature)
-		beta_m = 1 / (kB * T_max)
-		global_lambda = 0
-		compound_thermodynamic_state.set_alchemical_parameters(global_lambda, beta_0, beta_m)
+        # Set alchemical parameters
+        beta_0 = 1 / (kB * temperature)
+        beta_m = 1 / (kB * T_max)
+        global_lambda = 0
+        compound_thermodynamic_state.set_alchemical_parameters(global_lambda, beta_0, beta_m)
 
         thermodynamic_state_list = []
         sampler_state_list = []
