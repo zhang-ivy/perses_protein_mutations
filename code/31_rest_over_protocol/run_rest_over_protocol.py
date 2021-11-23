@@ -107,7 +107,7 @@ class HybridCompatibilityMixin(object):
         sampler_state =  SamplerState(positions, box_vectors=hybrid_system.getDefaultPeriodicBoxVectors())
         for lambda_val in lambda_schedule:
             compound_thermodynamic_state_copy = copy.deepcopy(compound_thermodynamic_state)
-            compound_thermodynamic_state.set_alchemical_parameters(lambda_val, beta_0, beta_m)
+            compound_thermodynamic_state_copy.set_alchemical_parameters(lambda_val, beta_0, beta_m)
             # compound_thermodynamic_state_copy.set_alchemical_parameters(lambda_val,lambda_protocol)
             thermodynamic_state_list.append(compound_thermodynamic_state_copy)
 
@@ -137,6 +137,36 @@ class HybridCompatibilityMixin(object):
             self.create(thermodynamic_states=thermodynamic_state_list, sampler_states=sampler_state_list,
                         storage=reporter)
 
+
+        def print_global_parameters(state):
+            print("REST")
+            print(state.lambda_rest_bonds)
+            print(state.lambda_rest_angles)
+            print(state.lambda_rest_torsions)
+            print(state.lambda_rest_electrostatics)
+            print(state.lambda_rest_electrostatics_exceptions)
+            print(state.lambda_rest_sterics)
+            print(state.lambda_rest_sterics_exceptions)
+            print("ALCHEMICAL")
+            print(state.lambda_alchemical_bonds_old)
+            print(state.lambda_alchemical_bonds_new)
+            print(state.lambda_alchemical_angles_old)
+            print(state.lambda_alchemical_angles_new)
+            print(state.lambda_alchemical_torsions_old)
+            print(state.lambda_alchemical_torsions_new)
+            print(state.lambda_alchemical_electrostatics_old)
+            print(state.lambda_alchemical_electrostatics_new)
+            print(state.lambda_alchemical_electrostatics_exceptions_old)
+            print(state.lambda_alchemical_electrostatics_exceptions_new)
+            print(state.lambda_alchemical_sterics_old)
+            print(state.lambda_alchemical_sterics_new)
+            print(state.lambda_alchemical_sterics_exceptions_old)
+            print(state.lambda_alchemical_sterics_exceptions_new)
+            print(state.lambda_alchemical_electrostatics_reciprocal)
+
+        for i, state in enumerate(thermodynamic_state_list):
+            print(i)
+            print_global_parameters(state)
 
 class HybridRepexSampler(HybridCompatibilityMixin, replicaexchange.ReplicaExchangeSampler):
     """
