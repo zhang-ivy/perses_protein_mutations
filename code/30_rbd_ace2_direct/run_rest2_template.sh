@@ -20,8 +20,7 @@
 #BSUB -J "14.1r[1-4]"
 
 source ~/.bashrc
-module load cuda/10.2
-conda activate perses-rbd-ace2-direct
+conda activate perses-rbd-ace2-direct3
 
 old_aa="ASN"
 new_aa="LYS"
@@ -32,5 +31,5 @@ neq_dir=/data/chodera/zhangi/perses_benchmark/neq/15/$new
 
 # Run and analyze rest
 cd /home/zhangi/choderalab/perses_benchmark/perses_protein_mutations/code/30_rbd_ace2_direct/
-python generate_rest2_cache_auto_lang_general_1ps_custom.py $rest_dir/ $resid $old_aa $new_aa "${LSB_JOBINDEX}" 1200 0.3 12
+python generate_rest2_cache_auto_lang_general_1ps_custom_mike.py $rest_dir/ $resid $old_aa $new_aa "${LSB_JOBINDEX}" 600 0.3 12 2
 

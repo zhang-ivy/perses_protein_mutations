@@ -20,8 +20,7 @@
 #BSUB -J "14.113r[1-2]"
 
 source ~/.bashrc
-module load cuda/10.2
-conda activate perses-rbd-ace2-direct
+conda activate perses-rbd-ace2-direct3
 
 old_aa=ASN
 new_aa=TYR

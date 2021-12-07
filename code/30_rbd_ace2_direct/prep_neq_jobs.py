@@ -2,7 +2,7 @@ import os
 import yaml
 
 # Load in mutation parameters
-stream = open("pilot_1_neq.yaml", 'r')
+stream = open("pilot_4.yaml", 'r')
 dictionary = yaml.load(stream)
 
 # Define file paths
@@ -18,7 +18,7 @@ phases = ['complex', 'apo']
 for k, v in dictionary.items():
 	print(f"prepping dir {k}")
 	new = k
-	old_aa, new_aa, resid, job_apo, job_complex = v
+	old_aa, new_aa, resid = v
 
 	for i, phase in enumerate(phases):
 
@@ -56,5 +56,5 @@ for k, v in dictionary.items():
 			lines_new.append(line)
 
 
-		with open(os.path.join(out_dir, str(new), f"run_all_neq_distrib_wait_{phase}.sh"), "w") as f:
+		with open(os.path.join(out_dir, str(new), f"run_neq_after_rest_{phase}.sh"), "w") as f:
 			f.writelines(lines_new)

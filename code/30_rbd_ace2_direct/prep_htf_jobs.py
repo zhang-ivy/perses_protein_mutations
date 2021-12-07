@@ -2,7 +2,7 @@ import os
 import yaml
 
 # Load in mutation parameters
-stream = open("pilot_1.yaml", 'r')
+stream = open("pilot_4.yaml", 'r')
 dictionary = yaml.load(stream)
 
 # Define file paths
@@ -13,7 +13,7 @@ out_dir = "/data/chodera/zhangi/perses_benchmark/neq/14/"
 for k, v in dictionary.items():
 	print(f"prepping dir {k}")
 	new = k
-	_, new_aa, resid, _, _ = v
+	_, new_aa, resid = v
 
 	# Edit template bash file
 	with open(template_file, "r") as f:

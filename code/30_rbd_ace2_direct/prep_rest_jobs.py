@@ -2,7 +2,7 @@ import os
 import yaml
 
 # Load in mutation parameters
-stream = open("pilot_2.yaml", 'r')
+stream = open("pilot_4.yaml", 'r')
 dictionary = yaml.load(stream)
 
 # Define file paths
@@ -16,7 +16,7 @@ memory = [10, 4]
 
 for k, v in dictionary.items():
 	new = k
-	old_aa, new_aa, resid, _, _ = v
+	old_aa, new_aa, resid = v
 	
 	for i, phase in enumerate(phases):
 

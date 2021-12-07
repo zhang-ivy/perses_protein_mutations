@@ -2,7 +2,7 @@ import os
 import yaml
 
 # Load in mutation parameters
-stream = open("pilot_1.yaml", 'r')
+stream = open("pilot_4.yaml", 'r')
 dictionary = yaml.load(stream)
 
 # Define file paths
@@ -12,11 +12,11 @@ out_dir = "/data/chodera/zhangi/perses_benchmark/neq/14/"
 # Define job parameters
 phases =  ['complex', 'apo']
 wall_time = [1, 1]
-memory = [30, 10]
+memory = [60, 20]
 
 for k, v in dictionary.items():
 	new = k
-	old_aa, new_aa, resid, job_apo, job_complex = v
+	old_aa, new_aa, resid = v
 	
 	for i, phase in enumerate(phases):
 

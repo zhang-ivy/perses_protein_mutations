@@ -6,6 +6,8 @@ from openmmtools.states import SamplerState, ThermodynamicState, CompoundThermod
 from openmmtools import cache, utils
 from perses.dispersed.utils import configure_platform
 cache.global_context_cache.platform = configure_platform(utils.get_fastest_platform().getName())
+context_cache = cache.DummyContextCache()
+#context_cache = cache.ContextCache(capacity=None, time_to_live=None)
 from simtk import openmm, unit
 import math
 from openmmtools.constants import kB
@@ -35,6 +37,7 @@ parser.add_argument('sim_number', type=int, help='index of job array, starts at 
 parser.add_argument('t_max', type=int, help='max temp for rest')
 parser.add_argument('radius', type=float, help='radius in nm for rest region')
 parser.add_argument('n_replicas', type=int, help='number of replicas')
+parser.add_argument('length', type=int, help='length in ns for each replica')
 args = parser.parse_args()
 
 if args.sim_number == 1:
@@ -54,7 +57,7 @@ elif args.sim_number == 4:
     name = args.new_aa_name
     state = 1
 
-length = 1
+length = args.length
 move_length = 1
 timestep = 4
 radius = args.radius
@@ -97,7 +100,7 @@ lambda_zero_alchemical_state = RESTState.from_system(REST_system)
 thermostate = ThermodynamicState(REST_system, temperature=T_min)
 compound_thermodynamic_state = CompoundThermodynamicState(thermostate, composable_states=[lambda_zero_alchemical_state])
 
-context_cache = cache.ContextCache()
+#context_cache = cache.ContextCache()
 
 # Create thermodynamics states
 sampler_state =  SamplerState(positions, box_vectors=htf.hybrid_system.getDefaultPeriodicBoxVectors())
@@ -143,7 +146,7 @@ _logger.setLevel(logging.DEBUG)
 _logger.info("About to start repex")
 print(f"move steps: {int((move_length*1000)/timestep)}")
 print(f"timestep: {timestep} fs")
-context_cache = cache.ContextCache(capacity=None, time_to_live=None)
+#context_cache = cache.ContextCache(capacity=None, time_to_live=None)
 move = mcmc.LangevinSplittingDynamicsMove(timestep=timestep*unit.femtoseconds, n_steps=int((move_length*1000)/timestep), context_cache=context_cache)
 simulation = ReplicaExchangeSampler2(mcmc_moves=move, number_of_iterations=length*1000)
 
