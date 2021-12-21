@@ -73,8 +73,8 @@ positions, energies = list(), list()
 for _ in tqdm.tqdm(range(nequil)):
     integrator.step(nsteps_per_iteration)
     state = context.getState(getEnergy=True, getPositions=True)
-    positions.append(state.getPositions())
-    energies.append(state.getPotentialEnergy())
+    positions.append(state.getPositions(asNumpy=True).value_in_unit_system(unit.md_unit_system))
+    energies.append(state.getPotentialEnergy().value_in_unit_system(unit.md_unit_system))
 _logger.info(f'Relax done')
 
 # Save positions and energies
