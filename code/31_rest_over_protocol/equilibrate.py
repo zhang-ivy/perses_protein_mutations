@@ -35,7 +35,7 @@ platform_name = 'CUDA'
 
 # Set number of steps
 nsteps_per_iteration = 250
-nequil = args.length * 1000
+nequil = int(args.length * 1000)
 
 # Load htf
 integrator = LangevinIntegrator(temperature=temperature, timestep=timestep, collision_rate=collision_rate)
