@@ -78,10 +78,10 @@ for _ in tqdm.tqdm(range(nequil)):
 _logger.info(f'Relax done')
 
 # Save positions and energies
-with open(os.path.join(args.outdir, f"{dir_num}_{phase}_positions.pickle"), 'wb') as f:
+with open(os.path.join(args.outdir, f"{dir_num}_{args.phase}_positions.pickle"), 'wb') as f:
     pickle.dump(positions, f)
 
-with open(os.path.join(args.outdir, f"{dir_num}_{phase}_energies.pickle"), 'wb') as f:
+with open(os.path.join(args.outdir, f"{dir_num}_{args.phase}_energies.pickle"), 'wb') as f:
     pickle.dump(energies, f)
 
 
