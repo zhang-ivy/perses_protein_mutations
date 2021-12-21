@@ -38,7 +38,6 @@ nsteps_per_iteration = 250
 nequil = args.length * 1000
 
 # Load htf
-_logger.info(f'Starting to relax')
 integrator = LangevinIntegrator(temperature=temperature, timestep=timestep, collision_rate=collision_rate)
 platform = openmm.Platform.getPlatformByName(platform_name)
 
@@ -55,8 +54,13 @@ context.setVelocitiesToTemperature(temperature)
 # Set context parameters
 context_parameters = context.getParameters().keys()
 for param in context_parameters:
-    context.setParameter(param, args.endstate)
-    _logger.info(f"Setting {param} to {args.endstate}")
+    if 'old' in param:
+        context.setParameter(param, 1 - args.endstate)
+        _logger.info(f"Setting {param} to {1 - args.endstate}")
+
+    elif 'new' in param:
+        context.setParameter(param, args.endstate)
+        _logger.info(f"Setting {param} to {args.endstate}")
 
 # Minimize
 _logger.info(f'Starting to minimize')
