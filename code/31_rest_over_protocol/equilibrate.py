@@ -67,10 +67,10 @@ _logger.info(f'Starting to minimize')
 openmm.LocalEnergyMinimizer.minimize(context)
 
 # Equilibrate
-_logger.info(f'Starting to equilibrate for {nequil*n_steps_per_iteration*timestep}')
+_logger.info(f'Starting to equilibrate for {nequil*nsteps_per_iteration*timestep}')
 positions, energies = list(), list()
 for _ in nequil:
-    integrator.step(n_steps_per_iteration)
+    integrator.step(nsteps_per_iteration)
     state = context.getState(getEnergy=True, getPositions=True)
     positions.append(state.getPositions())
     energies.append(state.getPotentialEnergy())
