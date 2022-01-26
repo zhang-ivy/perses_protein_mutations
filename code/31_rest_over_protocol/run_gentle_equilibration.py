@@ -1,0 +1,180 @@
+from openmm import unit
+import pickle
+import argparse
+import logging
+
+# Set up logger
+_logger = logging.getLogger()
+_logger.setLevel(logging.INFO)
+
+# Read args
+parser = argparse.ArgumentParser(description='run perses protein mutation on capped amino acid')
+parser.add_argument('infile', type=str, help='path to input pickle')
+parser.add_argument('outfile', type=str, help='path to output file (.pdb or .cif)')
+args = parser.parse_args()
+
+def run_gentle_equilibration(topology, positions, system, stages, filename, platform_name='CUDA'):
+    """
+    Run gentle equilibration.
+    
+    Parameters
+    ----------
+    topology : openmm.app.Topology
+        topology
+    positions : np.array in unit.nanometer
+        positions
+    system : openmm.System
+        system
+    stages : list of dicts
+        each list corresponds to a stage of equiilbration
+        each dict contains the equilibration parameters for a given stage
+        
+        equilibration parameters:
+            EOM : str
+                'minimize' or 'MD' or 'MD_interpolate' (the last one will allow interpolation between 'temperature' and 'temperature_end')
+            n_steps : int
+                number of steps of MD 
+            temperature : int
+                in units of kelvin
+            temperature_end : int, optional
+                the temperature at which to finish interpolation, if 'EOM' is 'MD_interpolate'
+            ensemble : str or None
+                'NPT' or 'NVT'
+            restraint_selection : str or None
+                to be used by mdtraj to select atoms for which to apply restraints
+            force_constant : int
+                in units of kcal/molA^2
+            collision_rate : int
+                 in units of 1/picoseconds
+                
+    filename : str
+        path to save the equilibrated structure
+        
+    """
+    import copy
+    import openmm
+    import time
+    import numpy as np
+    import mdtraj as md
+    from rich.progress import track
+            
+    for i, parameters in enumerate(stages):
+        
+        initial_time = time.time()
+        print(f"Executing stage {i + 1}")
+        
+        # Make a copy of the system
+        system_copy = copy.deepcopy(system)
+        
+        # Add restraint
+        if parameters['restraint_selection'] is not None:
+#             assert isinstance(parameters['restraint_selection'], str), "Invalid type of parameter supplied for 'restraint_selection'"
+
+            traj = md.Trajectory(positions, md.Topology.from_openmm(topology))
+            selection_indices = traj.topology.select(parameters['restraint_selection'])
+
+            custom_cv_force = openmm.CustomCVForce('(K_RMSD/2)*(RMSD)^2')
+            custom_cv_force.addGlobalParameter('K_RMSD', parameters['force_constant'] * 2)
+            rmsd_force = openmm.RMSDForce(positions, selection_indices)
+            custom_cv_force.addCollectiveVariable('RMSD', rmsd_force)
+            system_copy.addForce(custom_cv_force)
+
+        # Set barostat update interval to 0 (for NVT)
+        if parameters['ensemble'] == 'NVT':
+            force_dict = {force.__class__.__name__: index for index, force in enumerate(system_copy.getForces())}
+            system_copy.removeForce(force_dict['MonteCarloBarostat'])
+    
+        elif parameters['ensemble'] == 'NPT' or parameters['ensemble'] is None:
+            pass
+        
+        else:
+            raise Exception("Invalid parameter supplied for 'ensemble'")
+            
+        # Set up integrator
+        temperature = parameters['temperature']
+        collision_rate = parameters['collision_rate']
+        timestep = parameters['timestep']
+        
+        if parameters['EOM'] == 'MD_interpolate':
+            temperature_end = parameters['temperature_end'] # kelvin
+        
+        integrator = openmm.LangevinMiddleIntegrator(temperature, collision_rate, timestep)
+    
+        # Set up context
+        platform = openmm.Platform.getPlatformByName(platform_name)
+        if platform_name in ['CUDA', 'OpenCL']:
+            platform.setPropertyDefaultValue('Precision', 'mixed')
+        if platform_name in ['CUDA']:
+            platform.setPropertyDefaultValue('DeterministicForces', 'true')
+        
+        context = openmm.Context(system_copy, integrator, platform, {'DisablePmeStream':'true'})
+        context.setPeriodicBoxVectors(*system_copy.getDefaultPeriodicBoxVectors())
+        context.setPositions(positions)
+        context.setVelocitiesToTemperature(temperature)
+    
+        # Run minimization or MD
+        n_steps = parameters['n_steps']
+        n_steps_per_iteration = 100
+        
+        if parameters['EOM'] == 'minimize':
+            openmm.LocalEnergyMinimizer.minimize(context, maxIterations=n_steps)
+            
+        elif parameters['EOM'] == 'MD':
+            for _ in track(range(int(n_steps/n_steps_per_iteration))):
+                integrator.step(n_steps_per_iteration)
+              
+        elif parameters['EOM'] == 'MD_interpolate':
+            temperature_unit = unit.kelvin
+            temperatures = np.linspace(temperature/temperature_unit, temperature_end/temperature_unit, int(n_steps/n_steps_per_iteration)) * temperature_unit
+            for temperature in track(temperatures):
+                integrator.setTemperature(temperature)
+                integrator.step(n_steps_per_iteration)
+    
+        else:
+            raise Exception("Invalid parameter supplied for 'EOM'")
+            
+        # Retrieve positions after this stage of equil
+        positions = context.getState(getPositions=True).getPositions(asNumpy=True)
+
+        # Update default box vectors for next iteration
+        box_vectors = context.getState().getPeriodicBoxVectors()
+        system.setDefaultPeriodicBoxVectors(*box_vectors)
+        
+        # Delete context and integrator 
+        del context, integrator, system_copy
+        
+        elapsed_time = time.time() - initial_time
+        print(f"\tStage {i + 1} took {elapsed_time} seconds")
+        
+    # Save the final equilibrated file
+    if filename.endswith('pdb'):
+        openmm.app.PDBFile.writeFile(topology, positions, open(filename, "w"), keepIds=True)
+    elif filename.endswith('cif'):
+        openmm.app.PDBxFile.writeFile(topology, positions, open(filename, "w"), keepIds=True)
+
+    with open(filename[:-4] + '_box_vectors.npy', 'wb') as f:
+        np.save(f, box_vectors)
+
+# Load htf
+with open(args.infile, "rb") as f:
+    htf = pickle.load(f)
+
+# Retrieve old positions and system 
+# (in PointMutationExecutor, we will want to feed the gently equilibrated positions in before geometry engine)
+positions = htf.old_positions(htf.hybrid_positions)
+system = htf._topology_proposal.old_system
+topology = htf._topology_proposal.old_topology
+
+stages = [
+    {'EOM': 'minimize', 'n_steps': 10000, 'temperature': 300*unit.kelvin, 'ensemble': None, 'restraint_selection': 'protein and not type H', 'force_constant': 1*unit.kilocalories_per_mole/unit.angstrom**2, 'collision_rate': 2/unit.picoseconds, 'timestep': 1*unit.femtoseconds},
+    {'EOM': 'MD_interpolate', 'n_steps': 100000, 'temperature': 100*unit.kelvin, 'temperature_end': 300*unit.kelvin, 'ensemble': 'NVT', 'restraint_selection': 'protein and not type H', 'force_constant': 1*unit.kilocalories_per_mole/unit.angstrom**2, 'collision_rate': 10/unit.picoseconds, 'timestep': 1*unit.femtoseconds},
+    {'EOM': 'MD', 'n_steps': 100000, 'temperature': 300, 'ensemble': 'NPT', 'restraint_selection': 'protein and not type H', 'force_constant': 1*unit.kilocalories_per_mole/unit.angstrom**2, 'collision_rate': 10/unit.picoseconds, 'timestep': 1*unit.femtoseconds},
+    {'EOM': 'MD', 'n_steps': 250000, 'temperature': 300*unit.kelvin, 'ensemble': 'NPT', 'restraint_selection': 'protein and not type H', 'force_constant': 0.1*unit.kilocalories_per_mole/unit.angstrom**2, 'collision_rate': 2/unit.picoseconds, 'timestep': 1*unit.femtoseconds},
+    {'EOM': 'minimize', 'n_steps': 10000, 'temperature': 300*unit.kelvin, 'ensemble': None, 'restraint_selection': 'protein and backbone', 'force_constant': 0.1*unit.kilocalories_per_mole/unit.angstrom**2, 'collision_rate': 2/unit.picoseconds, 'timestep': 1*unit.femtoseconds},
+    {'EOM': 'MD', 'n_steps': 100000, 'temperature': 300*unit.kelvin, 'ensemble': 'NPT', 'restraint_selection': 'protein and backbone', 'force_constant': 0.1*unit.kilocalories_per_mole/unit.angstrom**2, 'collision_rate': 2/unit.picoseconds, 'timestep': 1*unit.femtoseconds},
+    {'EOM': 'MD', 'n_steps': 100000, 'temperature': 300*unit.kelvin, 'ensemble': 'NPT', 'restraint_selection': 'protein and backbone', 'force_constant': 0.01*unit.kilocalories_per_mole/unit.angstrom**2, 'collision_rate': 2/unit.picoseconds, 'timestep': 1*unit.femtoseconds},
+    {'EOM': 'MD', 'n_steps': 100000, 'temperature': 300*unit.kelvin, 'ensemble': 'NPT', 'restraint_selection': 'protein and backbone', 'force_constant': 0.001*unit.kilocalories_per_mole/unit.angstrom**2, 'collision_rate': 2/unit.picoseconds, 'timestep': 1*unit.femtoseconds},
+    {'EOM': 'MD', 'n_steps': 2500000, 'temperature': 300*unit.kelvin, 'ensemble': 'NPT', 'restraint_selection': None, 'force_constant': 0*unit.kilocalories_per_mole/unit.angstrom**2, 'collision_rate': 2/unit.picoseconds, 'timestep': 2*unit.femtoseconds},
+]
+
+run_gentle_equilibration(topology, positions, system, stages, args.outfile)
