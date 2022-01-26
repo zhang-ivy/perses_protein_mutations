@@ -26,29 +26,31 @@ def run_gentle_equilibration(topology, positions, system, stages, filename, plat
     system : openmm.System
         system
     stages : list of dicts
-        each list corresponds to a stage of equiilbration
-        each dict contains the equilibration parameters for a given stage
+        each dict corresponds to a stage of equilibration and contains the equilibration parameters for that stage
         
         equilibration parameters:
             EOM : str
                 'minimize' or 'MD' or 'MD_interpolate' (the last one will allow interpolation between 'temperature' and 'temperature_end')
             n_steps : int
                 number of steps of MD 
-            temperature : int
-                in units of kelvin
-            temperature_end : int, optional
-                the temperature at which to finish interpolation, if 'EOM' is 'MD_interpolate'
+            temperature : openmm.unit.kelvin
+                temperature (kelvin)
+            temperature_end : openmm.unit.kelvin, optional
+                the temperature (kelvin) at which to finish interpolation, if 'EOM' is 'MD_interpolate'
             ensemble : str or None
                 'NPT' or 'NVT'
             restraint_selection : str or None
                 to be used by mdtraj to select atoms for which to apply restraints
-            force_constant : int
-                in units of kcal/molA^2
-            collision_rate : int
-                 in units of 1/picoseconds
-                
+            force_constant : openmm.unit.kilocalories_per_mole/openmm.unit.angstrom**2
+                force constant (kcal/molA^2)
+            collision_rate : 1/openmm.unit.picoseconds
+                collision rate (1/picoseconds)
+            timestep : openmm.unit.femtoseconds
+                timestep (femtoseconds)
     filename : str
         path to save the equilibrated structure
+    platform_name : str, default 'CUDA'
+        name of platform to be used by OpenMM. If not specified, OpenMM will select the fastest available platform 
         
     """
     import copy
@@ -68,7 +70,6 @@ def run_gentle_equilibration(topology, positions, system, stages, filename, plat
         
         # Add restraint
         if parameters['restraint_selection'] is not None:
-#             assert isinstance(parameters['restraint_selection'], str), "Invalid type of parameter supplied for 'restraint_selection'"
 
             traj = md.Trajectory(positions, md.Topology.from_openmm(topology))
             selection_indices = traj.topology.select(parameters['restraint_selection'])
@@ -82,7 +83,7 @@ def run_gentle_equilibration(topology, positions, system, stages, filename, plat
         # Set barostat update interval to 0 (for NVT)
         if parameters['ensemble'] == 'NVT':
             force_dict = {force.__class__.__name__: index for index, force in enumerate(system_copy.getForces())}
-            system_copy.removeForce(force_dict['MonteCarloBarostat'])
+            system_copy.removeForce(force_dict['MonteCarloBarostat']) # TODO : change this to `system_copy.getForce(force_dict['MonteCarloBarostat']).setFrequency(0) once the next release comes out (this recently merged PR allows frequency to be 0: https://github.com/openmm/openmm/pull/3411) 
     
         elif parameters['ensemble'] == 'NPT' or parameters['ensemble'] is None:
             pass
@@ -96,7 +97,7 @@ def run_gentle_equilibration(topology, positions, system, stages, filename, plat
         timestep = parameters['timestep']
         
         if parameters['EOM'] == 'MD_interpolate':
-            temperature_end = parameters['temperature_end'] # kelvin
+            temperature_end = parameters['temperature_end']
         
         integrator = openmm.LangevinMiddleIntegrator(temperature, collision_rate, timestep)
     
@@ -107,7 +108,7 @@ def run_gentle_equilibration(topology, positions, system, stages, filename, plat
         if platform_name in ['CUDA']:
             platform.setPropertyDefaultValue('DeterministicForces', 'true')
         
-        context = openmm.Context(system_copy, integrator, platform, {'DisablePmeStream':'true'})
+        context = openmm.Context(system_copy, integrator, platform)
         context.setPeriodicBoxVectors(*system_copy.getDefaultPeriodicBoxVectors())
         context.setPositions(positions)
         context.setVelocitiesToTemperature(temperature)
@@ -146,12 +147,13 @@ def run_gentle_equilibration(topology, positions, system, stages, filename, plat
         elapsed_time = time.time() - initial_time
         print(f"\tStage {i + 1} took {elapsed_time} seconds")
         
-    # Save the final equilibrated file
+    # Save the final equilibrated positions
     if filename.endswith('pdb'):
         openmm.app.PDBFile.writeFile(topology, positions, open(filename, "w"), keepIds=True)
     elif filename.endswith('cif'):
         openmm.app.PDBxFile.writeFile(topology, positions, open(filename, "w"), keepIds=True)
 
+    # Save the box vectors
     with open(filename[:-4] + '_box_vectors.npy', 'wb') as f:
         np.save(f, box_vectors)
 
