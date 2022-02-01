@@ -20,46 +20,31 @@ parser = argparse.ArgumentParser(description='run perses protein mutation on cap
 parser.add_argument('dir', type=str, help='path to input/output dir')
 parser.add_argument('phase', type=str, help='solvent or vacuum')
 parser.add_argument('sim_number', type=int, help='number in job name - 1')
-parser.add_argument('old_aa_name', type=str, help='amino acid three letter code, e.g. ALA')
-parser.add_argument('new_aa_name', type=str, help='amino acid three letter code, e.g. ALA')
-parser.add_argument('length', type=float, help='neq switching time in ns')
-parser.add_argument('T_max', type=int, help='t_max for rest, in Kelvin')
+parser.add_argument('eq_length', type=float, help='eq switching time in ns')
+parser.add_argument('neq_length', type=float, help='neq switching time in ns')
 parser.add_argument('chain_A', type=int, help='(first) chain index for which to to add a virtual bond for complex phase')
 parser.add_argument('chain_B', type=int, help='(second) chain index for which to to add a virtual bond for complex phase')
-parser.add_argument('--cache', type=int, default=1, help='length of rest cache in ns')
-parser.add_argument('--restrained', action='store_true', help='whether to use restrained cache')
 args = parser.parse_args()
 
 # Define simulation parameters
-nsteps_eq = 10
-nsteps_neq = int(args.length*250000) # 1 ns
+nsteps_eq = int(args.eq_length*250000) # 1 ns
+nsteps_neq = int(args.neq_length*250000) # 1 ns
 neq_splitting='V R H O R V'
 timestep = 4.0 * unit.femtosecond
 platform_name = 'CUDA'
-cache_length = args.cache if args.cache else 1
 temperature = 300.0 * unit.kelvin
 
 # Define lambda functions
 x = 'lambda'
-beta0 = (1 / (kB * temperature)).value_in_unit_system(unit.md_unit_system)
-beta = (1 / (kB * args.T_max * unit.kelvin)).value_in_unit_system(unit.md_unit_system)
 
 ALCHEMICAL_FUNCTIONS = {
-                          'lambda_rest_bonds': f"select(step({x} - 0.5), 2 * (1 - sqrt({beta} / {beta0})) * {x} - 1 + 2 * sqrt({beta} / {beta0}), -2 * (1 - sqrt({beta} / {beta0})) * {x} + 1)",
-                         'lambda_rest_angles': f"select(step({x} - 0.5), 2 * (1 - sqrt({beta} / {beta0})) * {x} - 1 + 2 * sqrt({beta} / {beta0}), -2 * (1 - sqrt({beta} / {beta0})) * {x} + 1)",
-                         'lambda_rest_torsions':f"select(step({x} - 0.5), 2 * (1 - sqrt({beta} / {beta0})) * {x} - 1 + 2 * sqrt({beta} / {beta0}), -2 * (1 - sqrt({beta} / {beta0})) * {x} + 1)",
-                         'lambda_rest_electrostatics': f"select(step({x} - 0.5), 2 * (1 - sqrt({beta} / {beta0})) * {x} - 1 + 2 * sqrt({beta} / {beta0}), -2 * (1 - sqrt({beta} / {beta0})) * {x} + 1)",
-                         'lambda_rest_electrostatics_exceptions': f"select(step({x} - 0.5), 2 * (1 - sqrt({beta} / {beta0})) * {x} - 1 + 2 * sqrt({beta} / {beta0}), -2 * (1 - sqrt({beta} / {beta0})) * {x} + 1)",
-                         'lambda_rest_sterics':f"select(step({x} - 0.5), 2 * (1 - sqrt({beta} / {beta0})) * {x} - 1 + 2 * sqrt({beta} / {beta0}), -2 * (1 - sqrt({beta} / {beta0})) * {x} + 1)",
-                         'lambda_rest_sterics_exceptions': f"select(step({x} - 0.5), 2 * (1 - sqrt({beta} / {beta0})) * {x} - 1 + 2 * sqrt({beta} / {beta0}), -2 * (1 - sqrt({beta} / {beta0})) * {x} + 1)",
-#'lambda_rest_bonds': "1",
-#'lambda_rest_angles': "1",
-#'lambda_rest_torsions':"1",
-#'lambda_rest_electrostatics': "1",
-#'lambda_rest_electrostatics_exceptions': "1",
-#'lambda_rest_sterics':"1",
-#'lambda_rest_sterics_exceptions': "1", 
-
+'lambda_rest_bonds': "1",
+'lambda_rest_angles': "1",
+'lambda_rest_torsions':"1",
+'lambda_rest_electrostatics': "1",
+'lambda_rest_electrostatics_exceptions': "1",
+'lambda_rest_sterics':"1",
+'lambda_rest_sterics_exceptions': "1", 
                          'lambda_alchemical_bonds_old': f'1 - {x}',
                          'lambda_alchemical_bonds_new': x,
                          'lambda_alchemical_angles_old': f'1 - {x}',
@@ -81,9 +66,11 @@ ALCHEMICAL_FUNCTIONS = {
 i = os.path.basename(os.path.dirname(args.dir))
 with open(os.path.join(args.dir, f"{i}_{args.phase}.pickle"), 'rb') as f:
     htf = pickle.load(f)
-system = htf.hybrid_system
+positions = htf.hybrid_positions
+box_vectors = htf.hybrid_system.getDefaultPeriodicBoxVectors()
 
 # Make sure LRC is set correctly
+system = htf.hybrid_system
 system.getForce(5).setUseLongRangeCorrection(False)
 system.getForce(8).setUseDispersionCorrection(True)
 _logger.info(f"CustomNonbondedForce_sterics use LRC? {system.getForce(5).getUseLongRangeCorrection()}")
@@ -99,18 +86,6 @@ if args.phase == 'complex':
     system.addForce(force)
     _logger.info(f"Added virtual bond between {atom_A} and {atom_B}")
 
-# Read in lambda = 0 cache
-append = '_restrained' if args.restrained else ''
-_logger.info(f"Using restrained cache? {args.restrained}")
-with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.old_aa_name}_{cache_length}ns_snapshots{append}.npy"), 'rb') as f:
-    lambda_0_pos = np.load(f)
-positions = lambda_0_pos[args.sim_number]
-
-# Read in lambda = 0 cache box vectors
-with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.old_aa_name}_{cache_length}ns_box_vectors{append}.npy"), 'rb') as f:
-    lambda_0_box_vectors = np.load(f)
-box_vectors = lambda_0_box_vectors[args.sim_number][0]
-
 # Set up integrator
 integrator = PeriodicNonequilibriumIntegrator(ALCHEMICAL_FUNCTIONS, nsteps_eq, nsteps_neq, neq_splitting, timestep=timestep, temperature=temperature)
 
@@ -124,6 +99,9 @@ context = openmm.Context(system, integrator, platform)
 context.setPeriodicBoxVectors(*box_vectors)
 context.setPositions(positions)
 context.setVelocitiesToTemperature(temperature)
+
+# Minimize
+openmm.LocalEnergyMinimizer.minimize(context)
 
 # Run eq forward (0 -> 1)
 integrator.step(nsteps_eq)
@@ -157,20 +135,6 @@ forward_works_master.append(forward_works)
 
 for k, v in context.getParameters().items():
     print(k, v)
-
-# Read in lambda = 1 cache, if necessary
-with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.new_aa_name}_{cache_length}ns_snapshots.npy"), 'rb') as f:
-    lambda_1_pos = np.load(f)
-positions = lambda_1_pos[args.sim_number]
-
-# Read in lambda = 1 cache box vectors
-with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.new_aa_name}_{cache_length}ns_box_vectors.npy"), 'rb') as f:
-    lambda_1_box_vectors = np.load(f)
-box_vectors = lambda_1_box_vectors[args.sim_number][0]
-
-context.setPeriodicBoxVectors(*box_vectors)
-context.setPositions(positions)
-context.setVelocitiesToTemperature(temperature)
 
 # Run eq reverse (1 -> 0)
 integrator.step(nsteps_eq)
