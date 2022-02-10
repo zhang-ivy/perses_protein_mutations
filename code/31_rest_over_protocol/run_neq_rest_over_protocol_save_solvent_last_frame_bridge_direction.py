@@ -42,7 +42,7 @@ temperature = 300.0 * unit.kelvin
 aa_name = args.old_aa_name if args.endstate == 0 else args.new_aa_name
 
 # Define lambda functions
-x = 'lambda'
+x = '(1 - lambda)'
 beta0 = (1 / (kB * temperature)).value_in_unit_system(unit.md_unit_system)
 beta = (1 / (kB * args.T_max * unit.kelvin)).value_in_unit_system(unit.md_unit_system)
 
@@ -115,21 +115,6 @@ box_vectors = cache_box_vectors[args.sim_number][0]
 
 # Set up integrator
 integrator = PeriodicNonequilibriumIntegrator(ALCHEMICAL_FUNCTIONS, nsteps_eq, nsteps_neq, neq_splitting, timestep=timestep, temperature=temperature)
-if args.endstate == 1:
-    for i in range(integrator.getNumGlobalVariables()):
-        name = integrator.getGlobalVariableName(i)
-        _logger.info(f"{name}: {integrator.getGlobalVariable(i)}")
-        if name == 'step':
-            integrator.setGlobalVariable(i, nsteps_eq + nsteps_neq)
-            _logger.info(f"Setting integrator global variable '{name}' to {nsteps_eq + nsteps_neq} ")
-        elif name == 'lambda_step':
-            integrator.setGlobalVariable(i, nsteps_eq + nsteps_neq)
-            _logger.info(f"Setting integrator global variable '{name}' to {nsteps_eq + nsteps_neq} ")
-        elif name == 'lambda':
-            integrator.setGlobalVariable(i, 1.0)
-            _logger.info(f"Setting integrator global variable '{name}' to 1.0 ")
-else:
-    _logger.info("Skipping setting integrator global variable")
 
 # Set up context
 platform = openmm.Platform.getPlatformByName(platform_name)
@@ -141,16 +126,24 @@ context = openmm.Context(system, integrator, platform)
 context.setPeriodicBoxVectors(*box_vectors)
 context.setPositions(positions)
 context.setVelocitiesToTemperature(temperature)
+integrator.reset()
 
+#for k, v in context.getParameters().items():
+#    if 'old' in k:
+#        context.setParameter(k, 0.0)
+#    elif 'new' in k or 'reciprocal' in k:
+#        context.setParameter(k, 1.0)
+
+_logger.info("before eq")
 for k, v in context.getParameters().items():
-    if 'old' in k:
-        context.setParameter(k, 0.0)
-    elif 'new' in k or 'reciprocal' in k:
-        context.setParameter(k, 1.0)
+    _logger.info(f"{k} {v}")
 
 # Run eq
 integrator.step(nsteps_eq)
 _logger.info("finished eq")
+
+for k, v in context.getParameters().items():
+    _logger.info(f"{k} {v}")
 
 # Run neq
 works_master = list()
@@ -187,7 +180,7 @@ for step in range(int(nsteps_neq / 2500)):
 works_master.append(works)
 
 for k, v in context.getParameters().items():
-    print(k, v)
+    _logger.info(f"{k} {v}")
 
 # Save works
 i = os.path.basename(os.path.dirname(args.dir))
