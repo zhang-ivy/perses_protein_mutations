@@ -27,6 +27,7 @@ parser.add_argument('endstate', type=int, help='starting endstate (0 or 1)')
 parser.add_argument('T_max', type=int, help='t_max for rest, in Kelvin')
 parser.add_argument('chain_A', type=int, help='(first) chain index for which to to add a virtual bond for complex phase')
 parser.add_argument('chain_B', type=int, help='(second) chain index for which to to add a virtual bond for complex phase')
+parser.add_argument('protocol', type=str, help='protocol to use: default or bridge')
 parser.add_argument('--cache', type=int, default=1, help='length of rest cache in ns')
 parser.add_argument('--restrained', action='store_true', help='whether to use restrained cache')
 args = parser.parse_args()
@@ -46,7 +47,8 @@ x = '(1 - lambda)'
 beta0 = (1 / (kB * temperature)).value_in_unit_system(unit.md_unit_system)
 beta = (1 / (kB * args.T_max * unit.kelvin)).value_in_unit_system(unit.md_unit_system)
 
-ALCHEMICAL_FUNCTIONS = {
+if args.protocol == 'bridge':
+    ALCHEMICAL_FUNCTIONS = {
                           'lambda_rest_bonds': f"select(step({x} - 0.25), select(step({x} - 0.75), 4 * (1 - sqrt({beta} / {beta0})) * ({x} - 1) + 1, sqrt({beta}/{beta0})), -4 * (1 - sqrt({beta} / {beta0})) * {x} + 1)",
                          'lambda_rest_angles': f"select(step({x} - 0.25), select(step({x} - 0.75), 4 * (1 - sqrt({beta} / {beta0})) * ({x} - 1) + 1, sqrt({beta}/{beta0})), -4 * (1 - sqrt({beta} / {beta0})) * {x} + 1)",
                          'lambda_rest_torsions': f"select(step({x} - 0.25), select(step({x} - 0.75), 4 * (1 - sqrt({beta} / {beta0})) * ({x} - 1) + 1, sqrt({beta}/{beta0})), -4 * (1 - sqrt({beta} / {beta0})) * {x} + 1)",
@@ -78,6 +80,43 @@ ALCHEMICAL_FUNCTIONS = {
                          'lambda_alchemical_sterics_exceptions_old': f'select(step({x} - 0.25), select(step({x} - 0.75), 0.0, 1.5 - 2 * {x}), 1.0)',
                          'lambda_alchemical_sterics_exceptions_new': f'select(step({x} - 0.25), select(step({x} - 0.75), 1.0, 2 * {x} - 0.5), 0.0)',
                          }
+
+elif args.protocol == 'default':
+    ALCHEMICAL_FUNCTIONS = {
+                          'lambda_rest_bonds': f"select(step({x} - 0.5), 2 * (1 - sqrt({beta} / {beta0})) * {x} - 1 + 2 * sqrt({beta} / {beta0}), -2 * (1 - sqrt({beta} / {beta0})) * {x} + 1)",
+                         'lambda_rest_angles': f"select(step({x} - 0.5), 2 * (1 - sqrt({beta} / {beta0})) * {x} - 1 + 2 * sqrt({beta} / {beta0}), -2 * (1 - sqrt({beta} / {beta0})) * {x} + 1)",
+                         'lambda_rest_torsions':f"select(step({x} - 0.5), 2 * (1 - sqrt({beta} / {beta0})) * {x} - 1 + 2 * sqrt({beta} / {beta0}), -2 * (1 - sqrt({beta} / {beta0})) * {x} + 1)",
+                         'lambda_rest_electrostatics': f"select(step({x} - 0.5), 2 * (1 - sqrt({beta} / {beta0})) * {x} - 1 + 2 * sqrt({beta} / {beta0}), -2 * (1 - sqrt({beta} / {beta0})) * {x} + 1)",
+                         'lambda_rest_electrostatics_exceptions': f"select(step({x} - 0.5), 2 * (1 - sqrt({beta} / {beta0})) * {x} - 1 + 2 * sqrt({beta} / {beta0}), -2 * (1 - sqrt({beta} / {beta0})) * {x} + 1)",
+                         'lambda_rest_sterics':f"select(step({x} - 0.5), 2 * (1 - sqrt({beta} / {beta0})) * {x} - 1 + 2 * sqrt({beta} / {beta0}), -2 * (1 - sqrt({beta} / {beta0})) * {x} + 1)",
+                         'lambda_rest_sterics_exceptions': f"select(step({x} - 0.5), 2 * (1 - sqrt({beta} / {beta0})) * {x} - 1 + 2 * sqrt({beta} / {beta0}), -2 * (1 - sqrt({beta} / {beta0})) * {x} + 1)",
+#'lambda_rest_bonds': "1",
+#'lambda_rest_angles': "1",
+#'lambda_rest_torsions':"1",
+#'lambda_rest_electrostatics': "1",
+#'lambda_rest_electrostatics_exceptions': "1",
+#'lambda_rest_sterics':"1",
+#'lambda_rest_sterics_exceptions': "1", 
+
+                         'lambda_alchemical_bonds_old': f'1 - {x}',
+                         'lambda_alchemical_bonds_new': x,
+                         'lambda_alchemical_angles_old': f'1 - {x}',
+                         'lambda_alchemical_angles_new': x,
+                         'lambda_alchemical_torsions_old': f'1 - {x}',
+                         'lambda_alchemical_torsions_new': x,
+                         'lambda_alchemical_electrostatics_old': f'1 - {x}',
+                         'lambda_alchemical_electrostatics_new': x,
+                         'lambda_alchemical_electrostatics_exceptions_old': f'1 - {x}',
+                         'lambda_alchemical_electrostatics_exceptions_new': x,
+                         'lambda_alchemical_electrostatics_reciprocal': x,
+                         'lambda_alchemical_sterics_old': f'1 - {x}',
+                         'lambda_alchemical_sterics_new': x,
+                         'lambda_alchemical_sterics_exceptions_old': f'1 - {x}',
+                         'lambda_alchemical_sterics_exceptions_new': x
+                         }
+else:
+    raise Exception("protocol must be 'default' or 'bridge'")
+
 
 # Read in vanilla htf
 i = os.path.basename(os.path.dirname(args.dir))
