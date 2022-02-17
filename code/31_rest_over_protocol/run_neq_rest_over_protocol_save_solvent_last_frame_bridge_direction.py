@@ -43,7 +43,7 @@ temperature = 300.0 * unit.kelvin
 aa_name = args.old_aa_name if args.endstate == 0 else args.new_aa_name
 
 # Define lambda functions
-x = '(1 - lambda)'
+x = 'lambda' if args.endstate == 0 else '(1 - lambda)'
 beta0 = (1 / (kB * temperature)).value_in_unit_system(unit.md_unit_system)
 beta = (1 / (kB * args.T_max * unit.kelvin)).value_in_unit_system(unit.md_unit_system)
 
@@ -167,22 +167,29 @@ context.setPositions(positions)
 context.setVelocitiesToTemperature(temperature)
 integrator.reset()
 
-#for k, v in context.getParameters().items():
-#    if 'old' in k:
-#        context.setParameter(k, 0.0)
-#    elif 'new' in k or 'reciprocal' in k:
-#        context.setParameter(k, 1.0)
+#if args.endstate == 0:
+#    for k, v in context.getParameters().items():
+#        if 'old' in k:
+#            context.setParameter(k, 1.0)
+#        elif 'new' in k or 'reciprocal' in k:
+#            context.setParameter(k, 0.0)
+#elif args.endstate == 1:
+#    for k, v in context.getParameters().items():
+#        if 'old' in k:
+#            context.setParameter(k, 0.0)
+#        elif 'new' in k or 'reciprocal' in k:
+#            context.setParameter(k, 1.0)
 
 _logger.info("before eq")
 for k, v in context.getParameters().items():
-    _logger.info(f"{k} {v}")
+    _logger.info(f"\t{k} {v}")
 
 # Run eq
 integrator.step(nsteps_eq)
 _logger.info("finished eq")
 
 for k, v in context.getParameters().items():
-    _logger.info(f"{k} {v}")
+    _logger.info(f"\t{k} {v}")
 
 # Run neq
 works_master = list()
@@ -219,7 +226,7 @@ for step in range(int(nsteps_neq / 2500)):
 works_master.append(works)
 
 for k, v in context.getParameters().items():
-    _logger.info(f"{k} {v}")
+    _logger.info(f"\t{k} {v}")
 
 # Save works
 i = os.path.basename(os.path.dirname(args.dir))
