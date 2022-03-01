@@ -1,0 +1,46 @@
+MODEL        0
+ATOM      1  H1  ACE A   1       2.000   1.000  -0.000  1.00  0.00          H   
+ATOM      2  CH3 ACE A   1       2.000   2.090   0.000  1.00  0.00          C   
+ATOM      3  H2  ACE A   1       1.486   2.454   0.890  1.00  0.00          H   
+ATOM      4  H3  ACE A   1       1.486   2.454  -0.890  1.00  0.00          H   
+ATOM      5  C   ACE A   1       3.427   2.641  -0.000  1.00  0.00          C   
+ATOM      6  O   ACE A   1       4.391   1.877  -0.000  1.00  0.00          O   
+ATOM      7  N   VAL A   2       3.555   3.970  -0.000  1.00  0.00          N   
+ATOM      8  H   VAL A   2       2.733   4.556  -0.000  1.00  0.00          H   
+ATOM      9  CA  VAL A   2       4.853   4.614  -0.000  1.00  0.00          C   
+ATOM     10  HA  VAL A   2       5.408   4.316   0.890  1.00  0.00          H   
+ATOM     11  CB  VAL A   2       5.632   4.332  -1.276  1.00  0.00          C   
+ATOM     12  C   VAL A   2       4.713   6.129   0.000  1.00  0.00          C   
+ATOM     13  O   VAL A   2       3.601   6.653   0.000  1.00  0.00          O   
+ATOM     14  HB  VAL A   2       5.729   3.247  -1.239  1.00  0.00          H   
+ATOM     15  CG1 VAL A   2       6.913   4.958  -0.937  1.00  0.00          C   
+ATOM     16 HG11 VAL A   2       7.554   4.833  -1.810  1.00  0.00          H   
+ATOM     17 HG12 VAL A   2       7.434   4.494  -0.099  1.00  0.00          H   
+ATOM     18 HG13 VAL A   2       6.785   6.001  -0.647  1.00  0.00          H   
+ATOM     19  CG2 VAL A   2       4.907   4.676  -2.551  1.00  0.00          C   
+ATOM     20 HG21 VAL A   2       4.515   3.756  -2.985  1.00  0.00          H   
+ATOM     21 HG22 VAL A   2       5.609   5.166  -3.225  1.00  0.00          H   
+ATOM     22 HG23 VAL A   2       4.070   5.289  -2.217  1.00  0.00          H   
+ATOM     23  N   NME A   3       5.846   6.835   0.000  1.00  0.00          N   
+ATOM     24  H   NME A   3       6.737   6.359  -0.000  1.00  0.00          H   
+ATOM     25  C   NME A   3       5.846   8.284   0.000  1.00  0.00          C   
+ATOM     26  H1  NME A   3       4.819   8.648   0.000  1.00  0.00          H   
+ATOM     27  H2  NME A   3       6.360   8.648   0.890  1.00  0.00          H   
+ATOM     28  H3  NME A   3       6.360   8.648  -0.890  1.00  0.00          H   
+TER      29      NME A   3
+ENDMDL
+CONECT    1    2
+CONECT    2    5    1    3    4
+CONECT    3    2
+CONECT    4    2
+CONECT    5    2    6    7
+CONECT    6    5
+CONECT    7    5
+CONECT   12   23
+CONECT   23   12   25   24
+CONECT   24   23
+CONECT   25   26   27   28   23
+CONECT   26   25
+CONECT   27   25
+CONECT   28   25
+END
