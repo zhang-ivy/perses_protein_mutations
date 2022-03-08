@@ -110,6 +110,7 @@ integrator.step(nsteps_eq)
 forward_works_master = list()
 forward_neq_old, forward_neq_new = list(), list()
 forward_neq_old_waters, forward_neq_new_waters = list(), list()
+forward_neq_box_vectors = list()
 forward_works = [integrator.get_protocol_work(dimensionless=True)]
 for fwd_step in range(int(nsteps_neq / 2500)):
     integrator.step(2500)
@@ -117,7 +118,9 @@ for fwd_step in range(int(nsteps_neq / 2500)):
 
     forward_works.append(integrator.get_protocol_work(dimensionless=True))
     
-    pos = context.getState(getPositions=True, enforcePeriodicBox=False).getPositions(asNumpy=True)
+    state = context.getState(getPositions=True, enforcePeriodicBox=False)
+    box_vectors = state.getPeriodicBoxVectors(asNumpy=True)
+    pos = state.getPositions(asNumpy=True)
     old_pos = np.asarray(htf.old_positions(pos))
     old_traj = md.Trajectory(old_pos, md.Topology.from_openmm(htf._topology_proposal.old_topology))
     old_pos_solute = old_traj.atom_slice(old_traj.top.select("not water")).xyz[0]
@@ -126,6 +129,7 @@ for fwd_step in range(int(nsteps_neq / 2500)):
     new_traj = md.Trajectory(new_pos, md.Topology.from_openmm(htf._topology_proposal.new_topology))
     new_pos_solute = new_traj.atom_slice(new_traj.top.select("not water")).xyz[0]
     
+    forward_neq_box_vectors.append(box_vectors)
     forward_neq_old.append(old_pos_solute)
     forward_neq_new.append(new_pos_solute)
     if fwd_step == int(nsteps_neq / 2500) - 1:
@@ -143,6 +147,7 @@ integrator.step(nsteps_eq)
 reverse_works_master = list()
 reverse_neq_old, reverse_neq_new = list(), list()
 reverse_neq_old_waters, reverse_neq_new_waters = list(), list()
+reverse_neq_box_vectors = list()
 reverse_works = [integrator.get_protocol_work(dimensionless=True)]
 for rev_step in range(int(nsteps_neq / 2500)):
     integrator.step(2500)
@@ -150,7 +155,9 @@ for rev_step in range(int(nsteps_neq / 2500)):
     
     reverse_works.append(integrator.get_protocol_work(dimensionless=True))
     
-    pos = context.getState(getPositions=True, enforcePeriodicBox=False).getPositions(asNumpy=True)
+    state = context.getState(getPositions=True, enforcePeriodicBox=False)
+    box_vectors = state.getPeriodicBoxVectors(asNumpy=True)
+    pos = state.getPositions(asNumpy=True)
     old_pos = np.asarray(htf.old_positions(pos))
     old_traj = md.Trajectory(old_pos, md.Topology.from_openmm(htf._topology_proposal.old_topology))
     old_pos_solute = old_traj.atom_slice(old_traj.top.select("not water")).xyz[0]
@@ -159,6 +166,7 @@ for rev_step in range(int(nsteps_neq / 2500)):
     new_traj = md.Trajectory(new_pos, md.Topology.from_openmm(htf._topology_proposal.new_topology))
     new_pos_solute = new_traj.atom_slice(new_traj.top.select("not water")).xyz[0]
 
+    reverse_neq_box_vectors.append(box_vectors)
     reverse_neq_old.append(old_pos_solute)
     reverse_neq_new.append(new_pos_solute)
     if rev_step == int(nsteps_neq / 2500) - 1:
@@ -189,3 +197,8 @@ with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_reverse_ne
     np.save(f, reverse_neq_old_waters)
 with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_reverse_neq_new_waters.npy"), 'wb') as f:
     np.save(f, reverse_neq_new_waters)
+
+with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_forward_neq_box_vectors.npy"), 'wb') as f:
+    np.save(f, forward_neq_box_vectors)
+with open(os.path.join(args.dir, f"{i}_{args.phase}_{args.sim_number}_reverse_neq_box_vectors.npy"), 'wb') as f:
+    np.save(f, reverse_neq_box_vectors)
