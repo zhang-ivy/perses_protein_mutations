@@ -48,9 +48,9 @@ for k, v in dictionary.items():
                 line = f"new={new}\n"
             elif "phase=" in line:
                 line = f"phase={phase}\n"
-            elif "eq_length=" in line:
+            elif "eq_length=" == line[:10]:
                 line = f"eq_length={eq_length}\n"
-            elif "neq_length=" in line:
+            elif "neq_length=" == line[:10]:
                 line = f"neq_length={neq_length}\n"
             elif "chain_A=" in line:
                 line = f"chain_A={chain_A}\n"
