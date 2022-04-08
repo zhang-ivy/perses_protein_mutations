@@ -3,6 +3,8 @@ import numpy as np
 import argparse
 import os
 import logging
+_logger = logging.getLogger()
+_logger.setLevel(logging.INFO)
 
 from simtk import openmm
 from simtk.openmm import unit
@@ -29,8 +31,27 @@ args = parser.parse_args()
 i = os.path.basename(os.path.dirname(args.dir))
 htf = pickle.load(open(os.path.join(args.dir, f"{i}_{args.phase}.pickle"), "rb" ))
 hybrid_system = htf.hybrid_system
+#hybrid_system.getForce(5).setUseLongRangeCorrection(False) ## TEMPORARY FIX
 hybrid_positions = htf.hybrid_positions
 box_vectors = hybrid_system.getDefaultPeriodicBoxVectors()
+
+# Make sure LRC is set correctly
+hybrid_system.getForce(5).setUseLongRangeCorrection(False)
+hybrid_system.getForce(8).setUseDispersionCorrection(True)
+_logger.info(f"CustomNonbondedForce_sterics use LRC? {hybrid_system.getForce(5).getUseLongRangeCorrection()}")
+_logger.info(f"NonbondedForce_sterics use LRC? {hybrid_system.getForce(8).getUseDispersionCorrection()}")
+
+# Add virtual bond for complex phase
+if args.phase == 'complex':
+    chain_A = 0
+    chain_B = 2
+    chains = list(htf.hybrid_topology.chains)
+    atom_A = list(chains[chain_A].atoms)[0]
+    atom_B = list(chains[chain_B].atoms)[0]
+    force = openmm.CustomBondForce('0')
+    force.addBond(atom_A.index, atom_B.index, [])
+    hybrid_system.addForce(force)
+    _logger.info(f"Added virtual bond between {atom_A} and {atom_B}")
 
 # Subclass the HybridCompatilityMixin and HybridRepexSampler classes
 
@@ -38,7 +59,8 @@ box_vectors = hybrid_system.getDefaultPeriodicBoxVectors()
 from openmmtools.multistate import sams, replicaexchange
 from openmmtools import cache, utils
 from perses.dispersed.utils import configure_platform
-cache.global_context_cache.platform = configure_platform(utils.get_fastest_platform().getName())
+platform = configure_platform(utils.get_fastest_platform().getName())
+cache.global_context_cache.platform = platform
 context_cache = cache.ContextCache(capacity=None, time_to_live=None)
 from openmmtools.states import CompoundThermodynamicState, SamplerState, ThermodynamicState
 from perses.dispersed.utils import create_endstates
@@ -113,6 +135,7 @@ class HybridCompatibilityMixin(object):
 
              # now generating a sampler_state for each thermodyanmic state, with relaxed positions
             context, context_integrator = context_cache.get_context(compound_thermodynamic_state_copy)
+            _logger.info(f"minimizing {lambda_val} state")
             feptasks.minimize(compound_thermodynamic_state_copy,sampler_state, max_iterations=0)
             sampler_state_list.append(copy.deepcopy(sampler_state))
 
@@ -178,22 +201,23 @@ class HybridRepexSampler(HybridCompatibilityMixin, replicaexchange.ReplicaExchan
         self._factory = hybrid_factory
 
 # Instantiate sampler 
-_logger = logging.getLogger()
 _logger.setLevel(logging.DEBUG)
 reporter_file = os.path.join(os.path.join(args.dir, f"{i}_{args.phase}.nc"))
 reporter = MultiStateReporter(reporter_file, checkpoint_interval=10)
 hss = HybridRepexSampler(mcmc_moves=mcmc.LangevinSplittingDynamicsMove(timestep= 4.0 * unit.femtoseconds,
                                                                       collision_rate=1.0 / unit.picosecond,
                                                                       n_steps=250,
-                                                                      reassign_velocities=False,
+                                                                      reassign_velocities=True,
                                                                       n_restart_attempts=20,
                                                                       splitting="V R R R O R R R V",
-                                                                      constraint_tolerance=1e-06, 
-                                                                      context_cache=context_cache),
+                                                                      constraint_tolerance=1e-06),
                                                                       replica_mixing_scheme='swap-all',
                                                                       hybrid_factory=htf, 
-                                                                      online_analysis_interval=10)
+                                                                      online_analysis_interval=None)
 hss.setup(n_states=args.n_states, temperature=300*unit.kelvin, T_max=args.T_max * unit.kelvin, storage_file=reporter, endstates=False)
+
+hss.energy_context_cache = cache.ContextCache(capacity=None, time_to_live=None, platform=platform)
+hss.sampler_context_cache = cache.ContextCache(capacity=None, time_to_live=None, platform=platform)
 
 # Run simulation
 hss.extend(args.n_cycles)
