@@ -36,10 +36,13 @@ hybrid_positions = htf.hybrid_positions
 box_vectors = hybrid_system.getDefaultPeriodicBoxVectors()
 
 # Make sure LRC is set correctly
-hybrid_system.getForce(5).setUseLongRangeCorrection(False)
-hybrid_system.getForce(8).setUseDispersionCorrection(True)
-_logger.info(f"CustomNonbondedForce_sterics use LRC? {hybrid_system.getForce(5).getUseLongRangeCorrection()}")
-_logger.info(f"NonbondedForce_sterics use LRC? {hybrid_system.getForce(8).getUseDispersionCorrection()}")
+force_dict = {force.getName(): index for index, force in enumerate(hybrid_system.getForces())}
+custom_force = hybrid_system.getForce(force_dict['CustomNonbondedForce_sterics'])
+nonbonded_force = hybrid_system.getForce(force_dict['NonbondedForce_sterics'])
+custom_force.setUseLongRangeCorrection(False)
+nonbonded_force.setUseDispersionCorrection(True)
+_logger.info(f"CustomNonbondedForce_sterics use LRC? {custom_force.getUseLongRangeCorrection()}")
+_logger.info(f"NonbondedForce_sterics use LRC? {nonbonded_force.getUseDispersionCorrection()}")
 
 # Add virtual bond for complex phase
 if args.phase == 'complex':
